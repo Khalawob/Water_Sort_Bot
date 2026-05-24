@@ -26,7 +26,7 @@ EMPTY_THRESHOLD = 15
 # Hidden slots are darker/greyer than game colours but different from empty
 HIDDEN_COLOUR_RANGE = {
     "min": (40, 40, 40),    # darker than this = empty
-    "max": (130, 130, 130), # lighter than this = actual colour
+    "max": (100, 100, 100), # lighter than this = actual colour
 }
 
 UNKNOWN = "unknown"

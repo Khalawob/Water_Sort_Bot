@@ -10,7 +10,6 @@ Strategies:
 Moves are returned as (src, dst, num_poured).
 """
 
-import random
 from collections import deque
 from heapq import heappush, heappop
 
@@ -220,185 +219,85 @@ def solve_dfs(initial_state, tube_capacity=4, max_states=2_000_000,
     return None
 
 
-# ── Constraint deduction ─────────────────────────────────────────────
-
-def deduce_unknowns(state, tube_capacity=4):
-    """
-    Fill in forced unknowns using colour counting.
-
-    Each colour appears exactly tube_capacity times. If a colour has been
-    seen tube_capacity - 1 times, the one remaining UNKNOWN slot must be
-    that colour. Repeats until no more deductions can be made (one fill-in
-    can enable the next).
-
-    Returns a new state (list of lists) and the number of slots deduced.
-    """
-    tubes = [list(t) for t in state]
-    total_deduced = 0
-
-    while True:
-        # Count visible colours across all tubes
-        colour_counts = {}
-        for tube in tubes:
-            for slot in tube:
-                if slot != UNKNOWN:
-                    colour_counts[slot] = colour_counts.get(slot, 0) + 1
-
-        # Find colours that are one short of full count
-        missing_one = [
-            colour for colour, count in colour_counts.items()
-            if count == tube_capacity - 1
-        ]
-
-        if not missing_one:
-            break
-
-        # Count total unknowns to detect single-unknown-remaining case
-        total_unknowns = sum(t.count(UNKNOWN) for t in tubes)
-
-        deduced_this_round = 0
-        for colour in missing_one:
-            # If only one unknown slot remains anywhere, it must be this colour
-            if total_unknowns == 1:
-                for tube in tubes:
-                    if UNKNOWN in tube:
-                        idx = tube.index(UNKNOWN)
-                        tube[idx] = colour
-                        deduced_this_round += 1
-                        total_unknowns -= 1
-                        break
-            else:
-                # Multiple unknowns remain — can we narrow down which one?
-                # A tube with no unknowns can't hold the missing slot.
-                # If exactly one tube has unknowns AND could contain this
-                # colour, the missing instance must be there.
-                candidate_tubes = []
-                for i, tube in enumerate(tubes):
-                    if UNKNOWN in tube:
-                        candidate_tubes.append(i)
-
-                if len(candidate_tubes) == 1:
-                    # Only one tube has any unknowns — all missing colours
-                    # must be in that tube. Fill the topmost unknown.
-                    tube = tubes[candidate_tubes[0]]
-                    idx = tube.index(UNKNOWN)
-                    tube[idx] = colour
-                    deduced_this_round += 1
-                    total_unknowns -= 1
-
-        if deduced_this_round == 0:
-            break
-        total_deduced += deduced_this_round
-
-    if total_deduced > 0:
-        print(f"  🧩 Deduced {total_deduced} hidden slot(s) via colour counting")
-
-    return tubes, total_deduced
-
-
 # ── Safe moves (when unknowns prevent full solve) ────────────────────
 
 def find_safe_moves(initial_state, tube_capacity=4):
     """
-    Reveal-focused strategy. Called each round while unknowns remain.
+    When the puzzle can't be fully solved (hidden slots), find moves
+    that make obvious progress:
+      1. Complete a tube (fill it with one colour)
+      2. Pour onto matching colour
+      3. Pour to reveal a hidden slot (empty a tube above unknowns)
 
-    Priority order:
-      1. Matching reveal — pour from a tube with hidden slots below into
-         a tube whose top matches the source colour. Free information
-         without spending an empty tube.
-      2. Empty reveal — pour from a tube with hidden slots below into an
-         empty tube. Safe (always reversible) but spends an empty.
-      3. Matching consolidation — pour matching colours together even if
-         neither tube has hidden slots. Frees up space for future reveals.
-      4. Non-reveal empty park — pour into an empty to create room,
-         only as a last resort.
-
-    Only one move per call — the loop in solve_one_level will re-screenshot
-    and re-assess after each move, so we don't need to chain moves blindly.
-
-    Returns a list of (src, dst, num_poured) moves (0 or 1 move).
+    Returns a short list of (src, dst, num_poured) moves.
     """
-    state = [list(t) for t in initial_state]
+    state = tuple(tuple(t) for t in initial_state)
+    safe_moves = []
 
-    def has_hidden_below(tube):
-        """Check if pouring the visible top would reveal an UNKNOWN."""
-        if not tube:
-            return False
-        top_colour = tube[-1]
-        if top_colour == UNKNOWN:
-            return False
-        # Walk down past the top run to see if UNKNOWN is directly below
-        for i in range(len(tube) - 1, -1, -1):
-            if tube[i] == top_colour:
-                continue
-            return tube[i] == UNKNOWN
-        return False
-
-    def do_pour(src, dst):
-        """Execute a pour and return (num_poured, move_tuple)."""
-        frozen = tuple(tuple(t) for t in state)
-        new_frozen, num_poured = apply_move(frozen, src, dst, tube_capacity)
-        if num_poured > 0:
-            return num_poured, (src, dst, num_poured)
-        return 0, None
-
-    # Categorise tubes
-    empty_tubes = [i for i, t in enumerate(state) if len(t) == 0]
-
-    # Build candidate moves in priority order
-    # Each candidate: (priority, src, dst)
-    candidates = []
-
-    for src in range(len(state)):
-        if not state[src]:
-            continue
-        top_colour, top_count = get_top_run(state[src])
-        if top_colour == UNKNOWN:
+    # Score each possible move — use permissive generator so single-colour
+    # tubes can pour into empty slots (may be the only way to make progress
+    # when unknowns are blocking everything else)
+    scored = []
+    for src, dst in valid_moves(state, tube_capacity, restrict_empties=False):
+        new_state, num_poured = apply_move(state, src, dst, tube_capacity)
+        if num_poured == 0:
             continue
 
-        reveals = has_hidden_below(state[src])
+        score = 0
+        src_tube_after = new_state[src]
+        dst_tube_after = new_state[dst]
 
-        for dst in range(len(state)):
-            if dst == src:
-                continue
-            if len(state[dst]) >= tube_capacity:
-                continue
+        # Completing a tube = great
+        if (len(dst_tube_after) == tube_capacity
+                and len(set(dst_tube_after)) == 1
+                and UNKNOWN not in dst_tube_after):
+            score += 100
 
-            if len(state[dst]) == 0:
-                # Pouring a fully-visible single-colour tube into empty
-                # is pointless — skip it
-                known = [c for c in state[src] if c != UNKNOWN]
-                if len(set(known)) <= 1 and UNKNOWN not in state[src]:
-                    continue
+        # Emptying a tube = great (especially reveals unknowns)
+        if len(src_tube_after) == 0:
+            score += 80
 
-                if reveals:
-                    # Priority 2: empty reveal
-                    candidates.append((2, src, dst))
-                else:
-                    # Priority 4: non-reveal empty park
-                    candidates.append((4, src, dst))
+        # Revealing an unknown (top of source becomes unknown after pour)
+        if src_tube_after and src_tube_after[-1] == UNKNOWN:
+            score += 60
 
-            elif state[dst][-1] == top_colour:
-                if reveals:
-                    # Priority 1: matching reveal (best move)
-                    candidates.append((1, src, dst))
-                else:
-                    # Priority 3: matching consolidation
-                    candidates.append((3, src, dst))
+        # Pouring onto matching colour = good
+        if state[dst] and state[dst][-1] == state[src][-1]:
+            score += 30
 
-    # Sort by priority and pick the best one
-    candidates.sort(key=lambda c: c[0])
+        # Pouring more balls at once = efficient
+        score += num_poured * 5
 
-    for priority, src, dst in candidates:
-        num_poured, move = do_pour(src, dst)
-        if num_poured > 0:
-            kind = {1: "matching reveal", 2: "empty reveal",
-                    3: "consolidation", 4: "empty park"}
-            print(f"  Strategy: {kind.get(priority, '?')} "
-                  f"(Tube {src+1} → Tube {dst+1})")
-            return [move]
+        if score > 0:
+            scored.append((score, src, dst, num_poured))
 
-    return []
+    scored.sort(reverse=True)
+
+    # Fallback: when all tops are UNKNOWN, pour into empty tubes to reveal hidden balls.
+    # The real game always allows any tube → empty tube regardless of the top colour.
+    if not scored:
+        empty_dsts = [i for i, t in enumerate(state) if len(t) == 0]
+        for src, tube in enumerate(state):
+            if not tube or not empty_dsts:
+                break
+            top, _ = get_top_run(tube)
+            if top == UNKNOWN:
+                dst = empty_dsts.pop(0)
+                scored.append((10, src, dst, 1))
+
+    # Take the best moves but avoid conflicts
+    used_srcs = set()
+    for score, src, dst, num_poured in scored:
+        if src in used_srcs:
+            continue
+        safe_moves.append((src, dst, num_poured))
+        used_srcs.add(src)
+
+        # Limit to a few moves — we'll re-screenshot after
+        if len(safe_moves) >= 3:
+            break
+
+    return safe_moves
 
 
 # ── Auto-selecting solver ────────────────────────────────────────────
