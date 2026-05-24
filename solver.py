@@ -10,6 +10,7 @@ Strategies:
 Moves are returned as (src, dst, num_poured).
 """
 
+import random
 from collections import deque
 from heapq import heappush, heappop
 
@@ -43,6 +44,138 @@ def get_top_run(tube):
         else:
             break
     return colour, count
+
+
+def survey_visible_tops(state):
+    """Return (colour_map, empties) scanning all tube tops.
+
+    colour_map maps each visible (non-UNKNOWN) top colour to the list of
+    tube indices that show it.  empties is the list of empty tube indices.
+    """
+    colour_map = {}
+    empties = []
+    for i, tube in enumerate(state):
+        if not tube:
+            empties.append(i)
+            continue
+        colour, _ = get_top_run(tube)
+        if colour is None or colour == UNKNOWN:
+            continue
+        colour_map.setdefault(colour, []).append(i)
+    return colour_map, empties
+
+
+def count_colour_occurrences(state):
+    """Return a dict mapping each known colour to its total slot count across all tubes."""
+    counts = {}
+    for tube in state:
+        for slot in tube:
+            if slot == UNKNOWN:
+                continue
+            counts[slot] = counts.get(slot, 0) + 1
+    return counts
+
+
+def find_matching_tops(state, tube_capacity):
+    """Return sorted (src, dst) pairs where same-colour tops can pour without using an empty."""
+    colour_map, _ = survey_visible_tops(state)
+    working = []
+    for colour, indices in colour_map.items():
+        if len(indices) < 2:
+            continue
+        for dst in indices:
+            if len(state[dst]) >= tube_capacity:
+                continue
+            is_pure = all(c == colour for c in state[dst])
+            score = (not is_pure, -state[dst].count(colour))
+            for src in indices:
+                if src != dst:
+                    working.append((score, src, dst))
+    working.sort(key=lambda x: x[0])
+    return [(src, dst) for _, src, dst in working]
+
+
+def _pick_by_count(counts, candidates, pick_min):
+    """Return a randomly chosen colour from candidates with the min or max count."""
+    target = min(counts[c] for c in candidates) if pick_min else max(counts[c] for c in candidates)
+    tied = [c for c in candidates if counts[c] == target]
+    return random.choice(tied)
+
+
+def plan_reveal_round(state, tube_capacity):
+    """Return (src, dst, num_poured) moves for one reveal round based on empty-tube count."""
+    colour_map, empties = survey_visible_tops(state)
+    moves = []
+
+    def _free_match_moves(cur_state):
+        result = []
+        s = cur_state
+        for src, dst in find_matching_tops(s, tube_capacity):
+            s, n = apply_move(s, src, dst, tube_capacity)
+            if n > 0:
+                result.append((src, dst, n))
+        return result
+
+    if len(empties) >= 2:
+        counts = count_colour_occurrences(state)
+        visible_colours = list(colour_map)
+
+        # Park least-occurring colour into empties[0]
+        park_dst = empties[0]
+        least = _pick_by_count(counts, visible_colours, pick_min=True)
+        park_src = random.choice(colour_map[least])
+        n = min(get_top_run(state[park_src])[1], tube_capacity)
+        moves.append((park_src, park_dst, n))
+
+        # Consolidate most-occurring colour (2+ tops) into empties[1]
+        cons_dst = empties[1]
+        multi_top = [c for c in colour_map if len(colour_map[c]) >= 2 and c != least]
+        if multi_top:
+            most = _pick_by_count(counts, multi_top, pick_min=False)
+            cur_state = state
+            for src in colour_map[most]:
+                if len(cur_state[cons_dst]) >= tube_capacity:
+                    break
+                cur_state, n = apply_move(cur_state, src, cons_dst, tube_capacity)
+                if n > 0:
+                    moves.append((src, cons_dst, n))
+
+    elif len(empties) == 1:
+        matches = _free_match_moves(state)
+        if matches:
+            return matches
+        counts = count_colour_occurrences(state)
+        least = _pick_by_count(counts, list(colour_map), pick_min=True)
+        park_src = random.choice(colour_map[least])
+        n = min(get_top_run(state[park_src])[1], tube_capacity)
+        moves.append((park_src, empties[0], n))
+
+    else:
+        return _free_match_moves(state)
+
+    return moves
+
+
+def find_reclaim_moves(state, tube_capacity):
+    """Return (src, dst, num_poured) moves that pour single-colour parking tubes into matching tops.
+
+    Fully-emptying moves (reclaiming the tube as empty) are sorted first.
+    """
+    colour_map, _ = survey_visible_tops(state)
+    candidates = []
+    for i, tube in enumerate(state):
+        if not tube or UNKNOWN in tube or len(set(tube)) != 1:
+            continue
+        colour = tube[0]
+        for dst in colour_map.get(colour, []):
+            if dst == i or len(state[dst]) >= tube_capacity:
+                continue
+            _, num_poured = apply_move(state, i, dst, tube_capacity)
+            if num_poured > 0:
+                fully_empties = num_poured == len(tube)
+                candidates.append((not fully_empties, -num_poured, i, dst, num_poured))
+    candidates.sort(key=lambda x: (x[0], x[1]))
+    return [(src, dst, n) for _, _, src, dst, n in candidates]
 
 
 def apply_move(state, src, dst, tube_capacity):

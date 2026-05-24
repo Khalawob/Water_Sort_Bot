@@ -16,7 +16,7 @@ from pathlib import Path
 
 import cv2
 
-from solver import solve, find_safe_moves, UNKNOWN
+from solver import solve, plan_reveal_round, find_reclaim_moves, find_safe_moves, apply_move, UNKNOWN
 from screen_reader import (
     read_tubes, has_unknowns, load_config, save_config, calibrate,
     is_game_screen, wait_for_game_screen, CONFIG_PATH,
@@ -148,10 +148,11 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10):
             return True
 
         has_hidden = has_unknowns(tubes)
+        state = tuple(tuple(t) for t in tubes)
 
         if not has_hidden:
             print("\n🧠 Solving (full information)...")
-            moves = solve(tubes, tube_capacity=tube_capacity)
+            moves = solve(state, tube_capacity=tube_capacity)
 
             if moves is None:
                 print("\n✗ No solution found!")
@@ -167,39 +168,41 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10):
             execute_move_list(moves, config, tube_capacity)
             print("\n🎉 Level complete!")
             return True
-        else:
-            print("\n🧠 Attempting solve with hidden slots...")
-            moves = solve(tubes, tube_capacity=tube_capacity)
 
-            if moves is not None:
-                print(f"\n✓ Full solution found: {len(moves)} moves")
-                if dry_run:
-                    for i, (s, d, n) in enumerate(moves, 1):
-                        print(f"  {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
-                    print("\n(Dry run — no taps sent)")
-                    return True
+        # Unknowns remain: reclaim parking tubes first, then plan reveal round
+        print("\n🔄 Hidden slots remain — planning reveal round...")
+        reclaim = find_reclaim_moves(state, tube_capacity)
+        state_mid = state
+        for src, dst, _ in reclaim:
+            state_mid, _ = apply_move(state_mid, src, dst, tube_capacity)
 
-                execute_move_list(moves, config, tube_capacity)
-                print("\n🎉 Level complete!")
-                return True
+        reveal = plan_reveal_round(state_mid, tube_capacity)
+        all_moves = reclaim + reveal
 
-            print("  Finding safe moves to reveal hidden slots...")
-            safe = find_safe_moves(tubes, tube_capacity)
-
-            if not safe:
-                print("  ✗ No safe moves found. Stuck.")
+        if not all_moves:
+            print("  ⚠ New strategy found no moves — trying legacy fallback...")
+            fallback = find_safe_moves(tubes, tube_capacity)
+            if not fallback:
+                print(f"  ✗ Round {round_num}: stuck — no moves available.")
                 return False
-
-            print(f"\n  Playing {len(safe)} safe moves:")
-            if dry_run:
-                for i, (s, d, n) in enumerate(safe, 1):
+            print(f"  {len(fallback)} fallback moves")
+            if not dry_run:
+                execute_move_list(fallback, config, tube_capacity)
+            else:
+                for i, (s, d, n) in enumerate(fallback, 1):
                     print(f"    {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
-                print("  (Dry run — would re-screenshot and continue)")
-                return True
+                print("  (Dry run — continuing to next round)")
 
-            execute_move_list(safe, config, tube_capacity)
-            print("\n  ⏳ Waiting for animations...")
-            time.sleep(1.5)
+        print(f"  {len(reclaim)} reclaim + {len(reveal)} reveal moves")
+        if dry_run:
+            for i, (s, d, n) in enumerate(all_moves, 1):
+                print(f"    {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
+            print("  (Dry run — continuing to next round)")
+        else:
+            execute_move_list(all_moves, config, tube_capacity)
+
+        print("\n  ⏳ Waiting for animations...")
+        time.sleep(1.5)
 
     print(f"\n✗ Couldn't solve after {max_rounds} rounds.")
     return False
