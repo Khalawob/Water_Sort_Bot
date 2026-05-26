@@ -106,10 +106,13 @@ def get_config_for_level(image, existing_config=None):
     return new_config
 
 
-def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10):
+def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_num=1):
     """
     Solve a level with auto-calibration and iterative reveal strategy.
     """
+    screenshots_dir = Path(__file__).parent / "debug_screenshots" / f"level_{level_num:03d}"
+    initial_saved = False
+
     for round_num in range(1, max_rounds + 1):
         print(f"\n{'─' * 40}")
         print(f"  Round {round_num}")
@@ -148,6 +151,13 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10):
             return True
 
         has_hidden = has_unknowns(tubes)
+
+        if has_hidden and not initial_saved:
+            screenshots_dir.mkdir(parents=True, exist_ok=True)
+            cv2.imwrite(str(screenshots_dir / "initial.png"), image)
+            print(f"  📷 Saved initial screenshot → debug_screenshots/level_{level_num:03d}/initial.png")
+            initial_saved = True
+
         state = tuple(tuple(t) for t in tubes)
 
         if not has_hidden:
@@ -203,6 +213,12 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10):
 
         print("\n  ⏳ Waiting for animations...")
         time.sleep(1.5)
+
+        end_image = screenshot()
+        if end_image is not None:
+            screenshots_dir.mkdir(parents=True, exist_ok=True)
+            cv2.imwrite(str(screenshots_dir / f"round_{round_num:02d}_end.png"), end_image)
+            print(f"  📷 Saved round {round_num} end screenshot → debug_screenshots/level_{level_num:03d}/round_{round_num:02d}_end.png")
 
     print(f"\n✗ Couldn't solve after {max_rounds} rounds.")
     return False
@@ -385,7 +401,7 @@ def main():
             print(f"  LEVEL {level}")
             print(f"{'═' * 50}")
 
-            success = solve_one_level(config, tube_capacity)
+            success = solve_one_level(config, tube_capacity, level_num=level)
 
             if success:
                 failures = 0
