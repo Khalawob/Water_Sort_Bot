@@ -9,6 +9,7 @@ Supports hidden/unknown slots with iterative solve-reveal-solve.
 """
 
 import argparse
+import io
 import json
 import sys
 import time
@@ -106,119 +107,149 @@ def get_config_for_level(image, existing_config=None):
     return new_config
 
 
+class _Tee:
+    def __init__(self, real, buf):
+        self._real = real
+        self._buf = buf
+
+    def write(self, data):
+        self._real.write(data)
+        self._buf.write(data)
+
+    def flush(self):
+        self._real.flush()
+        self._buf.flush()
+
+    def fileno(self):
+        return self._real.fileno()
+
+
 def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_num=1):
     """
     Solve a level with auto-calibration and iterative reveal strategy.
     """
     screenshots_dir = Path(__file__).parent / "debug_screenshots" / f"level_{level_num:03d}"
+    log_file = screenshots_dir / "rounds.txt"
     initial_saved = False
 
     for round_num in range(1, max_rounds + 1):
-        print(f"\n{'─' * 40}")
-        print(f"  Round {round_num}")
-        print(f"{'─' * 40}")
+        _buf = io.StringIO()
+        _orig = sys.stdout
+        sys.stdout = _Tee(_orig, _buf)
+        try:
+            print(f"\n{'─' * 40}")
+            print(f"  Round {round_num}")
+            print(f"{'─' * 40}")
 
-        print("📸 Capturing screenshot (ADB)...")
-        image = screenshot()
+            print("📸 Capturing screenshot (ADB)...")
+            image = screenshot()
 
-        if image is None:
-            print("  ✗ Screenshot failed.")
-            return False
-
-        if not is_game_screen(image, config):
-            print("⚠ Game not visible — waiting...")
-            image = wait_for_game_screen(config, timeout=15)
             if image is None:
+                print("  ✗ Screenshot failed.")
                 return False
 
-        # Auto-detect tubes for this frame
-        config = get_config_for_level(image, config)
-        if config is None:
-            return False
-        tube_capacity = config.get("tube_capacity", 4)
+            if not is_game_screen(image, config):
+                print("⚠ Game not visible — waiting...")
+                image = wait_for_game_screen(config, timeout=15)
+                if image is None:
+                    return False
 
-        print("🔍 Reading tubes...")
-        tubes, valid = read_and_display(image, config, tube_capacity)
-
-        # Check if already solved
-        all_done = all(
-            len(t) == 0 or (len(t) == tube_capacity and len(set(t)) == 1
-                            and UNKNOWN not in t)
-            for t in tubes
-        )
-        if all_done:
-            print("\n🎉 Level already complete!")
-            return True
-
-        has_hidden = has_unknowns(tubes)
-
-        if has_hidden and not initial_saved:
-            screenshots_dir.mkdir(parents=True, exist_ok=True)
-            cv2.imwrite(str(screenshots_dir / "initial.png"), image)
-            print(f"  📷 Saved initial screenshot → debug_screenshots/level_{level_num:03d}/initial.png")
-            initial_saved = True
-
-        state = tuple(tuple(t) for t in tubes)
-
-        if not has_hidden:
-            print("\n🧠 Solving (full information)...")
-            moves = solve(state, tube_capacity=tube_capacity)
-
-            if moves is None:
-                print("\n✗ No solution found!")
+            # Auto-detect tubes for this frame
+            config = get_config_for_level(image, config)
+            if config is None:
                 return False
+            tube_capacity = config.get("tube_capacity", 4)
 
-            print(f"\n✓ Solution: {len(moves)} moves")
-            if dry_run:
-                for i, (s, d, n) in enumerate(moves, 1):
-                    print(f"  {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
-                print("\n(Dry run — no taps sent)")
+            print("🔍 Reading tubes...")
+            tubes, valid = read_and_display(image, config, tube_capacity)
+
+            # Check if already solved
+            all_done = all(
+                len(t) == 0 or (len(t) == tube_capacity and len(set(t)) == 1
+                                and UNKNOWN not in t)
+                for t in tubes
+            )
+            if all_done:
+                print("\n🎉 Level already complete!")
                 return True
 
-            execute_move_list(moves, config, tube_capacity)
-            print("\n🎉 Level complete!")
-            return True
+            has_hidden = has_unknowns(tubes)
 
-        # Unknowns remain: reclaim parking tubes first, then plan reveal round
-        print("\n🔄 Hidden slots remain — planning reveal round...")
-        reclaim = find_reclaim_moves(state, tube_capacity)
-        state_mid = state
-        for src, dst, _ in reclaim:
-            state_mid, _ = apply_move(state_mid, src, dst, tube_capacity)
+            if has_hidden and not initial_saved:
+                screenshots_dir.mkdir(parents=True, exist_ok=True)
+                cv2.imwrite(str(screenshots_dir / "initial.png"), image)
+                print(f"  📷 Saved initial screenshot → debug_screenshots/level_{level_num:03d}/initial.png")
+                initial_saved = True
 
-        reveal = plan_reveal_round(state_mid, tube_capacity)
-        all_moves = reclaim + reveal
+            state = tuple(tuple(t) for t in tubes)
 
-        if not all_moves:
-            print("  ⚠ New strategy found no moves — trying legacy fallback...")
-            fallback = find_safe_moves(tubes, tube_capacity)
-            if not fallback:
-                print(f"  ✗ Round {round_num}: stuck — no moves available.")
-                return False
-            print(f"  {len(fallback)} fallback moves")
-            if not dry_run:
-                execute_move_list(fallback, config, tube_capacity)
-            else:
-                for i, (s, d, n) in enumerate(fallback, 1):
+            if not has_hidden:
+                print("\n🧠 Solving (full information)...")
+                moves = solve(state, tube_capacity=tube_capacity)
+
+                if moves is None:
+                    print("\n✗ No solution found!")
+                    return False
+
+                print(f"\n✓ Solution: {len(moves)} moves")
+                if dry_run:
+                    for i, (s, d, n) in enumerate(moves, 1):
+                        print(f"  {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
+                    print("\n(Dry run — no taps sent)")
+                    return True
+
+                execute_move_list(moves, config, tube_capacity)
+                print("\n🎉 Level complete!")
+                return True
+
+            # Unknowns remain: reclaim parking tubes first, then plan reveal round
+            print("\n🔄 Hidden slots remain — planning reveal round...")
+            reclaim = find_reclaim_moves(state, tube_capacity)
+            state_mid = state
+            for src, dst, _ in reclaim:
+                state_mid, _ = apply_move(state_mid, src, dst, tube_capacity)
+
+            reveal = plan_reveal_round(state_mid, tube_capacity)
+            all_moves = reclaim + reveal
+
+            if not all_moves:
+                print("  ⚠ New strategy found no moves — trying legacy fallback...")
+                fallback = find_safe_moves(tubes, tube_capacity)
+                if not fallback:
+                    print(f"  ✗ Round {round_num}: stuck — no moves available.")
+                    return False
+                print(f"  {len(fallback)} fallback moves")
+                if not dry_run:
+                    execute_move_list(fallback, config, tube_capacity)
+                else:
+                    for i, (s, d, n) in enumerate(fallback, 1):
+                        print(f"    {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
+                    print("  (Dry run — continuing to next round)")
+
+            print(f"  {len(reclaim)} reclaim + {len(reveal)} reveal moves")
+            if dry_run:
+                for i, (s, d, n) in enumerate(all_moves, 1):
                     print(f"    {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
                 print("  (Dry run — continuing to next round)")
+            else:
+                execute_move_list(all_moves, config, tube_capacity)
 
-        print(f"  {len(reclaim)} reclaim + {len(reveal)} reveal moves")
-        if dry_run:
-            for i, (s, d, n) in enumerate(all_moves, 1):
-                print(f"    {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
-            print("  (Dry run — continuing to next round)")
-        else:
-            execute_move_list(all_moves, config, tube_capacity)
+            print("\n  ⏳ Waiting for animations...")
+            time.sleep(1.5)
 
-        print("\n  ⏳ Waiting for animations...")
-        time.sleep(1.5)
+            end_image = screenshot()
+            if end_image is not None:
+                screenshots_dir.mkdir(parents=True, exist_ok=True)
+                cv2.imwrite(str(screenshots_dir / f"round_{round_num:02d}_end.png"), end_image)
+                print(f"  📷 Saved round {round_num} end screenshot → debug_screenshots/level_{level_num:03d}/round_{round_num:02d}_end.png")
 
-        end_image = screenshot()
-        if end_image is not None:
-            screenshots_dir.mkdir(parents=True, exist_ok=True)
-            cv2.imwrite(str(screenshots_dir / f"round_{round_num:02d}_end.png"), end_image)
-            print(f"  📷 Saved round {round_num} end screenshot → debug_screenshots/level_{level_num:03d}/round_{round_num:02d}_end.png")
+        finally:
+            sys.stdout = _orig
+            if initial_saved:
+                screenshots_dir.mkdir(parents=True, exist_ok=True)
+                with open(log_file, 'a', encoding='utf-8') as f:
+                    f.write(f"\n{'='*40}\n  ROUND {round_num}\n{'='*40}\n")
+                    f.write(_buf.getvalue())
 
     print(f"\n✗ Couldn't solve after {max_rounds} rounds.")
     return False
