@@ -243,6 +243,12 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                 cv2.imwrite(str(screenshots_dir / f"round_{round_num:02d}_end.png"), end_image)
                 print(f"  📷 Saved round {round_num} end screenshot → debug_screenshots/level_{level_num:03d}/round_{round_num:02d}_end.png")
 
+            if not dry_run:
+                print("  🔄 Restarting scrcpy...")
+                stop_scrcpy()
+                launch_scrcpy()
+                refresh_mapping()
+
         finally:
             sys.stdout = _orig
             if initial_saved:
