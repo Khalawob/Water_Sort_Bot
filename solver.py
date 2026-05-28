@@ -102,7 +102,7 @@ def _pick_by_count(counts, candidates, pick_min):
     return random.choice(tied)
 
 
-def plan_reveal_round(state, tube_capacity):
+def plan_reveal_round(state, tube_capacity, force_park=False):
     """Return (src, dst, num_poured) moves for one reveal round based on empty-tube count."""
     colour_map, empties = survey_visible_tops(state)
     moves = []
@@ -111,9 +111,14 @@ def plan_reveal_round(state, tube_capacity):
         result = []
         s = cur_state
         for src, dst in find_matching_tops(s, tube_capacity):
-            s, n = apply_move(s, src, dst, tube_capacity)
+            new_s, n = apply_move(s, src, dst, tube_capacity)
             if n > 0:
-                result.append((src, dst, n))
+                src_after = new_s[src]
+                empties_src = len(src_after) == 0
+                reveals_hidden = bool(src_after) and src_after[-1] == UNKNOWN
+                if empties_src or reveals_hidden:
+                    result.append((src, dst, n))
+                    s = new_s
         return result
 
     if len(empties) >= 2:
@@ -141,9 +146,10 @@ def plan_reveal_round(state, tube_capacity):
                     moves.append((src, cons_dst, n))
 
     elif len(empties) == 1:
-        matches = _free_match_moves(state)
-        if matches:
-            return matches
+        if not force_park:
+            matches = _free_match_moves(state)
+            if matches:
+                return matches
         counts = count_colour_occurrences(state)
         least = _pick_by_count(counts, list(colour_map), pick_min=True)
         park_src = random.choice(colour_map[least])

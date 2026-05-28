@@ -131,6 +131,8 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
     screenshots_dir = Path(__file__).parent / "debug_screenshots" / f"level_{level_num:03d}"
     log_file = screenshots_dir / "rounds.txt"
     initial_saved = False
+    prev_state = None
+    force_park = False
 
     for round_num in range(1, max_rounds + 1):
         _buf = io.StringIO()
@@ -183,6 +185,11 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
 
             state = tuple(tuple(t) for t in tubes)
 
+            force_park = prev_state is not None and state == prev_state
+            if force_park:
+                print("  ⚠ State unchanged from previous round — forcing park strategy.")
+            prev_state = state
+
             if not has_hidden:
                 print("\n🧠 Solving (full information)...")
                 moves = solve(state, tube_capacity=tube_capacity)
@@ -209,7 +216,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
             for src, dst, _ in reclaim:
                 state_mid, _ = apply_move(state_mid, src, dst, tube_capacity)
 
-            reveal = plan_reveal_round(state_mid, tube_capacity)
+            reveal = plan_reveal_round(state_mid, tube_capacity, force_park=force_park)
             all_moves = reclaim + reveal
 
             if not all_moves:
