@@ -17,8 +17,13 @@ from pathlib import Path
 
 import cv2
 
-from solver import solve, plan_reveal_round, find_reclaim_moves, find_safe_moves, apply_move, UNKNOWN
+from solver import (
+    solve, plan_reveal_round, find_reclaim_moves, find_safe_moves,
+    apply_move, UNKNOWN, deduce_hidden_slots,
+    pick_best_move_by_determinization,
+)
 from screen_reader import (
+    detect_no_more_moves,
     read_tubes, has_unknowns, load_config, save_config, calibrate,
     is_game_screen, wait_for_game_screen, CONFIG_PATH,
 )
@@ -133,6 +138,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
     initial_saved = False
     prev_state = None
     force_park = False
+    restart_count = 0
 
     for round_num in range(1, max_rounds + 1):
         _buf = io.StringIO()
@@ -150,17 +156,33 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                 print("  ✗ Screenshot failed.")
                 return False
 
+            if detect_no_more_moves(image):
+                print("  🚫 'No more moves!' detected.")
+                if dry_run:
+                    return False
+                restart_count += 1
+                if restart_count > 3:
+                    print(f"  ✗ Too many restarts ({restart_count}) — giving up.")
+                    return False
+                print(f"  ↩ Restart attempt {restart_count}/3...")
+                if not tap_restart_level(config):
+                    return False
+                prev_state = None
+                force_park = False
+                continue
+
             if not is_game_screen(image, config):
                 print("⚠ Game not visible — waiting...")
                 image = wait_for_game_screen(config, timeout=15)
                 if image is None:
                     return False
 
-            # Auto-detect tubes for this frame
-            config = get_config_for_level(image, config)
-            if config is None:
-                return False
-            tube_capacity = config.get("tube_capacity", 4)
+            # Auto-detect tubes only on round 1; reuse config for subsequent rounds
+            if round_num == 1:
+                config = get_config_for_level(image, config)
+                if config is None:
+                    return False
+                tube_capacity = config.get("tube_capacity", 4)
 
             print("🔍 Reading tubes...")
             tubes, valid = read_and_display(image, config, tube_capacity)
@@ -184,6 +206,10 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                 initial_saved = True
 
             state = tuple(tuple(t) for t in tubes)
+
+            # Deduce forced unknown slots from colour-count constraints
+            state = deduce_hidden_slots(state, tube_capacity)
+            has_hidden = any(UNKNOWN in tube for tube in state)
 
             force_park = prev_state is not None and state == prev_state
             if force_park:
@@ -216,14 +242,21 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
             for src, dst, _ in reclaim:
                 state_mid, _ = apply_move(state_mid, src, dst, tube_capacity)
 
-            reveal = plan_reveal_round(state_mid, tube_capacity, force_park=force_park)
+            reveal = pick_best_move_by_determinization(state_mid, tube_capacity)
+            if not reveal:
+                print("  ℹ Determinization found no moves — falling back to heuristic reveal...")
+                reveal = plan_reveal_round(state_mid, tube_capacity, force_park=force_park, prev_state=prev_state)
             all_moves = reclaim + reveal
 
             if not all_moves:
                 print("  ⚠ New strategy found no moves — trying legacy fallback...")
-                fallback = find_safe_moves(tubes, tube_capacity)
+                fallback = find_safe_moves(tubes, tube_capacity, prev_state=prev_state)
                 if not fallback:
-                    print(f"  ✗ Round {round_num}: stuck — no moves available.")
+                    empties_now = [i for i, t in enumerate(state) if len(t) == 0]
+                    if not empties_now and prev_state is not None:
+                        print("  ✗ Deadlocked: 0 empty tubes and all candidate moves would reverse the prior state.")
+                    else:
+                        print(f"  ✗ Round {round_num}: stuck — no moves available.")
                     return False
                 print(f"  {len(fallback)} fallback moves")
                 if not dry_run:
@@ -333,12 +366,60 @@ def set_next_button():
         print(f"  Saved next button at ({btn_pos[0][0]}, {btn_pos[0][1]})")
 
 
+def tap_restart_level(config):
+    """Tap the Restart button on the 'No more moves!' screen."""
+    btn = config.get("restart_button")
+    if not btn:
+        print("  ⚠ No restart button configured. Run: python main.py --set-restart-button")
+        return False
+    x, y = btn["x"], btn["y"]
+    print(f"  🔄 Tapping restart at ({x}, {y})...")
+    adb_tap(x, y)
+    time.sleep(2.0)
+    return True
+
+
+def set_restart_button():
+    """Quick one-time setup: set the Restart button position."""
+    print("Navigate the game to a 'No more moves!' screen, then run this command.")
+    print("Taking screenshot...")
+    img = screenshot()
+    if img is None:
+        print("  ✗ Screenshot failed.")
+        return
+
+    print("Click the 'Restart' button, then press any key.")
+    btn_pos = []
+
+    def on_click(event, x, y, flags, param):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            btn_pos.append((x, y))
+            cv2.circle(img, (x, y), 12, (0, 165, 255), 3)
+            cv2.imshow("Set Restart Button", img)
+            print(f"  ✓ Button position: ({x}, {y})")
+
+    cv2.namedWindow("Set Restart Button", cv2.WINDOW_NORMAL)
+    cv2.resizeWindow("Set Restart Button", 540, 960)
+    cv2.imshow("Set Restart Button", img)
+    cv2.setMouseCallback("Set Restart Button", on_click)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    if btn_pos:
+        config = load_config() or {}
+        config["restart_button"] = {"x": btn_pos[0][0], "y": btn_pos[0][1]}
+        save_config(config)
+        print(f"  Saved restart button at ({btn_pos[0][0]}, {btn_pos[0][1]})")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Water Sort Puzzle Bot")
     parser.add_argument("--calibrate", action="store_true",
                         help="Manual calibration (usually not needed)")
     parser.add_argument("--set-next-button", action="store_true",
                         help="Set the Next Level button position (one-time)")
+    parser.add_argument("--set-restart-button", action="store_true",
+                        help="Set the Restart button position (shown on 'No more moves' screen)")
     parser.add_argument("--test-detect", action="store_true",
                         help="Test auto-detection and save visualisation")
     parser.add_argument("--dry-run", action="store_true",
@@ -359,6 +440,11 @@ def main():
     # ── Set next button ─────────────────────────────────────────────
     if args.set_next_button:
         set_next_button()
+        return
+
+    # ── Set restart button ───────────────────────────────────────────
+    if args.set_restart_button:
+        set_restart_button()
         return
 
     # ── Test auto-detection ─────────────────────────────────────────

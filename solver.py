@@ -11,7 +11,7 @@ Moves are returned as (src, dst, num_poured).
 """
 
 import random
-from collections import deque
+from collections import Counter, deque
 from heapq import heappush, heappop
 
 UNKNOWN = "unknown"
@@ -102,7 +102,7 @@ def _pick_by_count(counts, candidates, pick_min):
     return random.choice(tied)
 
 
-def plan_reveal_round(state, tube_capacity, force_park=False):
+def plan_reveal_round(state, tube_capacity, force_park=False, prev_state=None):
     """Return (src, dst, num_poured) moves for one reveal round based on empty-tube count."""
     colour_map, empties = survey_visible_tops(state)
     moves = []
@@ -113,6 +113,8 @@ def plan_reveal_round(state, tube_capacity, force_park=False):
         for src, dst in find_matching_tops(s, tube_capacity):
             new_s, n = apply_move(s, src, dst, tube_capacity)
             if n > 0:
+                if prev_state is not None and new_s == prev_state:
+                    continue
                 src_after = new_s[src]
                 empties_src = len(src_after) == 0
                 reveals_hidden = bool(src_after) and src_after[-1] == UNKNOWN
@@ -157,7 +159,26 @@ def plan_reveal_round(state, tube_capacity, force_park=False):
         moves.append((park_src, empties[0], n))
 
     else:
-        return _free_match_moves(state)
+        # 0 empties: score by reveal proximity, filter anti-shuffle
+        candidates = []
+        for src, dst in find_matching_tops(state, tube_capacity):
+            new_s, n = apply_move(state, src, dst, tube_capacity)
+            if n == 0:
+                continue
+            if prev_state is not None and new_s == prev_state:
+                continue
+            src_after = new_s[src]
+            empties_src = len(src_after) == 0
+            reveals_hidden = bool(src_after) and src_after[-1] == UNKNOWN
+            if not (empties_src or reveals_hidden):
+                continue
+            depth = next(
+                (i for i, c in enumerate(reversed(state[src])) if c == UNKNOWN),
+                float('inf'),
+            )
+            candidates.append((depth, src, dst, n))
+        candidates.sort()
+        return [(src, dst, n) for _, src, dst, n in candidates[:3]]
 
     return moves
 
@@ -294,6 +315,86 @@ def solve_astar(initial_state, tube_capacity=4, max_states=1_000_000):
     return None
 
 
+# ── Determinization ───────────────────────────────────────────────────
+
+def _fill_unknowns(state, color_pool):
+    pool_iter = iter(color_pool)
+    new_state = []
+    for tube in state:
+        new_tube = []
+        for slot in tube:
+            if slot == UNKNOWN:
+                new_tube.append(next(pool_iter))
+            else:
+                new_tube.append(slot)
+        new_state.append(tuple(new_tube))
+    return tuple(new_state)
+
+
+def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
+    """
+    Estimate the best next move(s) under hidden-slot uncertainty by sampling
+    random completions of UNKNOWN slots and running A* on each.
+
+    Returns up to 3 (src, dst, num_poured) tuples that win the most votes
+    across successful sample solves. Returns [] if no sample produced a solution.
+    """
+    visible_counts = count_colour_occurrences(state)
+
+    for colour, cnt in visible_counts.items():
+        if cnt > tube_capacity:
+            return []
+
+    pool_base = []
+    for colour, cnt in visible_counts.items():
+        needed = tube_capacity - cnt
+        if needed > 0:
+            pool_base.extend([colour] * needed)
+
+    num_unknowns = sum(slot == UNKNOWN for tube in state for slot in tube)
+
+    if num_unknowns == 0:
+        return []
+
+    if len(pool_base) != num_unknowns:
+        return []
+
+    solutions = []
+    for _ in range(num_samples):
+        pool = pool_base[:]
+        random.shuffle(pool)
+        filled = _fill_unknowns(state, pool)
+        sol = solve_astar(filled, tube_capacity)
+        if sol:
+            solutions.append(sol[:3])
+
+    if not solutions:
+        return []
+
+    first_moves = [s[0] for s in solutions if s]
+    if not first_moves:
+        return []
+
+    best_first = Counter(first_moves).most_common(1)[0][0]
+    result = [best_first]
+
+    sharing_first = [s for s in solutions if s and s[0] == best_first]
+    second_candidates = [s[1] for s in sharing_first if len(s) >= 2]
+    if second_candidates:
+        top_second, top_second_count = Counter(second_candidates).most_common(1)[0]
+        if top_second_count > len(sharing_first) / 2:
+            result.append(top_second)
+
+            sharing_two = [s for s in sharing_first if len(s) >= 3 and s[1] == top_second]
+            third_candidates = [s[2] for s in sharing_two]
+            if third_candidates:
+                top_third, top_third_count = Counter(third_candidates).most_common(1)[0]
+                if top_third_count > len(sharing_two) / 2:
+                    result.append(top_third)
+
+    return result
+
+
 # ── DFS fallback ─────────────────────────────────────────────────────
 
 def solve_dfs(initial_state, tube_capacity=4, max_states=2_000_000,
@@ -360,7 +461,7 @@ def solve_dfs(initial_state, tube_capacity=4, max_states=2_000_000,
 
 # ── Safe moves (when unknowns prevent full solve) ────────────────────
 
-def find_safe_moves(initial_state, tube_capacity=4):
+def find_safe_moves(initial_state, tube_capacity=4, prev_state=None):
     """
     When the puzzle can't be fully solved (hidden slots), find moves
     that make obvious progress:
@@ -380,6 +481,8 @@ def find_safe_moves(initial_state, tube_capacity=4):
     for src, dst in valid_moves(state, tube_capacity, restrict_empties=False):
         new_state, num_poured = apply_move(state, src, dst, tube_capacity)
         if num_poured == 0:
+            continue
+        if prev_state is not None and new_state == prev_state:
             continue
 
         score = 0
@@ -437,6 +540,68 @@ def find_safe_moves(initial_state, tube_capacity=4):
             break
 
     return safe_moves
+
+
+# ── Constraint-based hidden-slot deduction ───────────────────────────
+
+def deduce_hidden_slots(state, tube_capacity):
+    """
+    Replace UNKNOWN slots whose value is forced by colour-count constraints.
+    Each colour appears exactly tube_capacity times total; the unknowns fill
+    the remainder. Any slot whose value is identical across all valid
+    assignments is replaced; ambiguous slots remain UNKNOWN.
+    """
+    unknown_positions = [
+        (ti, si)
+        for ti, tube in enumerate(state)
+        for si, slot in enumerate(tube)
+        if slot == UNKNOWN
+    ]
+    if not unknown_positions:
+        return state
+
+    visible_counts = {}
+    for tube in state:
+        for slot in tube:
+            if slot != UNKNOWN:
+                visible_counts[slot] = visible_counts.get(slot, 0) + 1
+
+    needed = {c: tube_capacity - visible_counts.get(c, 0) for c in visible_counts}
+    needed = {c: n for c, n in needed.items() if n > 0}
+
+    # If visible colours don't account for all unknowns, a colour is 100%
+    # hidden and we can't build a complete constraint system — skip.
+    if not needed or sum(needed.values()) != len(unknown_positions):
+        return state
+
+    try:
+        from constraint import Problem
+    except ImportError:
+        return state
+
+    problem = Problem()
+    var_names = [f"u{i}" for i in range(len(unknown_positions))]
+
+    for var in var_names:
+        problem.addVariable(var, list(needed.keys()))
+
+    for colour, count in needed.items():
+        problem.addConstraint(
+            lambda *args, col=colour, cnt=count: args.count(col) == cnt,
+            var_names,
+        )
+
+    solutions = problem.getSolutions()
+    if not solutions:
+        return state
+
+    new_state = [list(tube) for tube in state]
+    for i, (ti, si) in enumerate(unknown_positions):
+        values = {sol[var_names[i]] for sol in solutions}
+        if len(values) == 1:
+            new_state[ti][si] = values.pop()
+
+    return tuple(tuple(tube) for tube in new_state)
 
 
 # ── Auto-selecting solver ────────────────────────────────────────────

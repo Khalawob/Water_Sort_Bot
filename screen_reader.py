@@ -235,6 +235,31 @@ def wait_for_game_screen(config, timeout=15, poll_interval=1.5):
     return None
 
 
+# ── "No more moves" overlay detection ───────────────────────────────
+
+_NMM_BRIGHT = 200           # per-channel minimum to count as white/bright
+_NMM_BOTTOM_DENSITY = 0.02  # 2% bright pixels in bottom 10% → "No more moves!" text
+_NMM_TOP_DENSITY = 0.08     # 8% bright pixels in top 20% → hand icons
+
+
+def detect_no_more_moves(image):
+    """
+    Return True if the "No more moves!" overlay is visible.
+
+    Two independent signals — either is sufficient:
+    - Bottom 10%: the "No more moves!" text (bright on dark background).
+    - Top 20%: large white hand icons that replace the normal tube buttons.
+    """
+    h = image.shape[0]
+
+    bottom = image[int(h * 0.90):, :]
+    if np.all(bottom > _NMM_BRIGHT, axis=2).mean() > _NMM_BOTTOM_DENSITY:
+        return True
+
+    top = image[:int(h * 0.20), :]
+    return np.all(top > _NMM_BRIGHT, axis=2).mean() > _NMM_TOP_DENSITY
+
+
 # ── Calibration ──────────────────────────────────────────────────────
 
 def calibrate():

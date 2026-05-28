@@ -335,6 +335,47 @@ def visualise_detection(image, config):
     return vis
 
 
+def detect_buttons(image):
+    """
+    Detect the 4 UI buttons (menu, restart, undo, add_tube) from the top 15%
+    of the screenshot by finding purple/lilac coloured regions.
+
+    Returns {"menu": (x,y), "restart": (x,y), "undo": (x,y), "add_tube": (x,y)}
+    or {} if fewer than 4 buttons are found.
+    """
+    h, w = image.shape[:2]
+    roi = image[:int(h * 0.15), :]
+
+    b = roi[:, :, 0].astype(np.int16)
+    g = roi[:, :, 1].astype(np.int16)
+    r = roi[:, :, 2].astype(np.int16)
+
+    # Purple/lilac: blue-dominant, enough blue-minus-green spread to exclude grey
+    mask = (
+        (b >= 140) & (b <= 220) &
+        (g >= 60)  & (g <= 145) &
+        (r >= 80)  & (r <= 165) &
+        (b > r) &
+        ((b - g) >= 50)
+    ).astype(np.uint8) * 255
+
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    candidates = []
+    for cnt in contours:
+        x, y, bw, bh = cv2.boundingRect(cnt)
+        if 60 <= bw <= 200 and bh >= 40:
+            candidates.append((x + bw // 2, y + bh // 2))
+
+    candidates.sort(key=lambda p: p[0])
+
+    if len(candidates) < 4:
+        return {}
+
+    names = ["menu", "restart", "undo", "add_tube"]
+    return {name: coord for name, coord in zip(names, candidates[:4])}
+
+
 if __name__ == "__main__":
     from capture import screenshot, SCREENSHOT_PATH
 
@@ -352,6 +393,18 @@ if __name__ == "__main__":
                 print(f"  T{i+1}: {tube['sample_points']}")
 
             vis = visualise_detection(img, config)
+
+            buttons = detect_buttons(img)
+            if buttons:
+                print("\nButtons detected:")
+                for name, (x, y) in buttons.items():
+                    print(f"  {name}: ({x}, {y})")
+                    cv2.circle(vis, (x, y), 15, (0, 0, 255), 3)
+                    cv2.putText(vis, name, (x - 30, y - 20),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+            else:
+                print("\nNo buttons detected (check colour ranges).")
+
             vis_path = str(SCREENSHOT_PATH).replace(".png", "_detected.png")
             cv2.imwrite(vis_path, vis)
             print(f"\nVisualisation saved to: {vis_path}")
