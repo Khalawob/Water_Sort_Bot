@@ -32,7 +32,7 @@ from automator import (
     adb_tap, human_delay, jittered_tap,
     get_tube_tap_zones, refresh_mapping,
 )
-from auto_calibrate import auto_calibrate, visualise_detection
+from auto_calibrate import auto_calibrate, visualise_detection, detect_buttons
 
 
 def read_and_display(image, config, tube_capacity):
@@ -102,9 +102,22 @@ def get_config_for_level(image, existing_config=None):
         print("  ✗ Auto-detection failed and no saved config.")
         return None
 
-    # Preserve next_button from existing config
-    if existing_config and "next_button" in existing_config:
-        new_config["next_button"] = existing_config["next_button"]
+    # Preserve next_button and restart_button from existing config
+    for key in ("next_button", "restart_button"):
+        if existing_config and key in existing_config:
+            new_config[key] = existing_config[key]
+            print(f"  ↻ Preserved {key} from existing config.")
+
+    # Auto-detect buttons for any still missing
+    buttons = detect_buttons(image)
+    if "restart_button" not in new_config and "restart" in buttons:
+        x, y = buttons["restart"]
+        new_config["restart_button"] = {"x": x, "y": y}
+        print(f"  ✓ Auto-detected restart_button at ({x}, {y}).")
+    if "next_button" not in new_config and "next" in buttons:
+        x, y = buttons["next"]
+        new_config["next_button"] = {"x": x, "y": y}
+        print(f"  ✓ Auto-detected next_button at ({x}, {y}).")
 
     # Save for debugging
     save_config(new_config)
@@ -305,9 +318,18 @@ def tap_next_level(config, wait_time=3.0):
     """Tap Next Level button."""
     btn = config.get("next_button")
     if not btn:
-        print("\n⚠ No 'next level' button configured.")
-        print("  Run: python main.py --set-next-button")
-        return False
+        print("\n⚠ No 'next level' button configured — trying auto-detection...")
+        fallback_img = screenshot()
+        buttons = detect_buttons(fallback_img) if fallback_img is not None else {}
+        if "next" in buttons:
+            bx, by = buttons["next"]
+            btn = {"x": bx, "y": by}
+            config["next_button"] = btn
+            save_config(config)
+            print(f"  ✓ Auto-detected next_button at ({bx}, {by}).")
+        else:
+            print("  Run: python main.py --set-next-button")
+            return False
 
     x, y = btn["x"], btn["y"]
     print(f"\n⏳ Waiting {wait_time}s for win animation...")
@@ -370,7 +392,11 @@ def tap_restart_level(config):
     """Tap the Restart button on the 'No more moves!' screen."""
     btn = config.get("restart_button")
     if not btn:
-        print("  ⚠ No restart button configured. Run: python main.py --set-restart-button")
+        print("  ⚠ No restart_button in config. It should have been auto-detected "
+              "during round-1 calibration — the calibration screenshot may have "
+              "been bad. Not detecting from the 'No more moves!' screen because "
+              "the hand-icon overlay interferes with button detection. Run "
+              "`python main.py --set-restart-button` to set it manually.")
         return False
     x, y = btn["x"], btn["y"]
     print(f"  🔄 Tapping restart at ({x}, {y})...")

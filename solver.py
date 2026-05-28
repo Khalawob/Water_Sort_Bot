@@ -356,15 +356,19 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
     if num_unknowns == 0:
         return []
 
+    if num_unknowns > tube_capacity * 2:
+        return []
+
     if len(pool_base) != num_unknowns:
         return []
 
     solutions = []
-    for _ in range(num_samples):
+    for i in range(num_samples):
+        print(f"    Determinization sample {i+1}/{num_samples}...")
         pool = pool_base[:]
         random.shuffle(pool)
         filled = _fill_unknowns(state, pool)
-        sol = solve_astar(filled, tube_capacity)
+        sol = solve_astar(filled, tube_capacity, max_states=200_000)
         if sol:
             solutions.append(sol[:3])
 
