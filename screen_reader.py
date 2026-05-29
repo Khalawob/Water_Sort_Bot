@@ -89,7 +89,7 @@ def is_hidden(rgb, empty_rgb):
 
 # ── Exact pixel colour matching ──────────────────────────────────────
 
-def read_tubes(image, config):
+def read_tubes(image, config, return_colours=False):
     """
     Read tube colours using exact pixel matching.
 
@@ -97,6 +97,10 @@ def read_tubes(image, config):
     = same colour, guaranteed, because ADB screenshots are pixel-perfect.
 
     Hidden/unknown slots are marked as "unknown".
+
+    When ``return_colours`` is True, also returns the ``seen_colours`` map
+    ({rgb_tuple: label}) so callers can recover the RGB behind each label
+    (labels themselves are not stable across reads).
     """
     empty_rgb = tuple(config.get("empty_colour", [40, 40, 40]))
     seen_colours = {}
@@ -188,6 +192,8 @@ def read_tubes(image, config):
         unknown_count = sum(tube.count(UNKNOWN) for tube in tubes)
         print(f"  Hidden slots: {unknown_count}")
 
+    if return_colours:
+        return tubes, seen_colours
     return tubes
 
 
