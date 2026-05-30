@@ -109,18 +109,34 @@ def plan_reveal_round(state, tube_capacity, force_park=False, prev_state=None):
 
     def _free_match_moves(cur_state):
         result = []
-        s = cur_state
-        for src, dst in find_matching_tops(s, tube_capacity):
-            new_s, n = apply_move(s, src, dst, tube_capacity)
-            if n > 0:
-                if prev_state is not None and new_s == prev_state:
-                    continue
-                src_after = new_s[src]
-                empties_src = len(src_after) == 0
-                reveals_hidden = bool(src_after) and src_after[-1] == UNKNOWN
-                if empties_src or reveals_hidden:
-                    result.append((src, dst, n))
-                    s = new_s
+        sim_state = cur_state
+        seen_states = {cur_state}
+        added_pairs = set()
+        # find_matching_tops scores/sorts candidates against the static state;
+        # acceptance is gated through a running sim so the batch stays executable.
+        for src, dst in find_matching_tops(cur_state, tube_capacity):
+            # Can't pour a known colour onto a hidden ball.
+            if sim_state[dst] and sim_state[dst][-1] == UNKNOWN:
+                continue
+            # Prevent A→B then B→A cancellation.
+            if (dst, src) in added_pairs:
+                continue
+            next_state, n = apply_move(sim_state, src, dst, tube_capacity)
+            if n == 0:
+                continue
+            # Prevent cycles.
+            if next_state in seen_states:
+                continue
+            if prev_state is not None and next_state == prev_state:
+                continue
+            src_after = next_state[src]
+            empties_src = len(src_after) == 0
+            reveals_hidden = bool(src_after) and src_after[-1] == UNKNOWN
+            if empties_src or reveals_hidden:
+                result.append((src, dst, n))
+                sim_state = next_state
+                seen_states.add(next_state)
+                added_pairs.add((src, dst))
         return result
 
     if len(empties) >= 2:
@@ -159,7 +175,8 @@ def plan_reveal_round(state, tube_capacity, force_park=False, prev_state=None):
         moves.append((park_src, empties[0], n))
 
     else:
-        # 0 empties: score by reveal proximity, filter anti-shuffle
+        # 0 empties: score by reveal proximity against the static state, then
+        # accept through a running sim so the batch is executable in order.
         candidates = []
         for src, dst in find_matching_tops(state, tube_capacity):
             new_s, n = apply_move(state, src, dst, tube_capacity)
@@ -176,9 +193,33 @@ def plan_reveal_round(state, tube_capacity, force_park=False, prev_state=None):
                 (i for i, c in enumerate(reversed(state[src])) if c == UNKNOWN),
                 float('inf'),
             )
-            candidates.append((depth, src, dst, n))
+            candidates.append((depth, src, dst))
         candidates.sort()
-        return [(src, dst, n) for _, src, dst, n in candidates[:3]]
+
+        sim_state = state
+        seen_states = {state}
+        added_pairs = set()
+        batch = []
+        for _, src, dst in candidates:
+            # Can't pour a known colour onto a hidden ball.
+            if sim_state[dst] and sim_state[dst][-1] == UNKNOWN:
+                continue
+            # Prevent A→B then B→A cancellation.
+            if (dst, src) in added_pairs:
+                continue
+            next_state, n = apply_move(sim_state, src, dst, tube_capacity)
+            if n == 0:
+                continue
+            # Prevent cycles.
+            if next_state in seen_states:
+                continue
+            batch.append((src, dst, n))
+            sim_state = next_state
+            seen_states.add(next_state)
+            added_pairs.add((src, dst))
+            if len(batch) >= 3:
+                break
+        return batch
 
     return moves
 
@@ -252,6 +293,38 @@ def valid_moves(state, tube_capacity, restrict_empties=True):
                 yield src, dst
             elif state[dst][-1] == src_colour:
                 yield src, dst
+
+
+def validate_move_sequence(state, moves, tube_capacity):
+    """Truncate a planned batch at the first move the real game can't execute.
+
+    After a pour, the exposed ball is UNKNOWN in our model but gets revealed
+    to an unpredictable colour in-game, so any move pouring onto an UNKNOWN
+    top must wait for a re-screenshot. Returns the executable prefix.
+    """
+    sim = tuple(tuple(t) for t in state)
+    valid = []
+    for (src, dst, _) in moves:
+        # Can't pour onto a tube whose top is hidden — outcome is unknowable.
+        if sim[dst] and sim[dst][-1] == UNKNOWN:
+            break
+        src_colour, _ = get_top_run(sim[src])
+        # Pouring a hidden top is only allowed into an empty tube (a reveal move);
+        # include it but stop, since we can't simulate what gets revealed.
+        if src_colour == UNKNOWN:
+            if sim[dst]:
+                break
+            valid.append((src, dst, 1))
+            break
+        # Can't pour onto a mismatched known colour.
+        if sim[dst] and sim[dst][-1] != src_colour:
+            break
+        new_sim, poured = apply_move(sim, src, dst, tube_capacity)
+        if poured == 0:
+            break
+        valid.append((src, dst, poured))
+        sim = new_sim
+    return valid
 
 
 # ── Heuristic ────────────────────────────────────────────────────────
@@ -341,24 +414,43 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
     """
     visible_counts = count_colour_occurrences(state)
 
+    # Counts are inconsistent if any visible colour overflows a tube.
     for colour, cnt in visible_counts.items():
         if cnt > tube_capacity:
             return []
-
-    pool_base = []
-    for colour, cnt in visible_counts.items():
-        needed = tube_capacity - cnt
-        if needed > 0:
-            pool_base.extend([colour] * needed)
 
     num_unknowns = sum(slot == UNKNOWN for tube in state for slot in tube)
 
     if num_unknowns == 0:
         return []
 
-    if num_unknowns > tube_capacity * 2:
+    # After memory overlay the unknown count sits around tube_capacity * 3; only
+    # bail when it's large enough that sampling becomes unreliable/slow.
+    if num_unknowns > tube_capacity * 4:
         return []
 
+    # Phantom-colour pool sizing. Each colour fills exactly tube_capacity slots,
+    # so the true colour count is derivable from board structure. Build the pool
+    # from visible colours' deficits, then add tube_capacity phantom balls for
+    # each colour that is entirely hidden (0 visible slots). This makes the pool
+    # length match the unknown count even when a colour never appears visibly —
+    # the bug that made the old deficits-only pool always come up short.
+    total_balls = sum(len(t) for t in state)
+    if total_balls % tube_capacity != 0:
+        return []
+    num_colours = total_balls // tube_capacity
+
+    pool_base = []
+    for colour, cnt in visible_counts.items():
+        needed = tube_capacity - cnt
+        if needed > 0:
+            pool_base.extend([colour] * needed)
+    for i in range(num_colours - len(visible_counts)):
+        pool_base.extend([f"_phantom_{i}"] * tube_capacity)
+
+    # Defensive: only triggers on a structurally impossible board (e.g. more
+    # visible colours than num_colours), where _fill_unknowns would otherwise
+    # run the pool dry.
     if len(pool_base) != num_unknowns:
         return []
 
@@ -375,22 +467,48 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
     if not solutions:
         return []
 
-    first_moves = [s[0] for s in solutions if s]
-    if not first_moves:
+    def _executable(real_state, move):
+        """True if `move` can be played on the real (still-UNKNOWN) board.
+
+        A sampled solution's move may rely on a slot only known in the sample,
+        so we accept it only when the real top is known and the destination
+        genuinely accepts the pour.
+        """
+        src, dst = move[0], move[1]
+        src_top, _ = get_top_run(real_state[src])
+        if src_top is None or src_top == UNKNOWN:
+            return False
+        if not real_state[dst]:
+            return True
+        dst_top, _ = get_top_run(real_state[dst])
+        return dst_top == src_top and len(real_state[dst]) < tube_capacity
+
+    # First move: vote only among sampled first moves executable for real.
+    executable_firsts = [s[0] for s in solutions if s and _executable(state, s[0])]
+    if not executable_firsts:
         return []
 
-    best_first = Counter(first_moves).most_common(1)[0][0]
+    best_first = Counter(executable_firsts).most_common(1)[0][0]
     result = [best_first]
+    # Advance the real board; newly-exposed slots stay UNKNOWN, so subsequent
+    # executability tests correctly reject moves that depended on the sample.
+    real_state, _ = apply_move(state, best_first[0], best_first[1], tube_capacity)
 
     sharing_first = [s for s in solutions if s and s[0] == best_first]
-    second_candidates = [s[1] for s in sharing_first if len(s) >= 2]
+    second_candidates = [
+        s[1] for s in sharing_first
+        if len(s) >= 2 and _executable(real_state, s[1])
+    ]
     if second_candidates:
         top_second, top_second_count = Counter(second_candidates).most_common(1)[0]
         if top_second_count > len(sharing_first) / 2:
             result.append(top_second)
+            real_state, _ = apply_move(real_state, top_second[0], top_second[1], tube_capacity)
 
             sharing_two = [s for s in sharing_first if len(s) >= 3 and s[1] == top_second]
-            third_candidates = [s[2] for s in sharing_two]
+            third_candidates = [
+                s[2] for s in sharing_two if _executable(real_state, s[2])
+            ]
             if third_candidates:
                 top_third, top_third_count = Counter(third_candidates).most_common(1)[0]
                 if top_third_count > len(sharing_two) / 2:
@@ -531,13 +649,34 @@ def find_safe_moves(initial_state, tube_capacity=4, prev_state=None):
                 dst = empty_dsts.pop(0)
                 scored.append((10, src, dst, 1))
 
-    # Take the best moves but avoid conflicts
+    # Take the best moves but avoid conflicts. Gate acceptance through a running
+    # sim so the batch stays executable in order (no reversals across different
+    # sources, no pours onto freshly-revealed hidden tops, no cycles).
     used_srcs = set()
+    sim_state = state
+    seen_states = {state}
+    accepted_pairs = set()
     for score, src, dst, num_poured in scored:
         if src in used_srcs:
             continue
+        next_state, _ = apply_move(sim_state, src, dst, tube_capacity)
+        # Can't pour a known colour onto a hidden ball.
+        if sim_state[dst] and sim_state[dst][-1] == UNKNOWN:
+            continue
+        # Prevent A→B then B→A reversal.
+        if (dst, src) in accepted_pairs:
+            continue
+        # Prevent cycles (real pours only; UNKNOWN-top fallback pours are no-ops).
+        is_noop = next_state == sim_state
+        if not is_noop and next_state in seen_states:
+            continue
+
         safe_moves.append((src, dst, num_poured))
         used_srcs.add(src)
+        accepted_pairs.add((src, dst))
+        if not is_noop:
+            sim_state = next_state
+            seen_states.add(next_state)
 
         # Limit to a few moves — we'll re-screenshot after
         if len(safe_moves) >= 3:
@@ -578,34 +717,17 @@ def deduce_hidden_slots(state, tube_capacity):
     if not needed or sum(needed.values()) != len(unknown_positions):
         return state
 
-    try:
-        from constraint import Problem
-    except ImportError:
-        return state
+    # Constraints are count-only with no positional dependence, so every
+    # unknown position is interchangeable. A position is forced (identical
+    # across all valid assignments) iff exactly one colour is still needed.
+    if len(needed) == 1:
+        colour = next(iter(needed))
+        new_state = [list(tube) for tube in state]
+        for ti, si in unknown_positions:
+            new_state[ti][si] = colour
+        return tuple(tuple(tube) for tube in new_state)
 
-    problem = Problem()
-    var_names = [f"u{i}" for i in range(len(unknown_positions))]
-
-    for var in var_names:
-        problem.addVariable(var, list(needed.keys()))
-
-    for colour, count in needed.items():
-        problem.addConstraint(
-            lambda *args, col=colour, cnt=count: args.count(col) == cnt,
-            var_names,
-        )
-
-    solutions = problem.getSolutions()
-    if not solutions:
-        return state
-
-    new_state = [list(tube) for tube in state]
-    for i, (ti, si) in enumerate(unknown_positions):
-        values = {sol[var_names[i]] for sol in solutions}
-        if len(values) == 1:
-            new_state[ti][si] = values.pop()
-
-    return tuple(tuple(tube) for tube in new_state)
+    return state
 
 
 # ── Auto-selecting solver ────────────────────────────────────────────

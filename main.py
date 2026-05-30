@@ -20,7 +20,7 @@ import cv2
 from solver import (
     solve, plan_reveal_round, find_reclaim_moves, find_safe_moves,
     apply_move, UNKNOWN, deduce_hidden_slots,
-    pick_best_move_by_determinization,
+    pick_best_move_by_determinization, validate_move_sequence,
 )
 from screen_reader import (
     detect_no_more_moves,
@@ -347,35 +347,39 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                     print("  ℹ Determinization found no moves — falling back to heuristic reveal...")
                     reveal = plan_reveal_round(state_mid, capacity, force_park=force_park, prev_state=prev_state)
                 all_moves = reclaim + reveal
-                executed_moves = all_moves
 
                 if not all_moves:
                     print("  ⚠ New strategy found no moves — trying legacy fallback...")
-                    fallback = find_safe_moves(tubes, capacity, prev_state=prev_state)
-                    if not fallback:
-                        empties_now = [i for i, t in enumerate(state) if len(t) == 0]
-                        if not empties_now and prev_state is not None:
-                            print("  ✗ Deadlocked: 0 empty tubes and all candidate moves would reverse the prior state.")
-                        else:
-                            print(f"  ✗ Round {round_num}: stuck — no moves available.")
-                        status = "stuck"
-                        break
-                    print(f"  {len(fallback)} fallback moves")
-                    executed_moves = fallback
-                    if not dry_run:
-                        execute_move_list(fallback, config, capacity)
+                    all_moves = find_safe_moves(tubes, capacity, prev_state=prev_state)
+                    if all_moves:
+                        print(f"  {len(all_moves)} fallback moves")
+
+                # Validate the planned batch against the board before executing:
+                # the game rejects a pour onto a freshly-revealed (UNKNOWN) top,
+                # so truncate at the first move it couldn't execute. The same
+                # validated prefix is what we execute AND mirror onto the sim,
+                # keeping origin-tracking in lock-step with the device.
+                executed_moves = validate_move_sequence(state, all_moves, capacity)
+
+                if not executed_moves:
+                    empties_now = [i for i, t in enumerate(state) if len(t) == 0]
+                    if not empties_now and prev_state is not None:
+                        print("  ✗ Deadlocked: 0 empty tubes and all candidate moves would reverse the prior state.")
                     else:
-                        for i, (s, d, n) in enumerate(fallback, 1):
-                            print(f"    {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
-                        print("  (Dry run — continuing to next round)")
+                        print(f"  ✗ Round {round_num}: stuck — no moves available.")
+                    status = "stuck"
+                    break
 
                 print(f"  {len(reclaim)} reclaim + {len(reveal)} reveal moves")
+                if len(executed_moves) < len(all_moves):
+                    print(f"  ✂ Truncated batch to {len(executed_moves)}/{len(all_moves)} "
+                          f"executable move(s) — later move would pour onto a hidden top.")
                 if dry_run:
-                    for i, (s, d, n) in enumerate(all_moves, 1):
+                    for i, (s, d, n) in enumerate(executed_moves, 1):
                         print(f"    {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
                     print("  (Dry run — continuing to next round)")
                 else:
-                    execute_move_list(all_moves, config, capacity)
+                    execute_move_list(executed_moves, config, capacity)
 
                 # Mirror the executed moves onto the sim so the next round's
                 # read can be reconciled against it.
