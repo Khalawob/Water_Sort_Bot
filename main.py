@@ -97,7 +97,7 @@ def execute_move_list(moves, config, tube_capacity):
     return True
 
 
-def get_config_for_level(image, existing_config=None):
+def get_config_for_level(image, existing_config=None, fallback_to_existing=True):
     """
     Auto-detect tubes from the screenshot.
     Preserves next_button from existing config if available.
@@ -106,10 +106,11 @@ def get_config_for_level(image, existing_config=None):
     new_config = auto_calibrate(image)
 
     if new_config is None:
-        if existing_config:
+        if existing_config and fallback_to_existing:
             print("  ⚠ Auto-detection failed, using saved config.")
             return existing_config
-        print("  ✗ Auto-detection failed and no saved config.")
+        if not existing_config:
+            print("  ✗ Auto-detection failed and no saved config.")
         return None
 
     # Preserve next_button and restart_button from existing config
@@ -197,6 +198,25 @@ def _overlay_learned_colours(tubes, learned_slots, seen_colours, label_to_rgb):
     return filled
 
 
+def wait_for_detectable_tubes(image, existing_config, timeout=15,
+                              poll_interval=1.5, min_tubes=3):
+    """Detection-based 'game visible' gate. Treats successful tube
+    auto-detection as proof the game is on screen. Returns (image, config)
+    on success, (None, None) on timeout."""
+    elapsed = 0
+    while elapsed <= timeout:
+        if image is not None:
+            config = get_config_for_level(image, existing_config,
+                                          fallback_to_existing=False)
+            if config and len(config.get("tubes", [])) >= min_tubes:
+                return image, config
+        print(f"    No tubes detected — retrying in {poll_interval}s...")
+        time.sleep(poll_interval)
+        elapsed += poll_interval
+        image = screenshot()
+    return None, None
+
+
 def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_num=1):
     """
     Solve a level with auto-calibration and iterative reveal strategy.
@@ -243,20 +263,27 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                     status = "no_moves"
                     break
 
-                if not is_game_screen(image, config):
-                    print("⚠ Game not visible — waiting...")
-                    image = wait_for_game_screen(config, timeout=15)
-                    if image is None:
-                        return False
-
                 # Auto-detect tubes once, on the very first round overall;
                 # the level is the same across attempts so reuse thereafter.
                 if not config_detected:
-                    config = get_config_for_level(image, config)
-                    if config is None:
+                    # First round: successful tube auto-detection is the "game
+                    # visible" signal. is_game_screen can't be trusted yet —
+                    # config still holds the previous level's geometry, so its
+                    # sample points hit tube borders and look like a solid overlay.
+                    image, new_config = wait_for_detectable_tubes(image, config)
+                    if new_config is None:
+                        print("⚠ Game not visible (no tubes detected) — aborting level.")
                         return False
+                    config = new_config
                     capacity = config.get("tube_capacity", 4)
                     config_detected = True
+                else:
+                    # Later rounds: config is correct, so the cheap pixel gate works.
+                    if not is_game_screen(image, config):
+                        print("⚠ Game not visible — waiting...")
+                        image = wait_for_game_screen(config, timeout=15)
+                        if image is None:
+                            return False
 
                 print("🔍 Reading tubes...")
                 tubes, valid, seen_colours = read_and_display(
@@ -270,16 +297,13 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                     print(f"  🔑 Level signature {signature[:12]}… "
                           f"({slots_before} hidden slot(s) known)")
 
-                # Seed the sim on the first round of the attempt; otherwise
-                # reconcile the read against it to learn newly-revealed slots.
+                # Seed the sim on the first round of the attempt. Reveals are
+                # reconciled at the END of each round (against end_image) so the
+                # final round's reveals are recorded even when the attempt ends
+                # next round before another read (No more moves / stuck).
                 if sim is None:
                     sim = AttemptSim(tubes, label_to_rgb,
                                      memory.get_initial_slots(signature))
-                else:
-                    for origin, rgb in sim.reconcile(tubes, label_to_rgb):
-                        memory.record_slot(signature, origin[0], origin[1], rgb, capacity)
-                    if not sim.valid:
-                        print("  ⚠ Sim desynced from board — stopped attributing reveals.")
 
                 # Fill UNKNOWN slots from memory before deducing/solving.
                 _overlay_learned_colours(
@@ -294,6 +318,8 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                 )
                 if all_done:
                     print("\n🎉 Level already complete!")
+                    if signature:
+                        memory.delete(signature)
                     return True
 
                 has_hidden = has_unknowns(tubes)
@@ -333,6 +359,8 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
 
                     execute_move_list(moves, config, capacity)
                     print("\n🎉 Level complete!")
+                    if signature:
+                        memory.delete(signature)
                     return True
 
                 # Unknowns remain: reclaim parking tubes first, then plan reveal round
@@ -394,6 +422,17 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                     screenshots_dir.mkdir(parents=True, exist_ok=True)
                     cv2.imwrite(str(screenshots_dir / f"round_{round_num:02d}_end.png"), end_image)
                     print(f"  📷 Saved round {round_num} end screenshot → debug_screenshots/level_{level_num:03d}/round_{round_num:02d}_end.png")
+
+                # Reconcile against the post-move board now, so reveals are
+                # recorded the same round they happen — even if the attempt ends
+                # next round (No more moves / stuck) before another read.
+                if not dry_run and end_image is not None and sim is not None and sim.valid:
+                    end_tubes, end_seen = read_tubes(end_image, config, return_colours=True)
+                    end_label_to_rgb = {label: rgb for rgb, label in end_seen.items()}
+                    for origin, rgb in sim.reconcile(end_tubes, end_label_to_rgb):
+                        memory.record_slot(signature, origin[0], origin[1], rgb, capacity)
+                    if not sim.valid:
+                        print("  ⚠ Sim desynced from board — stopped attributing reveals.")
 
                 if not dry_run:
                     print("  🔄 Restarting scrcpy...")

@@ -87,6 +87,27 @@ def is_hidden(rgb, empty_rgb):
     return in_range and is_grey
 
 
+def _slot_is_hidden(image, x, y, radius):
+    """Detect a hidden "?" slot by patch bimodality.
+
+    A hidden slot shows a white "?" glyph on a dark background, so a patch around
+    its centre contains BOTH bright (glyph) and dark (background) pixels. Real
+    balls/liquid render as a flat, uniform patch — even genuine grey or white
+    balls — so they fail this test. This is robust to where the centre sample
+    lands (glyph stroke, antialiased edge, or background), unlike a single pixel.
+    """
+    h, w = image.shape[:2]
+    y0, y1 = max(0, y - radius), min(h, y + radius)
+    x0, x1 = max(0, x - radius), min(w, x + radius)
+    patch = image[y0:y1, x0:x1]
+    if patch.size == 0:
+        return False
+    brightness = patch.mean(axis=2)  # channel-order independent
+    white_frac = float((brightness > 200).mean())
+    dark_frac = float((brightness < 100).mean())
+    return white_frac > 0.03 and dark_frac > 0.30
+
+
 # ── Exact pixel colour matching ──────────────────────────────────────
 
 def read_tubes(image, config, return_colours=False):
@@ -105,22 +126,20 @@ def read_tubes(image, config, return_colours=False):
     empty_rgb = tuple(config.get("empty_colour", [40, 40, 40]))
     seen_colours = {}
     colour_counter = 0
-    img_h, img_w = image.shape[:2]
 
     tubes = []
 
     for tube_info in config["tubes"]:
         sample_points = tube_info["sample_points"]
 
-        # Derive slot spacing so we can probe ±¼ slot-height when needed.
-        # Hidden "?" slots have a white "?" character at their center; the
-        # adjacent pixels above/below land on the dark grey background and
-        # correctly trigger is_hidden(), even when the center pixel does not.
+        # Patch half-size for hidden-slot detection: large enough to span the
+        # "?" glyph and its dark background, small enough to stay inside one slot
+        # (slot half-height ≈ slot_spacing / 2).
         if len(sample_points) >= 2:
             slot_spacing = abs(sample_points[1][1] - sample_points[0][1])
         else:
             slot_spacing = 0
-        probe_dy = max(4, slot_spacing // 4)
+        hidden_radius = max(6, slot_spacing // 4)
 
         layers = []
         for (x, y) in sample_points:
@@ -130,40 +149,13 @@ def read_tubes(image, config, return_colours=False):
             if is_empty(rgb, empty_rgb):
                 continue
 
-            # Check hidden — require an adjacent pixel to also be hidden before
-            # committing. Near-background noise in truly empty tubes can look grey
-            # at the sample centre but adjacent pixels will be empty background.
-            if is_hidden(rgb, empty_rgb):
-                if slot_spacing > 0:
-                    confirmed = False
-                    for dy in (probe_dy, -probe_dy):
-                        ny = y + dy
-                        if 0 <= ny < img_h:
-                            adj = read_pixel(image, x, ny)
-                            if not is_empty(adj, empty_rgb) and is_hidden(adj, empty_rgb):
-                                confirmed = True
-                                break
-                    if not confirmed:
-                        continue  # background noise in empty tube, skip slot
+            # Hidden "?" slots are a white glyph on a dark background — a bimodal
+            # patch. Real balls/liquid (incl. flat grey or white) are uniform, so
+            # this avoids recording the glyph's white centre or grey antialiased
+            # edge as a spurious colour.
+            if _slot_is_hidden(image, x, y, hidden_radius):
                 layers.append(UNKNOWN)
                 continue
-
-            # Primary pixel looks like a colour but may have landed on the
-            # white "?" text overlay of a hidden slot. Probe ±¼ slot-height;
-            # if either adjacent pixel is in the hidden range the slot is
-            # actually unknown.
-            if slot_spacing > 0:
-                slot_is_hidden = False
-                for dy in (probe_dy, -probe_dy):
-                    ny = y + dy
-                    if 0 <= ny < img_h:
-                        adj = read_pixel(image, x, ny)
-                        if not is_empty(adj, empty_rgb) and is_hidden(adj, empty_rgb):
-                            slot_is_hidden = True
-                            break
-                if slot_is_hidden:
-                    layers.append(UNKNOWN)
-                    continue
 
             # Exact match — use a tolerance of 3 to handle any
             # sub-pixel rounding (shouldn't happen with ADB but safe)
@@ -207,22 +199,37 @@ def has_unknowns(tubes):
 def is_game_screen(image, config):
     """Check if the game is visible (not an ad/popup)."""
     empty_rgb = tuple(config.get("empty_colour", [40, 40, 40]))
+    img_h = image.shape[0]
 
     samples = []
     for tube_info in config["tubes"][:5]:
-        x, y = tube_info["sample_points"][0]
+        sample_points = tube_info["sample_points"]
+        x, y = sample_points[0]
         rgb = read_pixel(image, x, y)
+
+        # An empty or hidden ("?") bottom slot is a sure sign the board is
+        # visible. The "?" glyph's centre pixel is white, so probe ±¼ slot to
+        # catch the dark grey cover around it (mirrors read_tubes' probe).
+        if is_empty(rgb, empty_rgb) or is_hidden(rgb, empty_rgb):
+            return True
+        if len(sample_points) >= 2:
+            probe_dy = max(4, abs(sample_points[1][1] - sample_points[0][1]) // 4)
+            for dy in (probe_dy, -probe_dy):
+                ny = y + dy
+                if 0 <= ny < img_h and is_hidden(read_pixel(image, x, ny), empty_rgb):
+                    return True
+
         samples.append(rgb)
 
     if len(samples) < 2:
         return True
 
+    # Reaching here means every sampled bottom slot is a real colour. Only a
+    # solid overlay would make them all identical and far from empty.
     first = samples[0]
     all_same = all(colour_distance(s, first) < 30 for s in samples[1:])
-
-    if all_same:
-        if colour_distance(first, empty_rgb) > 80:
-            return False
+    if all_same and colour_distance(first, empty_rgb) > 80:
+        return False
     return True
 
 

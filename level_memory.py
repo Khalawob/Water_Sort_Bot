@@ -97,6 +97,12 @@ class LevelMemory:
         entry["initial_slots"][f"{tube},{depth}"] = [int(c) for c in rgb]
         self._save()
 
+    def delete(self, signature):
+        """Remove a level's entry and persist. No-op if the signature is absent."""
+        if signature in self.data:
+            del self.data[signature]
+            self._save()
+
     def count(self, signature):
         """Number of learned slots for the signature (0 if unseen)."""
         if not signature:
