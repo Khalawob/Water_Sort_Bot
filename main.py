@@ -227,6 +227,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
     """
     screenshots_dir = Path(__file__).parent / "debug_screenshots" / f"level_{level_num:03d}"
     log_file = screenshots_dir / "rounds.txt"
+    log_file.unlink(missing_ok=True)   # start each level with a fresh log
     initial_saved = False
 
     memory = LevelMemory()
