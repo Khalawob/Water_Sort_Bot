@@ -55,6 +55,17 @@ def print_reveal_stats():
         print(f"  {stage:16s} reached {reached:4d}  used {used:4d}  ({pct:.0f}% hit)")
 
 
+def _rgb_signature(state, label_to_rgb):
+    """Label-independent board fingerprint: map each colour label to its RGB so
+    a relabeled-but-identical board compares equal. Tube order is geometry-stable
+    so it's kept. Returns a hashable tuple."""
+    return tuple(
+        tuple("?" if slot == UNKNOWN else tuple(label_to_rgb.get(slot, (slot,)))
+              for slot in tube)
+        for tube in state
+    )
+
+
 def read_and_display(image, config, tube_capacity, return_colours=False):
     """Read tubes, print them, return (tubes, is_valid).
 
@@ -263,6 +274,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=25, level_n
         prev_state = None
         force_park = False
         status = "stuck"
+        seen_signatures = set()
 
         for round_num in range(1, max_rounds + 1):
             _buf = io.StringIO()
@@ -387,27 +399,34 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=25, level_n
 
                 # Unknowns remain: reclaim parking tubes first, then plan reveal round
                 print("\n🔄 Hidden slots remain — planning reveal round...")
+                board_sig = _rgb_signature(state, label_to_rgb)
+                if board_sig in seen_signatures:
+                    print("  ♻ Reveal state already seen this attempt — cycle detected, ending attempt.")
+                    status = "stuck"
+                    break
+                seen_signatures.add(board_sig)
                 reclaim = find_reclaim_moves(state, capacity)
                 state_mid = state
                 for src, dst, _ in reclaim:
                     state_mid, _ = apply_move(state_mid, src, dst, capacity)
 
-                # Reveal chain: maximizer leads; determinization is now last-ditch.
+                # Reveal chain: maximizer leads; determinization handles buried
+                # unknowns; heuristic park is the genuine last resort.
                 REVEAL_STATS["maximize_reached"] += 1
                 reveal = plan_reveal_maximize(state_mid, capacity, prev_state=prev_state)
                 if reveal:
                     REVEAL_STATS["maximize_used"] += 1
                 else:
-                    REVEAL_STATS["reveal_round_reached"] += 1
-                    reveal = plan_reveal_round(state_mid, capacity, force_park=force_park, prev_state=prev_state)
+                    REVEAL_STATS["determinization_reached"] += 1
+                    reveal = pick_best_move_by_determinization(state_mid, capacity)
                     if reveal:
-                        REVEAL_STATS["reveal_round_used"] += 1
+                        REVEAL_STATS["determinization_used"] += 1
                     else:
-                        print("  ℹ Maximizer + heuristic empty — trying determinization (last resort)...")
-                        REVEAL_STATS["determinization_reached"] += 1
-                        reveal = pick_best_move_by_determinization(state_mid, capacity)
+                        print("  ℹ Maximizer + determinization empty — heuristic park (last resort)...")
+                        REVEAL_STATS["reveal_round_reached"] += 1
+                        reveal = plan_reveal_round(state_mid, capacity, force_park=force_park, prev_state=prev_state)
                         if reveal:
-                            REVEAL_STATS["determinization_used"] += 1
+                            REVEAL_STATS["reveal_round_used"] += 1
                 all_moves = reclaim + reveal
 
                 if not all_moves:
