@@ -11,6 +11,7 @@ Supports hidden/unknown slots with iterative solve-reveal-solve.
 import argparse
 import io
 import json
+import random
 import sys
 import time
 from pathlib import Path
@@ -18,8 +19,8 @@ from pathlib import Path
 import cv2
 
 from solver import (
-    solve, plan_reveal_round, find_reclaim_moves, find_safe_moves,
-    apply_move, UNKNOWN, deduce_hidden_slots,
+    solve, plan_reveal_round, plan_reveal_maximize, find_reclaim_moves,
+    find_safe_moves, apply_move, UNKNOWN, deduce_hidden_slots,
     pick_best_move_by_determinization, validate_move_sequence,
 )
 from screen_reader import (
@@ -34,6 +35,24 @@ from automator import (
     get_tube_tap_zones, refresh_mapping,
 )
 from auto_calibrate import auto_calibrate, visualise_detection, detect_buttons
+
+
+# Instrumentation: how often each reveal planner is reached vs. actually used.
+REVEAL_STATS = {
+    "maximize_reached": 0, "maximize_used": 0,
+    "reveal_round_reached": 0, "reveal_round_used": 0,
+    "determinization_reached": 0, "determinization_used": 0,
+}
+
+
+def print_reveal_stats():
+    s = REVEAL_STATS
+    print("\n=== Reveal planner stats ===")
+    for stage in ("maximize", "reveal_round", "determinization"):
+        reached = s[f"{stage}_reached"]
+        used = s[f"{stage}_used"]
+        pct = (100 * used / reached) if reached else 0.0
+        print(f"  {stage:16s} reached {reached:4d}  used {used:4d}  ({pct:.0f}% hit)")
 
 
 def read_and_display(image, config, tube_capacity, return_colours=False):
@@ -217,7 +236,7 @@ def wait_for_detectable_tubes(image, existing_config, timeout=15,
     return None, None
 
 
-def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_num=1):
+def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=25, level_num=1):
     """
     Solve a level with auto-calibration and iterative reveal strategy.
 
@@ -237,6 +256,8 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
     MAX_ATTEMPTS = 8
 
     for attempt in range(1, MAX_ATTEMPTS + 1):
+        # TEMP: reproducible measurement runs — remove for prod non-determinism.
+        random.seed(level_num * 100 + attempt)
         slots_before = memory.count(signature)
         sim = None
         prev_state = None
@@ -371,10 +392,22 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=10, level_n
                 for src, dst, _ in reclaim:
                     state_mid, _ = apply_move(state_mid, src, dst, capacity)
 
-                reveal = pick_best_move_by_determinization(state_mid, capacity)
-                if not reveal:
-                    print("  ℹ Determinization found no moves — falling back to heuristic reveal...")
+                # Reveal chain: maximizer leads; determinization is now last-ditch.
+                REVEAL_STATS["maximize_reached"] += 1
+                reveal = plan_reveal_maximize(state_mid, capacity, prev_state=prev_state)
+                if reveal:
+                    REVEAL_STATS["maximize_used"] += 1
+                else:
+                    REVEAL_STATS["reveal_round_reached"] += 1
                     reveal = plan_reveal_round(state_mid, capacity, force_park=force_park, prev_state=prev_state)
+                    if reveal:
+                        REVEAL_STATS["reveal_round_used"] += 1
+                    else:
+                        print("  ℹ Maximizer + heuristic empty — trying determinization (last resort)...")
+                        REVEAL_STATS["determinization_reached"] += 1
+                        reveal = pick_best_move_by_determinization(state_mid, capacity)
+                        if reveal:
+                            REVEAL_STATS["determinization_used"] += 1
                 all_moves = reclaim + reveal
 
                 if not all_moves:
@@ -690,6 +723,7 @@ def main():
         try:
             solve_one_level(config, tube_capacity, args.dry_run)
         finally:
+            print_reveal_stats()
             if not args.dry_run:
                 stop_scrcpy()
         return
@@ -739,8 +773,10 @@ def main():
 
     except KeyboardInterrupt:
         print(f"\n\nStopped after {level - 1} levels.")
+        print_reveal_stats()
 
     print(f"\n🏁 Done! Solved {level - failures} levels.")
+    print_reveal_stats()
     stop_scrcpy()
 
 

@@ -224,6 +224,62 @@ def plan_reveal_round(state, tube_capacity, force_park=False, prev_state=None):
     return moves
 
 
+def plan_reveal_maximize(state, tube_capacity, prev_state=None, max_moves=4):
+    """Greedy reveal-maximizer.
+
+    Each round, pick moves that expose still-UNKNOWN slots, ignoring solvability.
+    Assumes learned slots are already overlaid, so every remaining UNKNOWN is
+    genuinely unrecorded. Only evicts KNOWN top runs that sit directly on an
+    UNKNOWN — never pours a guessed colour. Returns [(src, dst, num_poured), ...]
+    or [] if nothing can be revealed this round.
+    """
+    def exposes_unknown(tube):
+        colour, run = get_top_run(tube)
+        if colour is None or colour == UNKNOWN:
+            return False
+        beneath = len(tube) - run - 1          # slot directly under the top run
+        return beneath >= 0 and tube[beneath] == UNKNOWN
+
+    def legal_dests(sim, src):
+        colour, _ = get_top_run(sim[src])
+        outs = []
+        for dst in range(len(sim)):
+            if dst == src or len(sim[dst]) >= tube_capacity:
+                continue
+            if not sim[dst]:
+                outs.append((dst, 1))            # empty: allowed, but last resort
+            elif sim[dst][-1] == UNKNOWN:
+                continue                         # can't pour onto a hidden top
+            elif sim[dst][-1] == colour:
+                outs.append((dst, 0))            # matching top: preferred
+        outs.sort(key=lambda d: d[1])
+        return [d for d, _ in outs]
+
+    # Shallow unknowns first (they unlock deeper ones next round); ties broken by
+    # smaller top run (cheaper to evict, burns less destination capacity).
+    sources = sorted(
+        (get_top_run(t)[1], i) for i, t in enumerate(state) if exposes_unknown(t)
+    )
+
+    sim = tuple(tuple(t) for t in state)
+    seen = {sim}
+    moves = []
+    for _, src in sources:
+        if not exposes_unknown(sim[src]):        # sim moved on; re-check
+            continue
+        for dst in legal_dests(sim, src):
+            nxt, n = apply_move(sim, src, dst, tube_capacity)
+            if n == 0 or nxt in seen or nxt == prev_state:
+                continue
+            moves.append((src, dst, n))
+            sim = nxt
+            seen.add(nxt)
+            break
+        if len(moves) >= max_moves:
+            break
+    return moves
+
+
 def find_reclaim_moves(state, tube_capacity):
     """Return (src, dst, num_poured) moves that pour single-colour parking tubes into matching tops.
 
@@ -426,7 +482,7 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
 
     # After memory overlay the unknown count sits around tube_capacity * 3; only
     # bail when it's large enough that sampling becomes unreliable/slow.
-    if num_unknowns > tube_capacity * 4:
+    if num_unknowns > tube_capacity * 5:
         return []
 
     # Phantom-colour pool sizing. Each colour fills exactly tube_capacity slots,
@@ -460,7 +516,7 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
         pool = pool_base[:]
         random.shuffle(pool)
         filled = _fill_unknowns(state, pool)
-        sol = solve_astar(filled, tube_capacity, max_states=200_000)
+        sol = solve_astar(filled, tube_capacity, max_states=50_000)
         if sol:
             solutions.append(sol[:3])
 
