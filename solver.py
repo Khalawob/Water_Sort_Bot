@@ -10,11 +10,24 @@ Strategies:
 Moves are returned as (src, dst, num_poured).
 """
 
+import math
 import random
 from collections import Counter, deque
+from functools import lru_cache
 from heapq import heappush, heappop
 
 UNKNOWN = "unknown"
+
+# Guaranteed-safe-move enumeration tuning (see find_guaranteed_safe_moves).
+SAFE_MAX_UNKNOWNS = 10      # only enumerate at/below this many unknowns
+# Bail (→ maximizer fallback) when the multiset has more completions than this.
+# Was 2000, but a near-ceiling board ran the exhaustive move×completion check for
+# ~14 min in one call; 200 caps a single call to a few seconds. When we *do* run
+# the check it stays exhaustive over all completions, so the safety guarantee is
+# preserved — we just decline to compute it (and fall through to the maximizer,
+# the path taken ~89% of the time regardless) on large completion spaces.
+SAFE_MAX_PERMS    = 200
+SAFE_MAX_STATES   = 20_000  # A* budget per completion solve
 
 
 # ── Shared helpers ───────────────────────────────────────────────────
@@ -247,24 +260,32 @@ def plan_reveal_maximize(state, tube_capacity, prev_state=None, max_moves=4):
             if dst == src or len(sim[dst]) >= tube_capacity:
                 continue
             if not sim[dst]:
-                outs.append((dst, 1))            # empty: allowed, but last resort
+                # empty: last resort. Random tail breaks ties among equal-rank dests.
+                outs.append((dst, (1, 0, 0, random.random())))
             elif sim[dst][-1] == UNKNOWN:
                 continue                         # can't pour onto a hidden top
             elif sim[dst][-1] == colour:
-                outs.append((dst, 0))            # matching top: preferred
+                # matching top: prefer the tube where this colour is most
+                # accumulated / closest to pure, so a reveal also makes sorting
+                # progress and conserves empties. Random tail breaks exact ties.
+                cnt = sim[dst].count(colour)
+                pure = all(c == colour for c in sim[dst])
+                outs.append((dst, (0, -cnt, 0 if pure else 1, random.random())))
         outs.sort(key=lambda d: d[1])
         return [d for d, _ in outs]
 
     # Shallow unknowns first (they unlock deeper ones next round); ties broken by
-    # smaller top run (cheaper to evict, burns less destination capacity).
+    # smaller top run (cheaper to evict, burns less destination capacity), then
+    # randomly so barren retries explore divergent paths.
     sources = sorted(
-        (get_top_run(t)[1], i) for i, t in enumerate(state) if exposes_unknown(t)
+        (get_top_run(t)[1], random.random(), i)
+        for i, t in enumerate(state) if exposes_unknown(t)
     )
 
     sim = tuple(tuple(t) for t in state)
     seen = {sim}
     moves = []
-    for _, src in sources:
+    for _, _, src in sources:
         if not exposes_unknown(sim[src]):        # sim moved on; re-check
             continue
         for dst in legal_dests(sim, src):
@@ -460,7 +481,39 @@ def _fill_unknowns(state, color_pool):
     return tuple(new_state)
 
 
-def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
+def _build_completion_pool(state, tube_capacity):
+    """Multiset of colours that must fill the UNKNOWN slots, or None if the
+    board is structurally inconsistent.
+
+    Phantom-colour pool sizing: each colour fills exactly tube_capacity slots, so
+    the true colour count is derivable from board structure. The pool is built
+    from visible colours' deficits, plus a phantom group of tube_capacity balls
+    per colour that is entirely hidden (0 visible slots). This makes the pool
+    length match the unknown count even when a colour never appears visibly.
+    """
+    visible_counts = count_colour_occurrences(state)
+
+    # Counts are inconsistent if any visible colour overflows a tube.
+    for cnt in visible_counts.values():
+        if cnt > tube_capacity:
+            return None
+
+    total_balls = sum(len(t) for t in state)
+    if total_balls % tube_capacity != 0:
+        return None
+    num_colours = total_balls // tube_capacity
+
+    pool = []
+    for colour, cnt in visible_counts.items():
+        needed = tube_capacity - cnt
+        if needed > 0:
+            pool.extend([colour] * needed)
+    for i in range(num_colours - len(visible_counts)):
+        pool.extend([f"_phantom_{i}"] * tube_capacity)
+    return pool
+
+
+def pick_best_move_by_determinization(state, tube_capacity, num_samples=10):
     """
     Estimate the best next move(s) under hidden-slot uncertainty by sampling
     random completions of UNKNOWN slots and running A* on each.
@@ -468,13 +521,6 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
     Returns up to 3 (src, dst, num_poured) tuples that win the most votes
     across successful sample solves. Returns [] if no sample produced a solution.
     """
-    visible_counts = count_colour_occurrences(state)
-
-    # Counts are inconsistent if any visible colour overflows a tube.
-    for colour, cnt in visible_counts.items():
-        if cnt > tube_capacity:
-            return []
-
     num_unknowns = sum(slot == UNKNOWN for tube in state for slot in tube)
 
     if num_unknowns == 0:
@@ -485,29 +531,12 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
     if num_unknowns > tube_capacity * 5:
         return []
 
-    # Phantom-colour pool sizing. Each colour fills exactly tube_capacity slots,
-    # so the true colour count is derivable from board structure. Build the pool
-    # from visible colours' deficits, then add tube_capacity phantom balls for
-    # each colour that is entirely hidden (0 visible slots). This makes the pool
-    # length match the unknown count even when a colour never appears visibly —
-    # the bug that made the old deficits-only pool always come up short.
-    total_balls = sum(len(t) for t in state)
-    if total_balls % tube_capacity != 0:
-        return []
-    num_colours = total_balls // tube_capacity
+    pool_base = _build_completion_pool(state, tube_capacity)
 
-    pool_base = []
-    for colour, cnt in visible_counts.items():
-        needed = tube_capacity - cnt
-        if needed > 0:
-            pool_base.extend([colour] * needed)
-    for i in range(num_colours - len(visible_counts)):
-        pool_base.extend([f"_phantom_{i}"] * tube_capacity)
-
-    # Defensive: only triggers on a structurally impossible board (e.g. more
-    # visible colours than num_colours), where _fill_unknowns would otherwise
-    # run the pool dry.
-    if len(pool_base) != num_unknowns:
+    # None: structurally inconsistent board. Length mismatch is defensive — it
+    # only triggers on a structurally impossible board (e.g. more visible colours
+    # than num_colours), where _fill_unknowns would otherwise run the pool dry.
+    if pool_base is None or len(pool_base) != num_unknowns:
         return []
 
     solutions = []
@@ -516,7 +545,7 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
         pool = pool_base[:]
         random.shuffle(pool)
         filled = _fill_unknowns(state, pool)
-        sol = solve_astar(filled, tube_capacity, max_states=50_000)
+        sol = solve_astar(filled, tube_capacity, max_states=20_000)
         if sol:
             solutions.append(sol[:3])
 
@@ -571,6 +600,188 @@ def pick_best_move_by_determinization(state, tube_capacity, num_samples=20):
                     result.append(top_third)
 
     return result
+
+
+def sample_solvable_completions(state, tube_capacity,
+                                num_samples=10, max_states=20_000):
+    """Sample random completions of the UNKNOWN slots, keep the solvable ones.
+
+    Returns a list of fully-known (no-UNKNOWN) states the game could actually win,
+    or ``None`` if the board can't be sampled (structurally inconsistent) or no
+    sampled completion was solvable. Factored out of ``score_reveal_batch`` so a
+    caller scoring several move-batches against the *same* board can reuse one base
+    set instead of resampling per batch.
+    """
+    pool = _build_completion_pool(state, tube_capacity)
+    if pool is None:
+        return None
+
+    solvable = []
+    for _ in range(num_samples):
+        p = pool[:]
+        random.shuffle(p)
+        c = _fill_unknowns(state, p)
+        if solve_astar(c, tube_capacity, max_states=max_states) is not None:
+            solvable.append(c)
+    return solvable or None
+
+
+def score_reveal_batch(state, moves, tube_capacity,
+                       num_samples=10, max_states=20_000, solvable=None):
+    """Fraction of solvable sampled completions that remain solvable after replaying
+    ``moves`` (``(src, dst, num_poured)`` tuples) on them.
+
+    Samples random completions of the UNKNOWN slots, keeps the ones the game could
+    actually win, then replays the planned tap sequence on each winning world and
+    measures how many stay winnable. A completion has no unknowns, so each
+    ``(src, dst)`` is an ordinary pour — replaying the taps faithfully models what
+    the game does in that world. Returns ``None`` if the board can't be sampled
+    (structurally inconsistent / no solvable completion found).
+
+    Pass a precomputed ``solvable`` base (from ``sample_solvable_completions``) to
+    score several batches against one shared sample set; when omitted the base is
+    sampled here, preserving the original standalone behaviour.
+    """
+    if solvable is None:
+        solvable = sample_solvable_completions(state, tube_capacity,
+                                               num_samples, max_states)
+    if not solvable:
+        return None
+
+    kept = 0
+    for c in solvable:
+        cur = c
+        for (src, dst, _n) in moves:        # replay taps; apply_move pours what's legal
+            cur, _ = apply_move(cur, src, dst, tube_capacity)
+        if solve_astar(cur, tube_capacity, max_states=max_states) is not None:
+            kept += 1
+    return kept / len(solvable)
+
+
+# ── Guaranteed-safe moves (exhaustive endgame) ───────────────────────
+
+def _distinct_permutations(items):
+    """Yield each distinct ordering of a multiset exactly once.
+
+    Avoids materialising n! tuples the way set(itertools.permutations(...))
+    would. Items must be sortable (colour labels are strings).
+    """
+    items = sorted(items)
+    n = len(items)
+    used = [False] * n
+    cur = []
+
+    def rec():
+        if len(cur) == n:
+            yield tuple(cur)
+            return
+        prev = None
+        for i in range(n):
+            if used[i] or items[i] == prev:
+                continue
+            used[i] = True
+            prev = items[i]
+            cur.append(items[i])
+            yield from rec()
+            cur.pop()
+            used[i] = False
+
+    yield from rec()
+
+
+@lru_cache(maxsize=None)
+def _is_solvable(state, tube_capacity=4, max_states=SAFE_MAX_STATES):
+    """Cached solvability test. `state` is a tuple-of-tuples (hashable)."""
+    return solve_astar(state, tube_capacity, max_states=max_states) is not None
+
+
+def find_guaranteed_safe_moves(state, tube_capacity,
+                               prev_state=None,
+                               max_unknowns=SAFE_MAX_UNKNOWNS,
+                               max_perms=SAFE_MAX_PERMS,
+                               max_states=SAFE_MAX_STATES):
+    """Return solvability-preserving moves [(src, dst, n), ...], best first.
+
+    A move is *safe* iff, for every hidden completion of the board in which the
+    level is solvable at all, applying the move leaves the board solvable. This
+    exhaustively enumerates the consistent hidden layouts (the endgame
+    counterpart to the sampling-based pick_best_move_by_determinization).
+
+    Returns [] when:
+      - there are no unknowns (caller should be on the full-info solve path),
+      - there are too many unknowns to enumerate (caller falls back to sampling),
+      - the multiset of completions exceeds max_perms,
+      - the board is structurally inconsistent / misread, or
+      - no completion is solvable (board already lost).
+    """
+    _is_solvable.cache_clear()
+
+    unknown_pos = [
+        (ti, si)
+        for ti, tube in enumerate(state)
+        for si, slot in enumerate(tube)
+        if slot == UNKNOWN
+    ]
+    if not unknown_pos or len(unknown_pos) > max_unknowns:
+        return []
+
+    pool = _build_completion_pool(state, tube_capacity)
+    if pool is None or len(pool) != len(unknown_pos):
+        return []
+
+    # Multiset-permutation count up front: len(pool)! / prod(count_i!). Bail
+    # before generating anything if it blows the budget.
+    num_perms = math.factorial(len(pool))
+    for cnt in Counter(pool).values():
+        num_perms //= math.factorial(cnt)
+    if num_perms > max_perms:
+        return []
+
+    solvable = []
+    for perm in _distinct_permutations(pool):
+        filled = _fill_unknowns(state, perm)
+        if _is_solvable(filled, tube_capacity, max_states):
+            solvable.append(filled)
+    if not solvable:
+        return []
+
+    safe = []
+    for src, dst in valid_moves(state, tube_capacity):
+        after, n = apply_move(state, src, dst, tube_capacity)
+        if n == 0:
+            continue
+        if after == prev_state:          # no-progress / reversal guard
+            continue
+
+        # Safe iff every solvable completion stays solvable after the move.
+        # Early-exit on the first completion where it doesn't.
+        is_safe = True
+        for completion in solvable:
+            moved, _ = apply_move(completion, src, dst, tube_capacity)
+            if not _is_solvable(moved, tube_capacity, max_states):
+                is_safe = False
+                break
+        if is_safe:
+            safe.append((src, dst, n, after))
+
+    if not safe:
+        return []
+
+    def _progress_key(move):
+        src, dst, n, after = move
+        src_after = after[src]
+        dst_after = after[dst]
+        reveals = bool(src_after) and src_after[-1] == UNKNOWN
+        completes = (len(dst_after) == tube_capacity
+                     and len(set(dst_after)) == 1
+                     and UNKNOWN not in dst_after)
+        empties = len(src_after) == 0
+        # Lower key sorts first: prioritise reveal > complete > empty, then
+        # smallest heuristic.
+        return (not reveals, not completes, not empties, heuristic(after))
+
+    safe.sort(key=_progress_key)
+    return [(src, dst, n) for src, dst, n, _ in safe[:3]]
 
 
 # ── DFS fallback ─────────────────────────────────────────────────────
