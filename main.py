@@ -49,9 +49,6 @@ PATIENCE = 3
 # risk is real); with more empties than this the batch can't strand the board.
 REVEAL_SOLVABILITY_EMPTY_GATE = 1
 
-# Extra settle time before the confirming post-move read (poisoned-read guard).
-CONFIRM_SETTLE = 0.4
-
 # Instrumentation: how often each reveal planner is reached vs. actually used.
 REVEAL_STATS = {
     "safe_reached": 0, "safe_used": 0,
@@ -292,27 +289,69 @@ def _batch_exposed_unknown(state, moves, capacity):
     return False
 
 
-def _reads_agree(tubes_a, l2r_a, tubes_b, l2r_b, tol=5):
-    """True if two tube reads describe the same board by RGB.
+def _majority_rgb(votes, tol=5):
+    """Return an RGB that ``>=2`` of ``votes`` agree on (within ``tol``), else None.
 
-    Labels (``colour_N``) are assigned per-read, so reads are compared by colour
-    RGB, not by label: same shape, and every slot is either UNKNOWN in both or a
-    known colour in both whose RGBs agree within ``tol`` (the tolerance
-    read_tubes uses). Used to reject mid-animation post-move reads.
+    ADB screenshots are pixel-perfect, so a settled board produces identical RGB
+    across reads and the votes are equal; mid-animation artifacts are inconsistent
+    and fail to reach a majority. ``tol`` matches read_tubes' matching tolerance.
     """
-    if len(tubes_a) != len(tubes_b):
-        return False
-    for ta, tb in zip(tubes_a, tubes_b):
-        if len(ta) != len(tb):
-            return False
-        for la, lb in zip(ta, tb):
-            if (la == UNKNOWN) != (lb == UNKNOWN):
-                return False
-            if la == UNKNOWN:
+    for candidate in votes:
+        if sum(1 for other in votes if colour_distance(candidate, other) < tol) >= 2:
+            return candidate
+    return None
+
+
+def _majority_read(reads, tol=5):
+    """Build a consensus ``(tubes_labels, label_to_rgb)`` from several reads.
+
+    ``reads`` is a list of ``(tubes_labels, label_to_rgb)`` post-move reads. For
+    each slot position, only the RGB agreed on by a 2-of-3 majority survives;
+    disputed slots (likely still mid-animation) become UNKNOWN so reconcile skips
+    them. Slots stay positioned (UNKNOWN placeholders) so tube lengths are
+    preserved for reconcile's shape check. Labels are synthetic (``vote_N``).
+    """
+    # The read with the most tubes sets the structure; shorter reads just abstain.
+    ref_tubes = max(reads, key=lambda r: len(r[0]))[0]
+    consensus_tubes = []
+    consensus_l2r = {}
+    seen = {}                                  # rgb -> label
+    counter = 0
+    confirmed = 0
+    skipped = []                               # (ti, d) candidate slots w/o consensus
+    for ti in range(len(ref_tubes)):
+        depth = max((len(t[ti]) for t, _ in reads if ti < len(t)), default=0)
+        layers = []
+        for d in range(depth):
+            votes = []
+            for tubes, l2r in reads:
+                if ti < len(tubes) and d < len(tubes[ti]):
+                    label = tubes[ti][d]
+                    if label != UNKNOWN:
+                        votes.append(tuple(l2r[label]))
+            winner = _majority_rgb(votes, tol)
+            if winner is None:
+                layers.append(UNKNOWN)
+                # A slot with colour votes but no majority is a dropped candidate;
+                # one UNKNOWN in every read is just still-hidden, not a dispute.
+                if votes:
+                    skipped.append((ti, d))
+                    print(f"  ⚠ No consensus for tube {ti + 1} slot {d + 1} "
+                          "— skipping record")
                 continue
-            if colour_distance(l2r_a[la], l2r_b[lb]) >= tol:
-                return False
-    return True
+            confirmed += 1
+            match = next((lbl for rgb, lbl in seen.items()
+                          if colour_distance(rgb, winner) < tol), None)
+            if match is None:
+                counter += 1
+                match = f"vote_{counter}"
+                seen[winner] = match
+                consensus_l2r[match] = winner
+            layers.append(match)
+        consensus_tubes.append(layers)
+    print(f"  🗳 Majority vote: {confirmed}/{confirmed + len(skipped)} slots "
+          f"confirmed, {len(skipped)} skipped (no consensus)")
+    return consensus_tubes, consensus_l2r
 
 
 def select_reveal_prefix(state, reveal, capacity, empties):
@@ -711,30 +750,32 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                     end_tubes, end_seen = read_tubes(end_image, config, return_colours=True)
                     end_label_to_rgb = {label: rgb for rgb, label in end_seen.items()}
 
-                    # Poisoned-read guard: only record a freshly-exposed slot when a
-                    # second settle-read agrees. ADB screenshots are deterministic,
-                    # so two reads differ only mid-animation; a disagreeing read is
-                    # untrustworthy. Pay the extra screenshot only when this batch
-                    # actually exposed a hidden slot.
-                    record = True
+                    # Poisoned-read guard: when this batch freshly exposed a hidden
+                    # slot, majority-vote 3 reads instead of trusting one. ADB shots
+                    # are deterministic, so a settled board yields identical RGB
+                    # across reads; inconsistent mid-animation pixels lose the
+                    # per-slot 2-of-3 vote and are dropped (that slot only). Pay the
+                    # extra screenshots only when a hidden slot was actually exposed.
                     if _batch_exposed_unknown(state, executed_moves, capacity):
-                        time.sleep(CONFIRM_SETTLE)
-                        confirm_image = screenshot()
-                        if confirm_image is not None:
-                            confirm_tubes, confirm_seen = read_tubes(
-                                confirm_image, config, return_colours=True)
-                            confirm_l2r = {label: rgb for rgb, label in confirm_seen.items()}
-                            if not _reads_agree(end_tubes, end_label_to_rgb,
-                                                confirm_tubes, confirm_l2r):
-                                record = False
-                                print("  ⚠ Post-move reads disagreed (mid-animation?) "
-                                      "— skipping record this round.")
+                        print("  🗳 Confirm read 1/3...")
+                        reads = [(end_tubes, end_label_to_rgb)]
+                        for i in range(2):
+                            time.sleep(0.15)
+                            vote_image = screenshot()
+                            if vote_image is not None:
+                                print(f"  🗳 Confirm read {2 + i}/3...")
+                                vote_tubes_n, vote_seen = read_tubes(
+                                    vote_image, config, return_colours=True)
+                                reads.append((vote_tubes_n,
+                                              {label: rgb for rgb, label in vote_seen.items()}))
+                        reconcile_tubes, reconcile_l2r = _majority_read(reads)
+                    else:
+                        reconcile_tubes, reconcile_l2r = end_tubes, end_label_to_rgb
 
-                    if record:
-                        for origin, rgb in sim.reconcile(end_tubes, end_label_to_rgb):
-                            memory.record_slot(signature, origin[0], origin[1], rgb, capacity)
-                        if not sim.valid:
-                            print("  ⚠ Sim desynced from board — stopped attributing reveals.")
+                    for origin, rgb in sim.reconcile(reconcile_tubes, reconcile_l2r):
+                        memory.record_slot(signature, origin[0], origin[1], rgb, capacity)
+                    if not sim.valid:
+                        print("  ⚠ Sim desynced from board — stopped attributing reveals.")
 
                 if not dry_run:
                     print("  🔄 Restarting scrcpy...")

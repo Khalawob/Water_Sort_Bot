@@ -1,6 +1,6 @@
 """Tests for the memory-integrity and patience changes:
 
-  #1  poisoned-read guards (_reads_agree, _batch_exposed_unknown) and the
+  #1  poisoned-read guards (majority-vote reads, _batch_exposed_unknown) and the
       corruption conditions (poisoned overlay overflows / unsolvable board).
   #2  the pure end-of-attempt retry decision (decide_retry).
   #4  select_reveal_prefix skips scoring above the empty gate.
@@ -17,8 +17,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import main
 from main import (
-    decide_retry, _reads_agree, _batch_exposed_unknown,
-    select_reveal_prefix, PATIENCE,
+    decide_retry, _majority_rgb, _majority_read, _batch_exposed_unknown,
+    select_reveal_prefix, PATIENCE, colour_distance,
 )
 from solver import UNKNOWN as U, solve_astar
 from level_memory import LevelMemory
@@ -82,30 +82,37 @@ def test_max_attempts_caps_retry():
 # ── #1: poisoned-read guards ─────────────────────────────────────────
 
 
-def test_reads_agree_within_tolerance():
-    a = [["c1"], [U]]
-    la = {"c1": (10, 20, 30)}
-    b = [["c9"], [U]]               # different label, near-identical RGB
-    lb = {"c9": (11, 21, 31)}
-    assert _reads_agree(a, la, b, lb)
+def test_majority_rgb():
+    # 2-of-3 agree within tolerance → that RGB wins (near-identical counts).
+    assert _majority_rgb([(10, 20, 30), (11, 21, 31), (200, 0, 0)]) is not None
+    # All distinct → no majority.
+    assert _majority_rgb([(10, 20, 30), (100, 0, 0), (0, 100, 0)]) is None
+    # Fewer than two votes can never reach a majority.
+    assert _majority_rgb([(10, 20, 30)]) is None
 
 
-def test_reads_disagree_on_colour():
-    a = [["c1"], [U]]
-    la = {"c1": (10, 20, 30)}
-    b = [["c9"], [U]]
-    lb = {"c9": (200, 20, 30)}      # far-apart RGB
-    assert not _reads_agree(a, la, b, lb)
+def test_majority_read_keeps_consensus_drops_dispute():
+    # Three reads, per-read (tubes_labels, label_to_rgb). Labels differ per read.
+    r1 = ([["c1"], [U]], {"c1": (10, 20, 30)})
+    r2 = ([["c9"], [U]], {"c9": (11, 21, 31)})   # agrees with r1 (within tol)
+    r3 = ([["c5"], [U]], {"c5": (200, 0, 0)})    # disagrees on tube0
+    tubes, l2r = _majority_read([r1, r2, r3])
+    # Tube0 slot0 reached a 2-of-3 majority → recorded as a real label near (10,20,30).
+    assert tubes[0][0] != U
+    assert colour_distance(l2r[tubes[0][0]], (10, 20, 30)) < 5
+    # Tube1 slot0 was UNKNOWN in every read → stays UNKNOWN.
+    assert tubes[1] == [U]
 
 
-def test_reads_disagree_on_unknown_pattern_and_shape():
-    a = [["c1"], [U]]
-    la = {"c1": (10, 20, 30)}
-    # UNKNOWN where the other has a colour
-    b = [["c1"], ["c1"]]
-    assert not _reads_agree(a, la, b, la)
-    # different shape
-    assert not _reads_agree(a, la, [["c1"]], la)
+def test_majority_read_disputed_slot_becomes_unknown():
+    # No two reads agree on tube0 slot0 → it loses the vote and becomes UNKNOWN,
+    # preserving the slot's position so reconcile's shape check still passes.
+    r1 = ([["c1"]], {"c1": (10, 20, 30)})
+    r2 = ([["c1"]], {"c1": (100, 0, 0)})
+    r3 = ([["c1"]], {"c1": (0, 100, 0)})
+    tubes, l2r = _majority_read([r1, r2, r3])
+    assert tubes == [[U]]
+    assert l2r == {}
 
 
 def test_batch_exposed_unknown():
@@ -183,4 +190,8 @@ def _run_all():
 
 
 if __name__ == "__main__":
+    # main.py prints emoji status lines (e.g. the 🗳 majority-vote summary); make
+    # the standalone runner UTF-8 so it doesn't crash on a cp1252 Windows console.
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     sys.exit(1 if _run_all() else 0)
