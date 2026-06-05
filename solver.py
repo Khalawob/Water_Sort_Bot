@@ -19,7 +19,9 @@ from heapq import heappush, heappop
 UNKNOWN = "unknown"
 
 # Guaranteed-safe-move enumeration tuning (see find_guaranteed_safe_moves).
-SAFE_MAX_UNKNOWNS = 10      # only enumerate at/below this many unknowns
+SAFE_MAX_UNKNOWNS = 5       # only enumerate at/below this many unknowns; 6-10
+                            # ran full enumeration for ~0% hit rate, late-game
+                            # handles <5-unknown boards anyway
 # Bail (→ maximizer fallback) when the multiset has more completions than this.
 # Was 2000, but a near-ceiling board ran the exhaustive move×completion check for
 # ~14 min in one call; 200 caps a single call to a few seconds. When we *do* run

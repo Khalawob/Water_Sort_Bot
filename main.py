@@ -823,11 +823,13 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                 # info-gain ranks reveals by uncertainty reduction + outcome memory;
                 # maximizer is the info-gain fallback; determinization handles buried
                 # unknowns; heuristic park is the genuine last resort.
+                reveal_source = None
                 REVEAL_STATS["safe_reached"] += 1
                 with time_stage("safe"):
                     reveal = find_guaranteed_safe_moves(state_mid, capacity, prev_state=prev_state)
                 if reveal:
                     REVEAL_STATS["safe_used"] += 1
+                    reveal_source = "safe"
                     print(f"  🛡 {len(reveal)} guaranteed-safe move(s).")
                 else:
                     REVEAL_STATS["info_gain_reached"] += 1
@@ -838,6 +840,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                     if ig_moves:
                         REVEAL_STATS["info_gain_used"] += 1
                         reveal = ig_moves
+                        reveal_source = "info_gain"
                         print(f"  🧠 Info-gain selected {len(reveal)} reveal "
                               f"move(s) (score: {ig_score:.2f})")
                     else:
@@ -852,6 +855,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                         if deep_moves:
                             REVEAL_STATS["deep_used"] += 1
                             reveal = deep_moves
+                            reveal_source = "deep"
                             print(f"  ⛏ Deep-reveal: {len(deep_moves)}-move dig into "
                                   f"tube {deep_moves[0][0] + 1} (score: {deep_score:.2f})")
                         else:
@@ -872,6 +876,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                                 if cons_moves:
                                     REVEAL_STATS["consolidate_used"] += 1
                                     reveal = cons_moves
+                                    reveal_source = "consolidate"
                                     print(f"  🔧 Consolidate: {len(cons_moves)} moves "
                                           f"to free {freed} tube(s) for deep dig")
                                 else:
@@ -883,12 +888,14 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                                     reveal = plan_reveal_maximize(state_mid, capacity, prev_state=prev_state)
                                 if reveal:
                                     REVEAL_STATS["maximize_used"] += 1
+                                    reveal_source = "maximize"
                                 else:
                                     REVEAL_STATS["determinization_reached"] += 1
                                     with time_stage("determinization"):
                                         reveal = pick_best_move_by_determinization(state_mid, capacity)
                                     if reveal:
                                         REVEAL_STATS["determinization_used"] += 1
+                                        reveal_source = "determinization"
                                     else:
                                         print("  ℹ Maximizer + determinization empty — heuristic park (last resort)...")
                                         REVEAL_STATS["reveal_round_reached"] += 1
@@ -896,19 +903,28 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                                             reveal = plan_reveal_round(state_mid, capacity, force_park=force_park, prev_state=prev_state)
                                         if reveal:
                                             REVEAL_STATS["reveal_round_used"] += 1
+                                            reveal_source = "reveal_round"
 
                 # When empties are scarce a reveal batch can be executable yet
                 # still strand the board (e.g. spend the last empty). Keep the
                 # prefix that best preserves solvability. No-op (and no extra
                 # solves) when empties are plentiful — see select_reveal_prefix.
+                # Only score prefixes for strategic planners (info-gain, deep-reveal).
+                # Safe is already solvability-checked; consolidate sorts known tubes
+                # (not a reveal); maximize/determinization/reveal_round are heuristic
+                # fallbacks where the 6s scoring cost exceeds the value.
+                SCORE_WORTHY = {"info_gain", "deep"}
                 empties_now = sum(1 for t in state_mid if len(t) == 0)
-                with time_stage("score_prefix"):
-                    trimmed = select_reveal_prefix(state_mid, reveal, capacity, empties_now)
-                if len(trimmed) < len(reveal):
-                    print(f"  🔒 Reveal trimmed {len(reveal)}→{len(trimmed)} move(s) "
-                          f"to preserve solvability ({empties_now} empt"
-                          f"{'y' if empties_now == 1 else 'ies'}).")
-                reveal = trimmed
+                if reveal_source in SCORE_WORTHY:
+                    with time_stage("score_prefix"):
+                        trimmed = select_reveal_prefix(state_mid, reveal, capacity, empties_now)
+                    if len(trimmed) < len(reveal):
+                        print(f"  🔒 Reveal trimmed {len(reveal)}→{len(trimmed)} move(s) "
+                              f"to preserve solvability ({empties_now} empt"
+                              f"{'y' if empties_now == 1 else 'ies'}).")
+                    reveal = trimmed
+                elif reveal_source:
+                    print(f"  ⏭ Skipping solvability scoring for {reveal_source} moves")
 
                 all_moves = reclaim + reveal
 
