@@ -873,6 +873,47 @@ def _build_completion_pool(state, tube_capacity):
     return pool
 
 
+def is_late_game(state, max_unknowns=5):
+    """True when all remaining unknowns are at depth 0 (tube bottom).
+
+    Each tube that still holds an UNKNOWN must hold it solely at index 0 (the
+    bottom slot) — any deeper or additional unknown disqualifies the board. Caps
+    at ``max_unknowns`` such tubes so the full-solve completion space stays small.
+    Called after the memory overlay, so recalled slots are already filled in.
+    """
+    total = 0
+    for t in state:
+        unknown_positions = [i for i, ball in enumerate(t) if ball == UNKNOWN]
+        if not unknown_positions:
+            continue
+        if unknown_positions != [0]:
+            return False                       # unknown NOT solely at depth 0
+        total += 1
+    return 0 < total <= max_unknowns
+
+
+def plan_late_game_solve(state, capacity, max_samples=5):
+    """Sample a completion of the UNKNOWN slots and A*-solve the full board.
+
+    Returns ``(moves, completed_state)`` for the first solvable sample, or
+    ``None`` if the board can't be pooled or no sample (of up to ``max_samples``)
+    is solvable. ``moves`` is the full solution (typically 30–50 moves).
+    """
+    pool = _build_completion_pool(state, capacity)
+    num_unknowns = _count_unknowns(state)
+    # None: structurally inconsistent. Length mismatch is defensive (misread).
+    if pool is None or len(pool) != num_unknowns:
+        return None
+    for _ in range(max_samples):
+        p = pool[:]
+        random.shuffle(p)
+        filled = _fill_unknowns(state, p)
+        solution = solve(filled, capacity)
+        if solution:
+            return solution, filled
+    return None
+
+
 def pick_best_move_by_determinization(state, tube_capacity, num_samples=10):
     """
     Estimate the best next move(s) under hidden-slot uncertainty by sampling

@@ -26,7 +26,7 @@ from solver import (
     find_reclaim_moves, find_safe_moves, apply_move, UNKNOWN, deduce_hidden_slots,
     pick_best_move_by_determinization, validate_move_sequence,
     find_guaranteed_safe_moves, score_reveal_batch,
-    sample_solvable_completions,
+    sample_solvable_completions, is_late_game, plan_late_game_solve,
 )
 from screen_reader import (
     detect_no_more_moves,
@@ -373,6 +373,129 @@ def _majority_read(reads, tol=5):
     return consensus_tubes, consensus_l2r
 
 
+def _read_exposed_slot(config, src, settle=1.0):
+    """Read the colour of a freshly-exposed bottom slot in tube ``src``.
+
+    Used by the late-game full-solve path after a peel leaves tube ``src`` holding
+    only its (now-revealed) bottom ball. Waits ``settle`` for the pour animation,
+    then majority-votes 3 ADB reads (same machinery as the round reconciliation)
+    so a mid-animation frame can't poison the read. Returns the slot's RGB tuple,
+    or ``None`` when the slot still reads UNKNOWN / has no 2-of-3 consensus.
+    """
+    time.sleep(settle)
+    reads = []
+    for _ in range(3):
+        img = screenshot()
+        if img is None:
+            continue
+        rt, rseen = read_tubes(img, config, return_colours=True)
+        reads.append((rt, {label: rgb for rgb, label in rseen.items()}))
+        time.sleep(0.15)
+    if not reads:
+        return None
+
+    reconcile_tubes, reconcile_l2r = _majority_read(reads)
+    if src >= len(reconcile_tubes) or not reconcile_tubes[src]:
+        return None
+    label = reconcile_tubes[src][0]
+    if label == UNKNOWN:
+        return None
+    return reconcile_l2r[label]
+
+
+def run_late_game(state, capacity, memory, signature, attempt_moves,
+                  attempt_reveals, config, label_to_rgb):
+    """Late-game full-solve: execute a sampled complete solution, pausing to read
+    each depth-0 unknown as a peel exposes it, then re-solving from the corrected
+    board (see plan: re-plan on every exposure).
+
+    Returns one of:
+      "solved"     — the board was driven to completion.
+      "dirty"      — moves were executed but the run couldn't finish (re-plan
+                     failed or a read failed); exposed slots are already recorded,
+                     caller should re-screenshot next round.
+      "clean_fail" — nothing was executed (couldn't even plan); caller may fall
+                     through to the reveal chain on the still-valid board.
+    """
+    sim_state = tuple(tuple(t) for t in state)
+    executed_any = False
+    refresh_mapping()
+    zones = get_tube_tap_zones(config)
+
+    # Label minting for a re-seen / brand-new colour, mirroring _overlay_learned_colours.
+    existing_nums = [
+        int(name.split("_")[1])
+        for name in label_to_rgb
+        if name.startswith("late_") and name.split("_")[1].isdigit()
+    ]
+    late_counter = max(existing_nums) if existing_nums else 0
+
+    while True:
+        planned = plan_late_game_solve(sim_state, capacity)
+        if planned is None:
+            return "dirty" if executed_any else "clean_fail"
+        solution, _filled = planned
+        print(f"  🧩 Late-game plan: {len(solution)} move(s) on a sampled completion")
+
+        replanned = False
+        for i, (src, dst, n) in enumerate(solution, 1):
+            # Execute one move — same tap sequence + wait as execute_move_list.
+            src_x, src_y = jittered_tap(zones[src])
+            dst_x, dst_y = jittered_tap(zones[dst])
+            pour_wait = 0.83 + (0.52 * n)
+            print(f"    Move {i}/{len(solution)}: Tube {src+1} → Tube {dst+1} "
+                  f"({n} poured, wait {pour_wait:.1f}s)")
+            adb_tap(src_x, src_y)
+            time.sleep(0.3)
+            adb_tap(dst_x, dst_y)
+            time.sleep(pour_wait)
+            executed_any = True
+
+            sim_state, _ = apply_move(sim_state, src, dst, capacity)
+            attempt_moves.append((src, dst, n))
+
+            # Exposure: peel emptied the known balls above a depth-0 unknown.
+            if len(sim_state[src]) == 1 and sim_state[src][0] == UNKNOWN:
+                attempt_reveals.append(1)
+                rgb = _read_exposed_slot(config, src)
+                if rgb is None:
+                    print(f"  ⚠ Couldn't read exposed slot in tube {src+1} — "
+                          "stopping late-game (will re-read next round).")
+                    return "dirty"
+
+                # Origin == current position: a depth-0 unknown never moves
+                # (apply_move never pours UNKNOWN), so it has sat at (src, 0) since
+                # the start.
+                memory.record_slot(signature, src, 0, rgb, capacity)
+
+                # Map RGB → label so the re-solve treats a re-seen visible colour
+                # as that colour (keeps the completion pool consistent).
+                label = None
+                for name, known_rgb in label_to_rgb.items():
+                    if colour_distance(rgb, known_rgb) < 5:
+                        label = name
+                        break
+                if label is None:
+                    late_counter += 1
+                    label = f"late_{late_counter}"
+                    label_to_rgb[label] = rgb
+                print(f"  🧠 Tube {src+1} bottom revealed → {label}; recorded to memory.")
+
+                tubes = [list(t) for t in sim_state]
+                tubes[src][0] = label
+                sim_state = tuple(tuple(t) for t in tubes)
+
+                replanned = True
+                break                              # re-plan from corrected board
+            else:
+                attempt_reveals.append(0)
+
+        if replanned:
+            continue
+        # Solution ran to the end without exposing an unknown → board is solved.
+        return "solved"
+
+
 def select_reveal_prefix(state, reveal, capacity, empties):
     """Choose the reveal prefix that best preserves solvability.
 
@@ -661,6 +784,27 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                     if signature:
                         memory.delete(signature)
                     return True
+
+                # Late-game: all remaining unknowns sit at depth 0 (tube bottoms),
+                # unreachable by the reveal chain. Sample a completion, A*-solve the
+                # full board, and execute it — pausing to read each unknown as a peel
+                # exposes it, re-solving from the corrected board each time.
+                if is_late_game(state) and not dry_run:
+                    print("  🎯 Late-game detected — all unknowns at depth 0, "
+                          "running full-solve strategy")
+                    result = run_late_game(state, capacity, memory, signature,
+                                           attempt_moves, attempt_reveals, config,
+                                           label_to_rgb)
+                    if result == "solved":
+                        print("\n🎉 Level complete (late-game)!")
+                        if signature:
+                            memory.delete(signature)
+                        return True
+                    if result == "dirty":
+                        print("  ↻ Late-game stopped early — re-reading board next round.")
+                        continue          # board changed; re-screenshot, don't tap on stale state
+                    print("  ⚠ Late-game couldn't plan — falling back to reveal chain")
+                    # "clean_fail": nothing executed, `state` still valid → fall through.
 
                 # Unknowns remain: reclaim parking tubes first, then plan reveal round
                 print("\n🔄 Hidden slots remain — planning reveal round...")
