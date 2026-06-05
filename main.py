@@ -9,6 +9,7 @@ Supports hidden/unknown slots with iterative solve-reveal-solve.
 """
 
 import argparse
+import hashlib
 import io
 import json
 import random
@@ -20,8 +21,9 @@ from pathlib import Path
 import cv2
 
 from solver import (
-    solve, plan_reveal_round, plan_reveal_maximize, find_reclaim_moves,
-    find_safe_moves, apply_move, UNKNOWN, deduce_hidden_slots,
+    solve, plan_reveal_round, plan_reveal_maximize, plan_reveal_info_gain,
+    plan_reveal_deep, plan_consolidate, _exposes_unknown,
+    find_reclaim_moves, find_safe_moves, apply_move, UNKNOWN, deduce_hidden_slots,
     pick_best_move_by_determinization, validate_move_sequence,
     find_guaranteed_safe_moves, score_reveal_batch,
     sample_solvable_completions,
@@ -52,6 +54,9 @@ REVEAL_SOLVABILITY_EMPTY_GATE = 1
 # Instrumentation: how often each reveal planner is reached vs. actually used.
 REVEAL_STATS = {
     "safe_reached": 0, "safe_used": 0,
+    "info_gain_reached": 0, "info_gain_used": 0,
+    "deep_reached": 0, "deep_used": 0,
+    "consolidate_reached": 0, "consolidate_used": 0,
     "maximize_reached": 0, "maximize_used": 0,
     "reveal_round_reached": 0, "reveal_round_used": 0,
     "determinization_reached": 0, "determinization_used": 0,
@@ -62,8 +67,10 @@ REVEAL_STATS = {
 # so the dominant cost is provable from rounds.txt / the end-of-run table. See
 # `time_stage` and `print_reveal_stats`.
 REVEAL_TIMES = {
-    "safe": [0.0, 0], "maximize": [0.0, 0], "determinization": [0.0, 0],
-    "reveal_round": [0.0, 0], "score_prefix": [0.0, 0], "full_solve": [0.0, 0],
+    "safe": [0.0, 0], "info_gain": [0.0, 0], "deep": [0.0, 0],
+    "consolidate": [0.0, 0],
+    "maximize": [0.0, 0], "determinization": [0.0, 0], "reveal_round": [0.0, 0],
+    "score_prefix": [0.0, 0], "full_solve": [0.0, 0],
 }
 
 
@@ -84,7 +91,7 @@ def time_stage(stage):
 def print_reveal_stats():
     s = REVEAL_STATS
     print("\n=== Reveal planner stats ===")
-    for stage in ("safe", "maximize", "reveal_round", "determinization"):
+    for stage in ("safe", "info_gain", "deep", "consolidate", "maximize", "reveal_round", "determinization"):
         reached = s[f"{stage}_reached"]
         used = s[f"{stage}_used"]
         pct = (100 * used / reached) if reached else 0.0
@@ -94,8 +101,8 @@ def print_reveal_stats():
     t = REVEAL_TIMES
     print("\n=== Reveal planner timings ===")
     print(f"  {'stage':16s} {'total':>9s} {'calls':>6s} {'mean':>10s}")
-    for stage in ("safe", "maximize", "determinization",
-                  "reveal_round", "score_prefix", "full_solve"):
+    for stage in ("safe", "info_gain", "deep", "consolidate", "maximize",
+                  "determinization", "reveal_round", "score_prefix", "full_solve"):
         total, calls = t[stage]
         mean_ms = (1000 * total / calls) if calls else 0.0
         print(f"  {stage:16s} {total:8.2f}s {calls:6d} {mean_ms:8.1f}ms")
@@ -110,6 +117,18 @@ def _rgb_signature(state, label_to_rgb):
               for slot in tube)
         for tube in state
     )
+
+
+def _hash_board(state):
+    """Stable sha1 of a board's sorted tube contents (UNKNOWN kept verbatim).
+
+    Order-independent across tubes so two reads of the same stuck layout hash
+    equal regardless of tube enumeration. Returns None for a falsy/empty state.
+    """
+    if not state:
+        return None
+    canon = sorted(tuple(tube) for tube in state)
+    return hashlib.sha1(repr(canon).encode()).hexdigest()
 
 
 def read_and_display(image, config, tube_capacity, return_colours=False):
@@ -474,6 +493,9 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
         status = "stuck"
         give_up = False          # set by second-corruption recovery (terminal)
         seen_signatures = set()
+        attempt_moves = []       # flat (src, dst, count) executed this attempt
+        attempt_reveals = []     # parallel per-move hidden-slot reveal counts
+        last_state = None        # most recent model board, for stuck board_hash
 
         for round_num in range(1, max_rounds + 1):
             _buf = io.StringIO()
@@ -600,6 +622,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                 if force_park:
                     print("  ⚠ State unchanged from previous round — forcing park strategy.")
                 prev_state = state
+                last_state = state       # snapshot for a stuck-attempt board_hash
 
                 if not has_hidden:
                     print("\n🧠 Solving (full information)...")
@@ -653,8 +676,9 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                     state_mid, _ = apply_move(state_mid, src, dst, capacity)
 
                 # Reveal chain: guaranteed-safe moves lead (exhaustive endgame);
-                # maximizer next; determinization handles buried unknowns;
-                # heuristic park is the genuine last resort.
+                # info-gain ranks reveals by uncertainty reduction + outcome memory;
+                # maximizer is the info-gain fallback; determinization handles buried
+                # unknowns; heuristic park is the genuine last resort.
                 REVEAL_STATS["safe_reached"] += 1
                 with time_stage("safe"):
                     reveal = find_guaranteed_safe_moves(state_mid, capacity, prev_state=prev_state)
@@ -662,24 +686,72 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                     REVEAL_STATS["safe_used"] += 1
                     print(f"  🛡 {len(reveal)} guaranteed-safe move(s).")
                 else:
-                    REVEAL_STATS["maximize_reached"] += 1
-                    with time_stage("maximize"):
-                        reveal = plan_reveal_maximize(state_mid, capacity, prev_state=prev_state)
-                    if reveal:
-                        REVEAL_STATS["maximize_used"] += 1
+                    REVEAL_STATS["info_gain_reached"] += 1
+                    with time_stage("info_gain"):
+                        ig_moves, ig_score = plan_reveal_info_gain(
+                            state_mid, capacity,
+                            attempt_log=memory.get_attempt_log(signature))
+                    if ig_moves:
+                        REVEAL_STATS["info_gain_used"] += 1
+                        reveal = ig_moves
+                        print(f"  🧠 Info-gain selected {len(reveal)} reveal "
+                              f"move(s) (score: {ig_score:.2f})")
                     else:
-                        REVEAL_STATS["determinization_reached"] += 1
-                        with time_stage("determinization"):
-                            reveal = pick_best_move_by_determinization(state_mid, capacity)
-                        if reveal:
-                            REVEAL_STATS["determinization_used"] += 1
+                        # Info-gain saw no directly-exposable unknown; try digging
+                        # 2–3 layers into one tube to surface a buried unknown.
+                        print("  ℹ Info-gain found no candidates — trying deep-reveal")
+                        REVEAL_STATS["deep_reached"] += 1
+                        with time_stage("deep"):
+                            deep_moves, deep_score = plan_reveal_deep(
+                                state_mid, capacity,
+                                attempt_log=memory.get_attempt_log(signature))
+                        if deep_moves:
+                            REVEAL_STATS["deep_used"] += 1
+                            reveal = deep_moves
+                            print(f"  ⛏ Deep-reveal: {len(deep_moves)}-move dig into "
+                                  f"tube {deep_moves[0][0] + 1} (score: {deep_score:.2f})")
                         else:
-                            print("  ℹ Maximizer + determinization empty — heuristic park (last resort)...")
-                            REVEAL_STATS["reveal_round_reached"] += 1
-                            with time_stage("reveal_round"):
-                                reveal = plan_reveal_round(state_mid, capacity, force_park=force_park, prev_state=prev_state)
-                            if reveal:
-                                REVEAL_STATS["reveal_round_used"] += 1
+                            print("  ℹ Deep-reveal found no buried targets — falling through")
+                            reveal = []
+                            # Consolidation: deep-reveal couldn't dig. If buried
+                            # unknowns remain but empties are the bottleneck, sort
+                            # known-only tubes to free a third empty so next
+                            # round's deep-reveal can reach depth-0 unknowns.
+                            empties_mid = sum(1 for t in state_mid if len(t) == 0)
+                            buried = any(UNKNOWN in t and not _exposes_unknown(t)
+                                         for t in state_mid)
+                            if buried and empties_mid < 3:
+                                REVEAL_STATS["consolidate_reached"] += 1
+                                with time_stage("consolidate"):
+                                    cons_moves, freed = plan_consolidate(
+                                        state_mid, capacity)
+                                if cons_moves:
+                                    REVEAL_STATS["consolidate_used"] += 1
+                                    reveal = cons_moves
+                                    print(f"  🔧 Consolidate: {len(cons_moves)} moves "
+                                          f"to free {freed} tube(s) for deep dig")
+                                else:
+                                    print("  ℹ Consolidation found no path to free "
+                                          "tubes — falling through")
+                            if not reveal:
+                                REVEAL_STATS["maximize_reached"] += 1
+                                with time_stage("maximize"):
+                                    reveal = plan_reveal_maximize(state_mid, capacity, prev_state=prev_state)
+                                if reveal:
+                                    REVEAL_STATS["maximize_used"] += 1
+                                else:
+                                    REVEAL_STATS["determinization_reached"] += 1
+                                    with time_stage("determinization"):
+                                        reveal = pick_best_move_by_determinization(state_mid, capacity)
+                                    if reveal:
+                                        REVEAL_STATS["determinization_used"] += 1
+                                    else:
+                                        print("  ℹ Maximizer + determinization empty — heuristic park (last resort)...")
+                                        REVEAL_STATS["reveal_round_reached"] += 1
+                                        with time_stage("reveal_round"):
+                                            reveal = plan_reveal_round(state_mid, capacity, force_park=force_park, prev_state=prev_state)
+                                        if reveal:
+                                            REVEAL_STATS["reveal_round_used"] += 1
 
                 # When empties are scarce a reveal batch can be executable yet
                 # still strand the board (e.g. spend the last empty). Keep the
@@ -746,6 +818,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                 # Reconcile against the post-move board now, so reveals are
                 # recorded the same round they happen — even if the attempt ends
                 # next round (No more moves / stuck) before another read.
+                revealed_count = 0
                 if not dry_run and end_image is not None and sim is not None and sim.valid:
                     end_tubes, end_seen = read_tubes(end_image, config, return_colours=True)
                     end_label_to_rgb = {label: rgb for rgb, label in end_seen.items()}
@@ -772,10 +845,33 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                     else:
                         reconcile_tubes, reconcile_l2r = end_tubes, end_label_to_rgb
 
-                    for origin, rgb in sim.reconcile(reconcile_tubes, reconcile_l2r):
+                    revealed = sim.reconcile(reconcile_tubes, reconcile_l2r)
+                    for origin, rgb in revealed:
                         memory.record_slot(signature, origin[0], origin[1], rgb, capacity)
+                    revealed_count = len(revealed)
                     if not sim.valid:
                         print("  ⚠ Sim desynced from board — stopped attributing reveals.")
+
+                # Accumulate this round's executed moves into the attempt log,
+                # attributing the round's revealed-slot count across the moves that
+                # actually uncovered a hidden top (others get 0). Even integer split
+                # keeps sum(attempt_reveals) == total slots revealed this attempt.
+                if not dry_run and executed_moves:
+                    sim_state = state
+                    reveal_idxs = []
+                    for idx, (src, dst, n) in enumerate(executed_moves):
+                        sim_state, _ = apply_move(sim_state, src, dst, capacity)
+                        if sim_state[src] and sim_state[src][-1] == UNKNOWN:
+                            reveal_idxs.append(idx)
+                    per_move = [0] * len(executed_moves)
+                    if reveal_idxs and revealed_count:
+                        base, extra = divmod(revealed_count, len(reveal_idxs))
+                        for j, idx in enumerate(reveal_idxs):
+                            per_move[idx] = base + (1 if j < extra else 0)
+                    elif revealed_count:
+                        per_move[-1] = revealed_count   # fallback: credit last move
+                    attempt_moves.extend(executed_moves)
+                    attempt_reveals.extend(per_move)
 
                 if not dry_run:
                     print("  🔄 Restarting scrcpy...")
@@ -794,48 +890,74 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
             print(f"\n✗ Couldn't solve within {max_rounds} rounds this attempt.")
 
         # ── Attempt finished without solving — decide whether to retry ──
-        slots_after = memory.count(signature)
-        learned = slots_after - slots_before
-        if status == "no_moves":
-            print("  🚫 Attempt ended on 'No more moves!'.")
-        print(f"  📚 Learned {learned} new hidden slot(s) this attempt "
-              f"({slots_after} known total).")
+        # Tee this summary into rounds.txt too: the round loop's finally above
+        # already restored sys.stdout, so without this the 📝/📚/↩/✗ verdicts
+        # would print to the terminal but never reach the log.
+        _buf = io.StringIO()
+        _orig = sys.stdout
+        sys.stdout = _Tee(_orig, _buf)
+        try:
+            slots_after = memory.count(signature)
+            learned = slots_after - slots_before
+            if status == "no_moves":
+                print("  🚫 Attempt ended on 'No more moves!'.")
+            print(f"  📚 Learned {learned} new hidden slot(s) this attempt "
+                  f"({slots_after} known total).")
 
-        if dry_run:
-            return False
+            # Record dead-end outcomes so the info-gain scorer can steer away from
+            # paths that previously stranded the board (advisory; penalty decays as
+            # more slots become known). Solved/heal attempts are not recorded.
+            if not dry_run and signature and status in ("stuck", "no_moves"):
+                board_hash = _hash_board(last_state)
+                memory.record_attempt(signature, attempt_moves, attempt_reveals,
+                                       status, board_hash)
+                total_str = (f"{slots_after}/{total_hidden_slots}"
+                             if total_hidden_slots is not None else str(slots_after))
+                print(f"  📝 Recorded attempt {attempt} (outcome: {status}, "
+                      f"reveals: {sum(attempt_reveals)}, total_known: {total_str})")
 
-        # A fully-mapped board's next attempt becomes a full-information solve, so
-        # always grant one more attempt (let #1's self-heal handle a still-unsolved
-        # board). Patience tolerates a few barren attempts because the maximizer's
-        # randomized tie-breaking makes each retry explore a divergent path.
-        fully_mapped = (total_hidden_slots is not None
-                        and slots_after >= total_hidden_slots)
-        retry, barren_attempts, reason = decide_retry(
-            status, learned, fully_mapped, barren_attempts,
-            attempt, MAX_ATTEMPTS, give_up)
-
-        if retry:
-            reason_msg = {
-                "heal": "healing corrupt memory",
-                "learned": f"learned {learned} new slot(s)",
-                "fully_mapped": "board fully mapped",
-                "patience": f"patience {barren_attempts}/{PATIENCE}",
-            }[reason]
-            if reason == "patience":
-                REVEAL_STATS["patience_retry"] += 1
-            print(f"  ↩ Restarting level to retry ({reason_msg}) "
-                  f"(attempt {attempt + 1}/{MAX_ATTEMPTS})...")
-            if not tap_restart_level(config):
+            if dry_run:
                 return False
-            continue
 
-        if give_up:
-            print("  ✗ Giving up (memory corruption unrecoverable).")
-        elif attempt >= MAX_ATTEMPTS:
-            print(f"  ✗ Reached max attempts ({MAX_ATTEMPTS}) — giving up.")
-        else:
-            print(f"  ✗ No new slots learned in {PATIENCE} attempt(s) — giving up.")
-        return False
+            # A fully-mapped board's next attempt becomes a full-information solve, so
+            # always grant one more attempt (let #1's self-heal handle a still-unsolved
+            # board). Patience tolerates a few barren attempts because the maximizer's
+            # randomized tie-breaking makes each retry explore a divergent path.
+            fully_mapped = (total_hidden_slots is not None
+                            and slots_after >= total_hidden_slots)
+            retry, barren_attempts, reason = decide_retry(
+                status, learned, fully_mapped, barren_attempts,
+                attempt, MAX_ATTEMPTS, give_up)
+
+            if retry:
+                reason_msg = {
+                    "heal": "healing corrupt memory",
+                    "learned": f"learned {learned} new slot(s)",
+                    "fully_mapped": "board fully mapped",
+                    "patience": f"patience {barren_attempts}/{PATIENCE}",
+                }[reason]
+                if reason == "patience":
+                    REVEAL_STATS["patience_retry"] += 1
+                print(f"  ↩ Restarting level to retry ({reason_msg}) "
+                      f"(attempt {attempt + 1}/{MAX_ATTEMPTS})...")
+                if not tap_restart_level(config):
+                    return False
+                continue
+
+            if give_up:
+                print("  ✗ Giving up (memory corruption unrecoverable).")
+            elif attempt >= MAX_ATTEMPTS:
+                print(f"  ✗ Reached max attempts ({MAX_ATTEMPTS}) — giving up.")
+            else:
+                print(f"  ✗ No new slots learned in {PATIENCE} attempt(s) — giving up.")
+            return False
+        finally:
+            sys.stdout = _orig
+            if initial_saved:
+                screenshots_dir.mkdir(parents=True, exist_ok=True)
+                with open(log_file, 'a', encoding='utf-8') as f:
+                    f.write(f"\n{'='*40}\n  ATTEMPT {attempt} · SUMMARY\n{'='*40}\n")
+                    f.write(_buf.getvalue())
 
     return False
 

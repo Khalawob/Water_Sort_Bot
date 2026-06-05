@@ -29,6 +29,20 @@ SAFE_MAX_UNKNOWNS = 10      # only enumerate at/below this many unknowns
 SAFE_MAX_PERMS    = 200
 SAFE_MAX_STATES   = 20_000  # A* budget per completion solve
 
+# ── Info-gain reveal scorer tuning (see plan_reveal_info_gain) ────────
+# Base-score weights. Cascade (forced-deduction unlocks) is weighted highest
+# because it removes uncertainty outright; completion and heuristic delta are
+# softer progress signals. EMPTY_PENALTY discourages spending the last empty on
+# a reveal that neither completes nor empties a tube.
+IG_W_CASCADE     = 3.0
+IG_W_COMPLETION  = 2.0
+IG_W_HEURISTIC   = 1.0
+IG_EMPTY_PENALTY = 2.0
+# Outcome-memory adjustments (advisory soft nudges, never hard blocks).
+IG_DEADEND_PENALTY = 4.0    # decayed by 1/(1 + new_knowledge_since_that_attempt)
+IG_EXPLORE_BONUS   = 1.0    # decayed by 1/(1 + times tube was a reveal source)
+IG_OPENER_PENALTY  = 1.5    # repeating a past attempt's first move
+
 
 # ── Shared helpers ───────────────────────────────────────────────────
 
@@ -237,6 +251,39 @@ def plan_reveal_round(state, tube_capacity, force_park=False, prev_state=None):
     return moves
 
 
+def _exposes_unknown(tube):
+    """True if pouring the top run off ``tube`` would uncover an UNKNOWN slot."""
+    colour, run = get_top_run(tube)
+    if colour is None or colour == UNKNOWN:
+        return False
+    beneath = len(tube) - run - 1          # slot directly under the top run
+    return beneath >= 0 and tube[beneath] == UNKNOWN
+
+
+def _legal_reveal_dests(sim, src, capacity):
+    """Ranked legal destinations for evicting ``src``'s top run (best first).
+
+    Prefers a matching top where the colour is most accumulated / closest to pure
+    (so a reveal also makes sorting progress and conserves empties); an empty tube
+    is a last resort. Random tail breaks exact ties so barren retries diverge.
+    """
+    colour, _ = get_top_run(sim[src])
+    outs = []
+    for dst in range(len(sim)):
+        if dst == src or len(sim[dst]) >= capacity:
+            continue
+        if not sim[dst]:
+            outs.append((dst, (1, 0, 0, random.random())))
+        elif sim[dst][-1] == UNKNOWN:
+            continue                         # can't pour onto a hidden top
+        elif sim[dst][-1] == colour:
+            cnt = sim[dst].count(colour)
+            pure = all(c == colour for c in sim[dst])
+            outs.append((dst, (0, -cnt, 0 if pure else 1, random.random())))
+    outs.sort(key=lambda d: d[1])
+    return [d for d, _ in outs]
+
+
 def plan_reveal_maximize(state, tube_capacity, prev_state=None, max_moves=4):
     """Greedy reveal-maximizer.
 
@@ -246,49 +293,21 @@ def plan_reveal_maximize(state, tube_capacity, prev_state=None, max_moves=4):
     UNKNOWN — never pours a guessed colour. Returns [(src, dst, num_poured), ...]
     or [] if nothing can be revealed this round.
     """
-    def exposes_unknown(tube):
-        colour, run = get_top_run(tube)
-        if colour is None or colour == UNKNOWN:
-            return False
-        beneath = len(tube) - run - 1          # slot directly under the top run
-        return beneath >= 0 and tube[beneath] == UNKNOWN
-
-    def legal_dests(sim, src):
-        colour, _ = get_top_run(sim[src])
-        outs = []
-        for dst in range(len(sim)):
-            if dst == src or len(sim[dst]) >= tube_capacity:
-                continue
-            if not sim[dst]:
-                # empty: last resort. Random tail breaks ties among equal-rank dests.
-                outs.append((dst, (1, 0, 0, random.random())))
-            elif sim[dst][-1] == UNKNOWN:
-                continue                         # can't pour onto a hidden top
-            elif sim[dst][-1] == colour:
-                # matching top: prefer the tube where this colour is most
-                # accumulated / closest to pure, so a reveal also makes sorting
-                # progress and conserves empties. Random tail breaks exact ties.
-                cnt = sim[dst].count(colour)
-                pure = all(c == colour for c in sim[dst])
-                outs.append((dst, (0, -cnt, 0 if pure else 1, random.random())))
-        outs.sort(key=lambda d: d[1])
-        return [d for d, _ in outs]
-
     # Shallow unknowns first (they unlock deeper ones next round); ties broken by
     # smaller top run (cheaper to evict, burns less destination capacity), then
     # randomly so barren retries explore divergent paths.
     sources = sorted(
         (get_top_run(t)[1], random.random(), i)
-        for i, t in enumerate(state) if exposes_unknown(t)
+        for i, t in enumerate(state) if _exposes_unknown(t)
     )
 
     sim = tuple(tuple(t) for t in state)
     seen = {sim}
     moves = []
     for _, _, src in sources:
-        if not exposes_unknown(sim[src]):        # sim moved on; re-check
+        if not _exposes_unknown(sim[src]):       # sim moved on; re-check
             continue
-        for dst in legal_dests(sim, src):
+        for dst in _legal_reveal_dests(sim, src, tube_capacity):
             nxt, n = apply_move(sim, src, dst, tube_capacity)
             if n == 0 or nxt in seen or nxt == prev_state:
                 continue
@@ -299,6 +318,347 @@ def plan_reveal_maximize(state, tube_capacity, prev_state=None, max_moves=4):
         if len(moves) >= max_moves:
             break
     return moves
+
+
+def _count_unknowns(state):
+    return sum(slot == UNKNOWN for tube in state for slot in tube)
+
+
+def _outcome_memory_indices(attempt_log):
+    """Build the three outcome-memory indices the reveal scorers share.
+
+    Returns ``(deadend_new_knowledge, explore_used, past_openers)``:
+      - ``deadend_new_knowledge``: ``{(src, dst): knowledge_since}`` — for each move
+        played into a past dead-end, how many slots were learnt in *later* attempts
+        (penalty decays as that grows). The most-recent dead-end wins per move.
+      - ``explore_used``: ``{src: count}`` — how often a tube was a *productive*
+        reveal source across past attempts (bonus decays as it grows).
+      - ``past_openers``: set of ``(src, dst)`` first moves tried before.
+    """
+    attempt_log = attempt_log or []
+    deadend_log = [e for e in attempt_log
+                   if e.get("outcome") in ("stuck", "no_moves")]
+    deadend_new_knowledge = {}
+    for i, e in enumerate(deadend_log):
+        later_knowledge = sum(x.get("total_reveals", 0) for x in deadend_log[i + 1:])
+        for m in e.get("moves", []):
+            deadend_new_knowledge[(m[0], m[1])] = later_knowledge  # later i overwrites
+    explore_used = {}
+    for e in attempt_log:
+        for m, rev in zip(e.get("moves", []), e.get("reveals_per_move", [])):
+            if rev > 0:
+                explore_used[m[0]] = explore_used.get(m[0], 0) + 1
+    past_openers = {(e["moves"][0][0], e["moves"][0][1])
+                    for e in attempt_log if e.get("moves")}
+    return deadend_new_knowledge, explore_used, past_openers
+
+
+def _reveal_base_proxies(after, src, exposed_pos, possible_colours,
+                         known_counts, base_h, capacity):
+    """Score a freshly-exposed UNKNOWN slot by the shared info-gain proxies.
+
+    ``after`` is a board where ``after[src][exposed_pos]`` is the UNKNOWN slot the
+    reveal uncovers (the new source top). Trying each colour the slot could hold,
+    returns ``(cascade, completion, heuristic_delta)``:
+      - ``cascade``: how many candidate colours force *additional* deductions.
+      - ``completion``: best colour-completion proximity (one-short-of-full ≈ 1.0).
+      - ``heuristic_delta``: average heuristic improvement (positive = better).
+    """
+    cascade = 0
+    completion = 0.0
+    deltas = []
+    for colour in possible_colours:
+        trial = [list(t) for t in after]
+        trial[src][exposed_pos] = colour
+        trial = tuple(tuple(t) for t in trial)
+
+        # Cascade: did setting this one slot force *additional* deductions?
+        deduced = deduce_hidden_slots(trial, capacity)
+        if _count_unknowns(deduced) < _count_unknowns(trial):
+            cascade += 1
+        # Heuristic improvement (positive = better).
+        deltas.append(base_h - heuristic(trial))
+        # Completion proximity: this colour one short of full scores ~1.0.
+        completion = max(completion,
+                         (known_counts.get(colour, 0) + 1) / capacity)
+
+    heuristic_delta = sum(deltas) / len(deltas) if deltas else 0.0
+    return cascade, completion, heuristic_delta
+
+
+def plan_reveal_info_gain(tubes, capacity, attempt_log=None):
+    """Rank candidate reveal moves by cheap information-gain proxies (no A*).
+
+    A *candidate* pours the top run off a tube whose run sits directly on an
+    UNKNOWN slot (same condition as ``_exposes_unknown``), uncovering that slot.
+    One candidate per source tube, using its single best legal destination.
+
+    Each candidate is scored against the set of colours the hidden slot could
+    hold (the distinct completion-pool colours) by four base proxies — cascade
+    potential (forced deductions unlocked), colour-completion proximity, average
+    heuristic improvement, and empty conservation — then softly adjusted using
+    ``attempt_log`` (dead-end penalty, exploration bonus, opener diversity).
+
+    Returns ``(moves, top_score)`` where ``moves`` is a list of ``(src, dst, n)``
+    tuples sorted by score descending. Returns ``([], 0.0)`` when no tube exposes
+    an unknown (caller falls back to the maximizer).
+    """
+    state = tuple(tuple(t) for t in tubes)
+
+    # Colours the hidden slot could take: distinct completion-pool colours
+    # (visible deficits + phantom groups for fully-hidden colours). Fall back to
+    # visible known colours if the board can't be pooled (structurally odd).
+    pool = _build_completion_pool(state, capacity)
+    possible_colours = sorted(set(pool)) if pool else sorted(count_colour_occurrences(state))
+
+    known_counts = count_colour_occurrences(state)
+    base_h = heuristic(state)
+
+    # ── Outcome-memory indices (built once, shared with plan_reveal_deep) ──
+    deadend_new_knowledge, explore_used, past_openers = \
+        _outcome_memory_indices(attempt_log)
+
+    scored = []
+    for src in range(len(state)):
+        if not _exposes_unknown(state[src]):
+            continue
+        dests = _legal_reveal_dests(state, src, capacity)
+        if not dests:
+            continue
+        dst = dests[0]
+        after, n = apply_move(state, src, dst, capacity)
+        if n == 0:
+            continue
+        # Exposed slot is the new top of the source after the pour.
+        exposed_pos = len(after[src]) - 1
+        if exposed_pos < 0 or after[src][exposed_pos] != UNKNOWN:
+            continue
+
+        cascade, completion, heuristic_delta = _reveal_base_proxies(
+            after, src, exposed_pos, possible_colours,
+            known_counts, base_h, capacity)
+
+        # Empty conservation: penalise spending the last empty on a reveal that
+        # neither completes a tube nor empties the source.
+        empties_after = sum(1 for t in after if len(t) == 0)
+        src_after = after[src]
+        dst_after = after[dst]
+        completes = (len(dst_after) == capacity
+                     and len(set(dst_after)) == 1
+                     and UNKNOWN not in dst_after)
+        empties_src = len(src_after) == 0
+        empty_pen = (IG_EMPTY_PENALTY
+                     if empties_after < 1 and not (completes or empties_src)
+                     else 0.0)
+
+        score = (IG_W_CASCADE * cascade
+                 + IG_W_COMPLETION * completion
+                 + IG_W_HEURISTIC * heuristic_delta
+                 - empty_pen)
+
+        # ── Outcome-memory adjustments (advisory, never hard blocks) ──
+        if attempt_log:
+            if (src, dst) in deadend_new_knowledge:
+                nk = deadend_new_knowledge[(src, dst)]
+                score -= IG_DEADEND_PENALTY / (1 + nk)
+            score += IG_EXPLORE_BONUS / (1 + explore_used.get(src, 0))
+            if (src, dst) in past_openers:
+                score -= IG_OPENER_PENALTY
+
+        scored.append((score, src, dst, n))
+
+    if not scored:
+        return [], 0.0
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    moves = [(src, dst, n) for _, src, dst, n in scored]
+    return moves, scored[0][0]
+
+
+def plan_reveal_deep(state, capacity, max_depth=3, attempt_log=None):
+    """Dig 2–3 known top runs off one source tube to expose a *buried* UNKNOWN.
+
+    Once memory overlay fills most hidden slots, the survivors sit 2–3 layers
+    under known balls, so the planners gated on ``_exposes_unknown`` (info-gain,
+    maximizer) all return empty and the bot cycles. This planner peels the top
+    run off a single source repeatedly — into the best legal destination each
+    time (``_legal_reveal_dests``) — until a pour surfaces the buried UNKNOWN as
+    the new source top, never pouring an unknown itself.
+
+    Each candidate digs ONE source only and is scored with the *same* proxies as
+    ``plan_reveal_info_gain`` (evaluated on the finally-exposed unknown slot),
+    minus a depth penalty so shorter digs win, the empty-conservation penalty,
+    and the shared outcome-memory adjustments keyed on the dig's opener/source.
+
+    Returns ``(moves, top_score)`` for the single best peel sequence, or
+    ``([], 0.0)`` if no tube can be dug to a buried unknown. No A*.
+    """
+    state = tuple(tuple(t) for t in state)
+
+    pool = _build_completion_pool(state, capacity)
+    possible_colours = sorted(set(pool)) if pool else sorted(count_colour_occurrences(state))
+    known_counts = count_colour_occurrences(state)
+    base_h = heuristic(state)
+    deadend_new_knowledge, explore_used, past_openers = \
+        _outcome_memory_indices(attempt_log)
+
+    candidates = []
+    for src in range(len(state)):
+        tube = state[src]
+        # Only buried unknowns: a tube that has an UNKNOWN but doesn't expose one
+        # directly (the directly-exposing case is info-gain's job).
+        if UNKNOWN not in tube or _exposes_unknown(tube):
+            continue
+
+        sim = state
+        moves = []
+        completed_a_tube = False
+        exposed = False
+        for _ in range(max_depth):
+            top_colour, _run = get_top_run(sim[src])
+            if top_colour == UNKNOWN:
+                break                                  # can't pour unknowns
+            dests = _legal_reveal_dests(sim, src, capacity)
+            if not dests:
+                break                                  # no legal destination
+            dst = dests[0]
+            after, n = apply_move(sim, src, dst, capacity)
+            if n == 0:
+                break
+            moves.append((src, dst, n))
+            sim = after
+            dst_after = sim[dst]
+            if (len(dst_after) == capacity and len(set(dst_after)) == 1
+                    and UNKNOWN not in dst_after):
+                completed_a_tube = True
+            if not sim[src]:
+                break                                  # emptied before reaching unknown
+            if sim[src][-1] == UNKNOWN:
+                exposed = True                         # buried unknown surfaced
+                break
+
+        if not exposed or not moves:
+            continue
+
+        exposed_pos = len(sim[src]) - 1
+        cascade, completion, heuristic_delta = _reveal_base_proxies(
+            sim, src, exposed_pos, possible_colours,
+            known_counts, base_h, capacity)
+
+        score = (IG_W_CASCADE * cascade
+                 + IG_W_COMPLETION * completion
+                 + IG_W_HEURISTIC * heuristic_delta)
+
+        # Depth penalty: prefer shorter digs (single-pour digs unpenalised).
+        score -= 0.5 * (len(moves) - 1)
+
+        # Empty conservation: penalise a dig that spends the last empty without
+        # completing a tube (source-emptying digs are already skipped above).
+        empties_after = sum(1 for t in sim if len(t) == 0)
+        if empties_after < 1 and not completed_a_tube:
+            score -= IG_EMPTY_PENALTY
+
+        # Outcome-memory adjustments (advisory), keyed on the dig opener/source.
+        if attempt_log:
+            opener = (moves[0][0], moves[0][1])
+            if opener in deadend_new_knowledge:
+                score -= IG_DEADEND_PENALTY / (1 + deadend_new_knowledge[opener])
+            score += IG_EXPLORE_BONUS / (1 + explore_used.get(src, 0))
+            if opener in past_openers:
+                score -= IG_OPENER_PENALTY
+
+        candidates.append((score, moves))
+
+    if not candidates:
+        return [], 0.0
+
+    candidates.sort(key=lambda c: c[0], reverse=True)
+    return candidates[0][1], candidates[0][0]
+
+
+def plan_consolidate(state, capacity, needed_empties=None):
+    """BFS short sorting sequences among KNOWN-ONLY tubes to free empties.
+
+    Used when deep-reveal can't dig because empties are the bottleneck. Finds a
+    move sequence that merges known balls to reach >= needed_empties empty tubes,
+    so next round's deep-reveal has a destination for its deepest peel.
+
+    Constraint: never pours an unknown ball. The BFS may freely use tubes with
+    unknowns buried below known balls — only tubes whose current TOP is UNKNOWN
+    are excluded (they can't be a source or destination). Buried unknowns never
+    move (apply_move stops at the UNKNOWN layer; valid_moves only pours onto a
+    matching known top), so the memory overlay stays valid. Returns
+    (moves, empties_created); ([], 0) if no path.
+    """
+    state = tuple(tuple(t) for t in state)
+
+    def count_empties(s):
+        return sum(1 for t in s if not t)
+
+    start_empties = count_empties(state)
+    if needed_empties is None:
+        # Free just one more tube than currently available (0→1, 1→2, 2→3).
+        # A fixed target of 3 from 0 empties is unreachable in MAX_MOVES; an
+        # adaptive +1 target lets the bot incrementally create space per round.
+        needed_empties = start_empties + 1
+    if start_empties >= needed_empties:
+        return [], 0
+
+    # Excludes only tubes whose current TOP is UNKNOWN (can't pour from/to them).
+    # Tubes with unknowns buried below known balls are fair game: the unknown's
+    # position never changes (apply_move stops at the UNKNOWN layer, and pours
+    # only land on matching known tops), so membership stays constant.
+    allowed = frozenset(
+        i for i, t in enumerate(state)
+        if not t or t[-1] != UNKNOWN  # empty tubes OK, known-top tubes OK
+    )
+
+    print(f"  🔧 Consolidation BFS: {len([i for i in allowed if state[i]])} usable tubes, "
+          f"{start_empties} empties, target {needed_empties}")
+
+    MAX_STATES = 50_000        # dequeued expansions
+    MAX_MOVES = 8              # longest sorting sequence considered
+
+    queue = deque([(state, [])])
+    seen = {state}
+    explored = 0
+    best_moves = None
+    best_empties = -1
+
+    while queue and explored < MAX_STATES:
+        cur, path = queue.popleft()
+        # A deeper parent can only produce longer/equal goals — can't improve on
+        # a goal we already have. Shorter parents still expand (filling the level
+        # so the max-empties tiebreak sees every equal-length goal).
+        if best_moves is not None and len(path) >= len(best_moves):
+            continue
+        if len(path) >= MAX_MOVES:
+            continue
+        explored += 1
+
+        for src, dst in valid_moves(cur, capacity, restrict_empties=True):
+            if src not in allowed or dst not in allowed:
+                continue
+            nxt, n = apply_move(cur, src, dst, capacity)
+            if n == 0 or nxt in seen:
+                continue
+            seen.add(nxt)
+            npath = path + [(src, dst, n)]
+            emp = count_empties(nxt)
+            if emp >= needed_empties:
+                created = emp - start_empties
+                if (best_moves is None
+                        or len(npath) < len(best_moves)
+                        or (len(npath) == len(best_moves) and created > best_empties)):
+                    best_moves = npath
+                    best_empties = created
+                # Goal state is terminal — don't expand it further.
+            else:
+                queue.append((nxt, npath))
+
+    if best_moves is None:
+        return [], 0
+    return best_moves, best_empties
 
 
 def find_reclaim_moves(state, tube_capacity):

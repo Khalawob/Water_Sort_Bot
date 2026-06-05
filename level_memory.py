@@ -97,6 +97,34 @@ class LevelMemory:
         entry["initial_slots"][f"{tube},{depth}"] = [int(c) for c in rgb]
         self._save()
 
+    def record_attempt(self, signature, moves, reveals_per_move, outcome,
+                       board_hash=None):
+        """Append one attempt's outcome to this level's attempt log and persist.
+
+        ``moves`` is a list of ``(src, dst, count)`` tuples; ``reveals_per_move``
+        is a parallel list of ints (hidden slots that move uncovered); ``outcome``
+        is "stuck", "no_moves", or "solved"; ``board_hash`` is an optional snapshot
+        of the board when it got stuck (for dead-end detection). Coexists with
+        entries created by ``record_slot`` (which don't pre-create ``attempt_log``).
+        """
+        entry = self.data.setdefault(
+            signature, {"initial_slots": {}, "capacity": None}
+        )
+        entry.setdefault("attempt_log", []).append({
+            "moves": [list(m) for m in moves],
+            "reveals_per_move": list(reveals_per_move),
+            "outcome": outcome,
+            "board_hash": board_hash,
+            "total_reveals": sum(reveals_per_move),
+        })
+        self._save()
+
+    def get_attempt_log(self, signature):
+        """Return the list of attempt entries for the signature (empty if unseen)."""
+        if not signature:
+            return []
+        return self.data.get(signature, {}).get("attempt_log", [])
+
     def delete(self, signature):
         """Remove a level's entry and persist. No-op if the signature is absent."""
         if signature in self.data:
