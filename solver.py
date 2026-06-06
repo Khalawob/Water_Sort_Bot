@@ -876,21 +876,16 @@ def _build_completion_pool(state, tube_capacity):
 
 
 def is_late_game(state, max_unknowns=5):
-    """True when all remaining unknowns are at depth 0 (tube bottom).
+    """True when few enough unknowns remain for the full-solve strategy.
 
-    Each tube that still holds an UNKNOWN must hold it solely at index 0 (the
-    bottom slot) — any deeper or additional unknown disqualifies the board. Caps
-    at ``max_unknowns`` such tubes so the full-solve completion space stays small.
-    Called after the memory overlay, so recalled slots are already filled in.
+    Returns True when the total number of UNKNOWN slots across all tubes is
+    between 1 and ``max_unknowns`` inclusive.  Called after the memory overlay,
+    so recalled slots are already filled in.  Unlike the previous version, this
+    does NOT require unknowns to be at depth 0 — the late-game execution loop
+    handles unknowns at any depth by detecting when a pour exposes one as the
+    tube's new top.
     """
-    total = 0
-    for t in state:
-        unknown_positions = [i for i, ball in enumerate(t) if ball == UNKNOWN]
-        if not unknown_positions:
-            continue
-        if unknown_positions != [0]:
-            return False                       # unknown NOT solely at depth 0
-        total += 1
+    total = sum(1 for t in state for ball in t if ball == UNKNOWN)
     return 0 < total <= max_unknowns
 
 

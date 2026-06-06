@@ -373,14 +373,14 @@ def _majority_read(reads, tol=5):
     return consensus_tubes, consensus_l2r
 
 
-def _read_exposed_slot(config, src, settle=1.0):
-    """Read the colour of a freshly-exposed bottom slot in tube ``src``.
+def _read_exposed_slot(config, src, depth=0, settle=1.0):
+    """Read the colour of a freshly-exposed slot at ``depth`` in tube ``src``.
 
-    Used by the late-game full-solve path after a peel leaves tube ``src`` holding
-    only its (now-revealed) bottom ball. Waits ``settle`` for the pour animation,
-    then majority-votes 3 ADB reads (same machinery as the round reconciliation)
-    so a mid-animation frame can't poison the read. Returns the slot's RGB tuple,
-    or ``None`` when the slot still reads UNKNOWN / has no 2-of-3 consensus.
+    Used by the late-game full-solve path after a peel leaves the unknown as the
+    tube's top (index ``depth``). Waits ``settle`` for the pour animation, then
+    majority-votes 3 ADB reads (same machinery as the round reconciliation) so a
+    mid-animation frame can't poison the read. Returns the slot's RGB tuple, or
+    ``None`` when the slot still reads UNKNOWN / has no 2-of-3 consensus.
     """
     time.sleep(settle)
     reads = []
@@ -395,9 +395,9 @@ def _read_exposed_slot(config, src, settle=1.0):
         return None
 
     reconcile_tubes, reconcile_l2r = _majority_read(reads)
-    if src >= len(reconcile_tubes) or not reconcile_tubes[src]:
+    if src >= len(reconcile_tubes) or depth >= len(reconcile_tubes[src]):
         return None
-    label = reconcile_tubes[src][0]
+    label = reconcile_tubes[src][depth]
     if label == UNKNOWN:
         return None
     return reconcile_l2r[label]
@@ -406,8 +406,8 @@ def _read_exposed_slot(config, src, settle=1.0):
 def run_late_game(state, capacity, memory, signature, attempt_moves,
                   attempt_reveals, config, label_to_rgb):
     """Late-game full-solve: execute a sampled complete solution, pausing to read
-    each depth-0 unknown as a peel exposes it, then re-solving from the corrected
-    board (see plan: re-plan on every exposure).
+    each unknown as it becomes the tube's top (at any depth), then re-solving from
+    the corrected board.
 
     Returns one of:
       "solved"     — the board was driven to completion.
@@ -454,19 +454,21 @@ def run_late_game(state, capacity, memory, signature, attempt_moves,
             sim_state, _ = apply_move(sim_state, src, dst, capacity)
             attempt_moves.append((src, dst, n))
 
-            # Exposure: peel emptied the known balls above a depth-0 unknown.
-            if len(sim_state[src]) == 1 and sim_state[src][0] == UNKNOWN:
+            # Exposure: pouring stripped the last known ball above an unknown,
+            # making it the tube's new top.  Works at any depth.
+            if sim_state[src] and sim_state[src][-1] == UNKNOWN:
                 attempt_reveals.append(1)
-                rgb = _read_exposed_slot(config, src)
+                depth = len(sim_state[src]) - 1
+                rgb = _read_exposed_slot(config, src, depth)
                 if rgb is None:
                     print(f"  ⚠ Couldn't read exposed slot in tube {src+1} — "
                           "stopping late-game (will re-read next round).")
                     return "dirty"
 
-                # Origin == current position: a depth-0 unknown never moves
-                # (apply_move never pours UNKNOWN), so it has sat at (src, 0) since
-                # the start.
-                memory.record_slot(signature, src, 0, rgb, capacity)
+                # Origin == current position: apply_move never pours UNKNOWN
+                # and nothing below an unknown can be removed, so it sits at its
+                # original index throughout execution.
+                memory.record_slot(signature, src, depth, rgb, capacity)
 
                 # Map RGB → label so the re-solve treats a re-seen visible colour
                 # as that colour (keeps the completion pool consistent).
@@ -479,10 +481,10 @@ def run_late_game(state, capacity, memory, signature, attempt_moves,
                     late_counter += 1
                     label = f"late_{late_counter}"
                     label_to_rgb[label] = rgb
-                print(f"  🧠 Tube {src+1} bottom revealed → {label}; recorded to memory.")
+                print(f"  🧠 Tube {src+1} depth {depth} revealed → {label}; recorded to memory.")
 
                 tubes = [list(t) for t in sim_state]
-                tubes[src][0] = label
+                tubes[src][-1] = label
                 sim_state = tuple(tuple(t) for t in tubes)
 
                 replanned = True
