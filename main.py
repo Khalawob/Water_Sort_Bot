@@ -52,6 +52,12 @@ PATIENCE = 3
 # risk is real); with more empties than this the batch can't strand the board.
 REVEAL_SOLVABILITY_EMPTY_GATE = 1
 
+# Skip solvability scoring when too many unknowns remain: each sample fills all
+# unknowns and A*-solves (~15-20s), and most random completions are unsolvable,
+# so the estimate is noise. Late-game fires at <=5 unknowns, so scoring only
+# meaningfully helps in the 6-8 range; above this the cost is wasted.
+SCORE_PREFIX_MAX_UNKNOWNS = 8
+
 # Instrumentation: how often each reveal planner is reached vs. actually used.
 REVEAL_STATS = {
     "safe_reached": 0, "safe_used": 0,
@@ -513,6 +519,10 @@ def select_reveal_prefix(state, reveal, capacity, empties):
     """
     if not reveal or empties > REVEAL_SOLVABILITY_EMPTY_GATE:
         return reveal
+    # With many unknowns, sampled solvability is too noisy to be useful
+    unknown_count = sum(1 for t in state for s in t if s == UNKNOWN)
+    if unknown_count > SCORE_PREFIX_MAX_UNKNOWNS:
+        return reveal
 
     # Sample the solvable base ONCE and score every prefix against the same set
     # (shared common random numbers): each prefix still gets a full sample, but
@@ -621,6 +631,7 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
         force_park = False
         status = "stuck"
         give_up = False          # set by second-corruption recovery (terminal)
+        restarted_for_late_game = False   # restart-for-clean-slate allowed once per attempt
         seen_signatures = set()
         attempt_moves = []       # flat (src, dst, count) executed this attempt
         attempt_reveals = []     # parallel per-move hidden-slot reveal counts
@@ -798,6 +809,19 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                 skip_safe = False
                 path_to_unknown = None
                 if is_late_game(state) and not dry_run:
+                    # If the board has been modified this attempt and we haven't
+                    # already restarted for late-game, restart to give A* a clean
+                    # board with maximum empty tubes.
+                    if not restarted_for_late_game and len(attempt_moves) > 0:
+                        print("  🎯 Late-game detected on modified board — "
+                              "restarting for clean slate")
+                        if not tap_restart_level(config):
+                            return False
+                        restarted_for_late_game = True
+                        seen_signatures.clear()   # fresh board, reset cycle detection
+                        prev_state = None          # no "previous state" after restart
+                        continue                   # next round: screenshot → overlay → late-game on fresh board
+
                     print("  🎯 Late-game detected — ≤5 unknowns remain, "
                           "running full-solve strategy")
                     result = run_late_game(state, capacity, memory, signature,
