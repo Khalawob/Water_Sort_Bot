@@ -889,7 +889,7 @@ def is_late_game(state, max_unknowns=5):
     return 0 < total <= max_unknowns
 
 
-def plan_late_game_solve(state, capacity, max_samples=5):
+def plan_late_game_solve(state, capacity, max_samples=20):
     """Sample a completion of the UNKNOWN slots and A*-solve the full board.
 
     Returns ``(moves, completed_state)`` for the first solvable sample, or
@@ -908,6 +908,47 @@ def plan_late_game_solve(state, capacity, max_samples=5):
         solution = solve(filled, capacity)
         if solution:
             return solution, filled
+    return None
+
+
+def find_path_to_unknown(state, capacity, max_moves=8, max_states=50_000):
+    """Shortest move sequence that exposes ANY hidden UNKNOWN as a tube's top.
+
+    Unlike the A* solver (goal = fully solved) this BFS only needs to surface one
+    buried unknown so the reveal/read loop can make progress. It may shuffle balls
+    across MULTIPLE tubes to clear room for a peel — something the single-source
+    digging planners (deep-reveal, maximize) can't do. Reuses valid_moves /
+    apply_move, never pours an UNKNOWN (apply_move enforces this).
+
+    Returns a list of (src, dst, num_poured) tuples (possibly []), or None if no
+    exposing path exists within budget.
+    """
+    state = tuple(tuple(t) for t in state)
+
+    def exposes(s):                       # any tube whose current top is hidden
+        return any(t and t[-1] == UNKNOWN for t in s)
+
+    if exposes(state):                    # already exposed → no moves needed
+        return []
+
+    queue = deque([(state, [])])
+    seen = {state}
+    explored = 0
+    while queue and explored < max_states:
+        cur, path = queue.popleft()
+        explored += 1
+        if len(path) >= max_moves:
+            continue
+        for src, dst in valid_moves(cur, capacity, restrict_empties=True):
+            nxt, n = apply_move(cur, src, dst, capacity)
+            if n == 0 or nxt in seen:
+                continue
+            npath = path + [(src, dst, n)]
+            # Goal: this move uncovered an unknown as src's NEW top.
+            if nxt[src] and nxt[src][-1] == UNKNOWN:
+                return npath
+            seen.add(nxt)
+            queue.append((nxt, npath))
     return None
 
 

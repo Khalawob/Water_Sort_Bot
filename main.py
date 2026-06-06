@@ -27,6 +27,7 @@ from solver import (
     pick_best_move_by_determinization, validate_move_sequence,
     find_guaranteed_safe_moves, score_reveal_batch,
     sample_solvable_completions, is_late_game, plan_late_game_solve,
+    find_path_to_unknown,
 )
 from screen_reader import (
     detect_no_more_moves,
@@ -60,6 +61,7 @@ REVEAL_STATS = {
     "maximize_reached": 0, "maximize_used": 0,
     "reveal_round_reached": 0, "reveal_round_used": 0,
     "determinization_reached": 0, "determinization_used": 0,
+    "path_to_unknown_reached": 0, "path_to_unknown_used": 0,
     "heal": 0, "patience_retry": 0,
 }
 
@@ -70,6 +72,7 @@ REVEAL_TIMES = {
     "safe": [0.0, 0], "info_gain": [0.0, 0], "deep": [0.0, 0],
     "consolidate": [0.0, 0],
     "maximize": [0.0, 0], "determinization": [0.0, 0], "reveal_round": [0.0, 0],
+    "path_to_unknown": [0.0, 0],
     "score_prefix": [0.0, 0], "full_solve": [0.0, 0],
 }
 
@@ -91,7 +94,7 @@ def time_stage(stage):
 def print_reveal_stats():
     s = REVEAL_STATS
     print("\n=== Reveal planner stats ===")
-    for stage in ("safe", "info_gain", "deep", "consolidate", "maximize", "reveal_round", "determinization"):
+    for stage in ("safe", "info_gain", "deep", "consolidate", "maximize", "reveal_round", "determinization", "path_to_unknown"):
         reached = s[f"{stage}_reached"]
         used = s[f"{stage}_used"]
         pct = (100 * used / reached) if reached else 0.0
@@ -102,7 +105,8 @@ def print_reveal_stats():
     print("\n=== Reveal planner timings ===")
     print(f"  {'stage':16s} {'total':>9s} {'calls':>6s} {'mean':>10s}")
     for stage in ("safe", "info_gain", "deep", "consolidate", "maximize",
-                  "determinization", "reveal_round", "score_prefix", "full_solve"):
+                  "determinization", "reveal_round", "path_to_unknown",
+                  "score_prefix", "full_solve"):
         total, calls = t[stage]
         mean_ms = (1000 * total / calls) if calls else 0.0
         print(f"  {stage:16s} {total:8.2f}s {calls:6d} {mean_ms:8.1f}ms")
@@ -791,8 +795,10 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                 # unreachable by the reveal chain. Sample a completion, A*-solve the
                 # full board, and execute it — pausing to read each unknown as a peel
                 # exposes it, re-solving from the corrected board each time.
+                skip_safe = False
+                path_to_unknown = None
                 if is_late_game(state) and not dry_run:
-                    print("  🎯 Late-game detected — all unknowns at depth 0, "
+                    print("  🎯 Late-game detected — ≤5 unknowns remain, "
                           "running full-solve strategy")
                     result = run_late_game(state, capacity, memory, signature,
                                            attempt_moves, attempt_reveals, config,
@@ -805,8 +811,19 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                     if result == "dirty":
                         print("  ↻ Late-game stopped early — re-reading board next round.")
                         continue          # board changed; re-screenshot, don't tap on stale state
-                    print("  ⚠ Late-game couldn't plan — falling back to reveal chain")
                     # "clean_fail": nothing executed, `state` still valid → fall through.
+                    print("  ⚠ Late-game couldn't plan — trying path-to-unknown BFS")
+                    skip_safe = True                  # A* proved no completion solvable; safe won't either
+                    REVEAL_STATS["path_to_unknown_reached"] += 1
+                    with time_stage("path_to_unknown"):
+                        path_to_unknown = find_path_to_unknown(state, capacity)
+                    if path_to_unknown:
+                        REVEAL_STATS["path_to_unknown_used"] += 1
+                        print(f"  🧭 Path-to-unknown: {len(path_to_unknown)} move(s) "
+                              "to expose a buried slot")
+                    else:
+                        print("  ℹ Path-to-unknown found nothing — falling through (safe skipped)")
+                    # fall through to reveal chain (state unchanged); skip_safe gates `safe`
 
                 # Unknowns remain: reclaim parking tubes first, then plan reveal round
                 print("\n🔄 Hidden slots remain — planning reveal round...")
@@ -825,15 +842,24 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                 # info-gain ranks reveals by uncertainty reduction + outcome memory;
                 # maximizer is the info-gain fallback; determinization handles buried
                 # unknowns; heuristic park is the genuine last resort.
+                reveal = None
                 reveal_source = None
-                REVEAL_STATS["safe_reached"] += 1
-                with time_stage("safe"):
-                    reveal = find_guaranteed_safe_moves(state_mid, capacity, prev_state=prev_state)
-                if reveal:
-                    REVEAL_STATS["safe_used"] += 1
-                    reveal_source = "safe"
-                    print(f"  🛡 {len(reveal)} guaranteed-safe move(s).")
-                else:
+
+                if path_to_unknown:
+                    # Late-game clean_fail produced a multi-tube peel path; use it
+                    # directly and skip the whole planner cascade below.
+                    reveal = path_to_unknown
+                    reveal_source = "path_to_unknown"
+                elif not skip_safe:
+                    REVEAL_STATS["safe_reached"] += 1
+                    with time_stage("safe"):
+                        reveal = find_guaranteed_safe_moves(state_mid, capacity, prev_state=prev_state)
+                    if reveal:
+                        REVEAL_STATS["safe_used"] += 1
+                        reveal_source = "safe"
+                        print(f"  🛡 {len(reveal)} guaranteed-safe move(s).")
+
+                if not reveal:
                     REVEAL_STATS["info_gain_reached"] += 1
                     with time_stage("info_gain"):
                         ig_moves, ig_score = plan_reveal_info_gain(
@@ -914,7 +940,8 @@ def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_n
                 # Only score prefixes for strategic planners (info-gain, deep-reveal).
                 # Safe is already solvability-checked; consolidate sorts known tubes
                 # (not a reveal); maximize/determinization/reveal_round are heuristic
-                # fallbacks where the 6s scoring cost exceeds the value.
+                # fallbacks where the 6s scoring cost exceeds the value; path_to_unknown
+                # is a shortest-path peel we want executed whole, not trimmed.
                 SCORE_WORTHY = {"info_gain", "deep"}
                 empties_now = sum(1 for t in state_mid if len(t) == 0)
                 if reveal_source in SCORE_WORTHY:
