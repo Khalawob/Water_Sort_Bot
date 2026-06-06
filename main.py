@@ -34,7 +34,7 @@ from screen_reader import (
     read_tubes, has_unknowns, load_config, save_config, calibrate,
     is_game_screen, wait_for_game_screen, colour_distance, CONFIG_PATH,
 )
-from level_memory import LevelMemory, AttemptSim
+from level_memory import LevelMemory, AttemptSim, MEMORY_PATH
 from capture import screenshot, launch_scrcpy, stop_scrcpy
 from automator import (
     adb_tap, human_delay, jittered_tap,
@@ -97,25 +97,32 @@ def time_stage(stage):
         print(f"  ⏱ {stage} {elapsed:.2f}s")
 
 
-def print_reveal_stats():
+def format_reveal_stats():
+    lines = []
     s = REVEAL_STATS
-    print("\n=== Reveal planner stats ===")
-    for stage in ("safe", "info_gain", "deep", "consolidate", "maximize", "reveal_round", "determinization", "path_to_unknown"):
+    lines.append("\n=== Reveal planner stats ===")
+    for stage in ("safe", "info_gain", "deep", "consolidate", "maximize",
+                  "reveal_round", "determinization", "path_to_unknown"):
         reached = s[f"{stage}_reached"]
         used = s[f"{stage}_used"]
         pct = (100 * used / reached) if reached else 0.0
-        print(f"  {stage:16s} reached {reached:4d}  used {used:4d}  ({pct:.0f}% hit)")
-    print(f"  {'heal':16s} {s['heal']:4d}   {'patience_retry':16s} {s['patience_retry']:4d}")
+        lines.append(f"  {stage:16s} reached {reached:4d}  used {used:4d}  ({pct:.0f}% hit)")
+    lines.append(f"  {'heal':16s} {s['heal']:4d}   {'patience_retry':16s} {s['patience_retry']:4d}")
 
     t = REVEAL_TIMES
-    print("\n=== Reveal planner timings ===")
-    print(f"  {'stage':16s} {'total':>9s} {'calls':>6s} {'mean':>10s}")
+    lines.append("\n=== Reveal planner timings ===")
+    lines.append(f"  {'stage':16s} {'total':>9s} {'calls':>6s} {'mean':>10s}")
     for stage in ("safe", "info_gain", "deep", "consolidate", "maximize",
                   "determinization", "reveal_round", "path_to_unknown",
                   "score_prefix", "full_solve"):
         total, calls = t[stage]
         mean_ms = (1000 * total / calls) if calls else 0.0
-        print(f"  {stage:16s} {total:8.2f}s {calls:6d} {mean_ms:8.1f}ms")
+        lines.append(f"  {stage:16s} {total:8.2f}s {calls:6d} {mean_ms:8.1f}ms")
+    return "\n".join(lines)
+
+
+def print_reveal_stats():
+    print(format_reveal_stats())
 
 
 def _rgb_signature(state, label_to_rgb):
@@ -599,6 +606,23 @@ def wait_for_detectable_tubes(image, existing_config, timeout=15,
 
 
 def solve_one_level(config, tube_capacity, dry_run=False, max_rounds=40, level_num=1):
+    """Solve a level, appending the reveal-planner stats to its rounds.txt on exit.
+
+    Thin wrapper around :func:`_solve_one_level_impl` so the stats snapshot is
+    written on every exit path (success, failure, or exception) without
+    threading a write through the impl's many return points.
+    """
+    screenshots_dir = Path(__file__).parent / "debug_screenshots" / f"level_{level_num:03d}"
+    log_file = screenshots_dir / "rounds.txt"
+    try:
+        return _solve_one_level_impl(config, tube_capacity, dry_run, max_rounds, level_num)
+    finally:
+        screenshots_dir.mkdir(parents=True, exist_ok=True)
+        with open(log_file, 'a', encoding='utf-8') as f:
+            f.write(format_reveal_stats() + "\n")
+
+
+def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, level_num=1):
     """
     Solve a level with auto-calibration and iterative reveal strategy.
 
@@ -1361,6 +1385,11 @@ def main():
     # ── Load existing config (for next_button) ──────────────────────
     config = load_config() or {}
     tube_capacity = config.get("tube_capacity", 4)
+
+    # Reset level memory for a fresh start
+    if MEMORY_PATH.exists():
+        MEMORY_PATH.unlink()
+        print("🧹 Reset level memory (level_memory.json)")
 
     # ── Launch scrcpy ───────────────────────────────────────────────
     if not args.dry_run:
