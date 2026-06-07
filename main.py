@@ -515,6 +515,95 @@ def run_late_game(state, capacity, memory, signature, attempt_moves,
         return "solved"
 
 
+def run_reveal_intervention(config, capacity, memory, signature, n_reveals=2):
+    """Restart-and-reveal loop: for each reveal cycle, restart the level to get
+    a clean board with empties, run find_path_to_unknown, execute the path,
+    read the exposed slot, and record it to memory.
+
+    Returns the number of slots successfully revealed.
+    """
+    revealed = 0
+    for i in range(n_reveals):
+        print(f"\n  🔬 Intervention reveal {i + 1}/{n_reveals}...")
+
+        # Restart to get a clean board with maximum empties
+        if not tap_restart_level(config):
+            print("  ⚠ Restart failed — aborting intervention")
+            break
+
+        # Screenshot + read
+        image = screenshot()
+        if image is None:
+            print("  ⚠ Screenshot failed — aborting intervention")
+            break
+        if not is_game_screen(image, config):
+            image = wait_for_game_screen(config, timeout=10)
+            if image is None:
+                print("  ⚠ Game not visible — aborting intervention")
+                break
+
+        tubes, valid, seen_colours = read_and_display(
+            image, config, capacity, return_colours=True)
+        label_to_rgb = {label: rgb for rgb, label in seen_colours.items()}
+
+        # Overlay known slots from memory
+        _overlay_learned_colours(
+            tubes, memory.get_initial_slots(signature),
+            seen_colours, label_to_rgb)
+
+        # Deduce forced slots
+        state = tuple(tuple(t) for t in tubes)
+        state = deduce_hidden_slots(state, capacity)
+
+        # Find a path to a buried unknown
+        path = find_path_to_unknown(state, capacity)
+        if not path:
+            print(f"  ℹ No path to unknown found — ending intervention")
+            break
+
+        print(f"  🧭 Found {len(path)} move(s) to expose a buried slot")
+
+        # Execute the path
+        execute_move_list(path, config, capacity)
+
+        # Simulate to find which tube has the exposed unknown
+        sim_state = state
+        exposed_src = None
+        exposed_depth = None
+        for src, dst, n in path:
+            sim_state, _ = apply_move(sim_state, src, dst, capacity)
+            if sim_state[src] and sim_state[src][-1] == UNKNOWN:
+                exposed_src = src
+                exposed_depth = len(sim_state[src]) - 1
+
+        if exposed_src is None:
+            print("  ⚠ No unknown exposed after executing path")
+            break
+
+        # Read the exposed slot's colour
+        rgb = _read_exposed_slot(config, exposed_src, exposed_depth)
+        if rgb is None:
+            print("  ⚠ Couldn't read exposed slot — ending intervention")
+            break
+
+        # Record to memory
+        memory.record_slot(signature, exposed_src, exposed_depth, rgb, capacity)
+
+        # Identify the colour label for logging
+        label = None
+        for name, known_rgb in label_to_rgb.items():
+            if colour_distance(rgb, known_rgb) < 5:
+                label = name
+                break
+        if label is None:
+            label = f"intervention_{i + 1}"
+
+        print(f"  🧠 Revealed tube {exposed_src + 1} depth {exposed_depth} → {label}")
+        revealed += 1
+
+    return revealed
+
+
 def select_reveal_prefix(state, reveal, capacity, empties):
     """Choose the reveal prefix that best preserves solvability.
 
@@ -656,6 +745,7 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
         status = "stuck"
         give_up = False          # set by second-corruption recovery (terminal)
         restarted_for_late_game = False   # restart-for-clean-slate allowed once per attempt
+        late_game_intervention_done = False
         seen_signatures = set()
         attempt_moves = []       # flat (src, dst, count) executed this attempt
         attempt_reveals = []     # parallel per-move hidden-slot reveal counts
@@ -861,6 +951,24 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                     if result == "dirty":
                         print("  ↻ Late-game stopped early — re-reading board next round.")
                         continue          # board changed; re-screenshot, don't tap on stale state
+                    if result == "clean_fail" and not late_game_intervention_done:
+                        late_game_intervention_done = True
+                        print("  🔬 Late-game failed — running reveal intervention "
+                              "to reduce unknowns")
+                        n_revealed = run_reveal_intervention(
+                            config, capacity, memory, signature)
+                        if n_revealed > 0:
+                            print(f"  🔬 Intervention revealed {n_revealed} slot(s) "
+                                  "— restarting for late-game retry")
+                            # Final restart so late-game gets a clean board
+                            if not tap_restart_level(config):
+                                return False
+                            # Reset round state since the board is now fresh
+                            sim = None
+                            prev_state = None
+                            seen_signatures.clear()
+                            continue
+                        print("  ℹ Intervention revealed nothing — falling through")
                     # "clean_fail": nothing executed, `state` still valid → fall through.
                     print("  ⚠ Late-game couldn't plan — trying path-to-unknown BFS")
                     skip_safe = True                  # A* proved no completion solvable; safe won't either

@@ -12,6 +12,7 @@ Moves are returned as (src, dst, num_poured).
 
 import math
 import random
+import time
 from collections import Counter, deque
 from functools import lru_cache
 from heapq import heappush, heappop
@@ -889,19 +890,26 @@ def is_late_game(state, max_unknowns=5):
     return 0 < total <= max_unknowns
 
 
-def plan_late_game_solve(state, capacity, max_samples=20):
+def plan_late_game_solve(state, capacity, max_samples=20, timeout=90):
     """Sample a completion of the UNKNOWN slots and A*-solve the full board.
 
     Returns ``(moves, completed_state)`` for the first solvable sample, or
     ``None`` if the board can't be pooled or no sample (of up to ``max_samples``)
     is solvable. ``moves`` is the full solution (typically 30–50 moves).
+
+    Sampling is time-boxed to ``timeout`` seconds; if exceeded the loop stops
+    early and ``None`` is returned via the normal no-solvable-sample path.
     """
+    start = time.perf_counter()
     pool = _build_completion_pool(state, capacity)
     num_unknowns = _count_unknowns(state)
     # None: structurally inconsistent. Length mismatch is defensive (misread).
     if pool is None or len(pool) != num_unknowns:
         return None
     for _ in range(max_samples):
+        if time.perf_counter() - start > timeout:
+            print(f"  ⏱ Late-game sampling timed out after {timeout}s")
+            break
         p = pool[:]
         random.shuffle(p)
         filled = _fill_unknowns(state, p)
