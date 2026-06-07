@@ -660,6 +660,8 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
         attempt_moves = []       # flat (src, dst, count) executed this attempt
         attempt_reveals = []     # parallel per-move hidden-slot reveal counts
         last_state = None        # most recent model board, for stuck board_hash
+        is_barren_retry = barren_attempts > 0
+        barren_path_tried = False
 
         for round_num in range(1, max_rounds + 1):
             _buf = io.StringIO()
@@ -892,6 +894,19 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                 # unknowns; heuristic park is the genuine last resort.
                 reveal = None
                 reveal_source = None
+
+                if is_barren_retry and not barren_path_tried and not path_to_unknown:
+                    barren_path_tried = True
+                    REVEAL_STATS["path_to_unknown_reached"] += 1
+                    with time_stage("path_to_unknown"):
+                        path_to_unknown = find_path_to_unknown(state_mid, capacity)
+                    if path_to_unknown:
+                        REVEAL_STATS["path_to_unknown_used"] += 1
+                        print(f"  🧭 Barren-retry path-to-unknown: {len(path_to_unknown)} move(s) "
+                              "to expose a buried slot")
+                    else:
+                        print("  ℹ Barren-retry path-to-unknown found nothing — "
+                              "falling through to normal cascade")
 
                 if path_to_unknown:
                     # Late-game clean_fail produced a multi-tube peel path; use it
