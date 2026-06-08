@@ -58,6 +58,9 @@ REVEAL_SOLVABILITY_EMPTY_GATE = 1
 # meaningfully helps in the 6-8 range; above this the cost is wasted.
 SCORE_PREFIX_MAX_UNKNOWNS = 8
 
+ENABLE_BARREN_PATH = False   # Gate: barren-retry find_path_to_unknown
+ENABLE_LATE_GAME_PATH = False  # Gate: find_path_to_unknown after late-game clean_fail
+
 # Instrumentation: how often each reveal planner is reached vs. actually used.
 REVEAL_STATS = {
     "safe_reached": 0, "safe_used": 0,
@@ -984,17 +987,20 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                             continue
                         print("  ℹ Intervention revealed nothing — falling through")
                     # "clean_fail": nothing executed, `state` still valid → fall through.
-                    print("  ⚠ Late-game couldn't plan — trying path-to-unknown BFS")
                     skip_safe = True                  # A* proved no completion solvable; safe won't either
-                    REVEAL_STATS["path_to_unknown_reached"] += 1
-                    with time_stage("path_to_unknown"):
-                        path_to_unknown = find_path_to_unknown(state, capacity)
-                    if path_to_unknown:
-                        REVEAL_STATS["path_to_unknown_used"] += 1
-                        print(f"  🧭 Path-to-unknown: {len(path_to_unknown)} move(s) "
-                              "to expose a buried slot")
+                    if ENABLE_LATE_GAME_PATH:
+                        print("  ⚠ Late-game couldn't plan — trying path-to-unknown BFS")
+                        REVEAL_STATS["path_to_unknown_reached"] += 1
+                        with time_stage("path_to_unknown"):
+                            path_to_unknown = find_path_to_unknown(state, capacity)
+                        if path_to_unknown:
+                            REVEAL_STATS["path_to_unknown_used"] += 1
+                            print(f"  🧭 Path-to-unknown: {len(path_to_unknown)} move(s) "
+                                  "to expose a buried slot")
+                        else:
+                            print("  ℹ Path-to-unknown found nothing — falling through (safe skipped)")
                     else:
-                        print("  ℹ Path-to-unknown found nothing — falling through (safe skipped)")
+                        print("  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through")
                     # fall through to reveal chain (state unchanged); skip_safe gates `safe`
 
                 # Unknowns remain: reclaim parking tubes first, then plan reveal round
@@ -1017,7 +1023,7 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                 reveal = None
                 reveal_source = None
 
-                if is_barren_retry and not barren_path_tried and not path_to_unknown:
+                if ENABLE_BARREN_PATH and is_barren_retry and not barren_path_tried and not path_to_unknown:
                     barren_path_tried = True
                     REVEAL_STATS["path_to_unknown_reached"] += 1
                     with time_stage("path_to_unknown"):

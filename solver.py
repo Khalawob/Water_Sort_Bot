@@ -31,6 +31,7 @@ SAFE_MAX_UNKNOWNS = 5       # only enumerate at/below this many unknowns; 6-10
 # the path taken ~89% of the time regardless) on large completion spaces.
 SAFE_MAX_PERMS    = 200
 SAFE_MAX_STATES   = 20_000  # A* budget per completion solve
+ENABLE_LATE_GAME_TIMEOUT = False  # Gate: time limit on plan_late_game_solve
 
 # ── Info-gain reveal scorer tuning (see plan_reveal_info_gain) ────────
 # Base-score weights. Cascade (forced-deduction unlocks) is weighted highest
@@ -907,7 +908,7 @@ def plan_late_game_solve(state, capacity, max_samples=20, timeout=90):
     if pool is None or len(pool) != num_unknowns:
         return None
     for _ in range(max_samples):
-        if time.perf_counter() - start > timeout:
+        if ENABLE_LATE_GAME_TIMEOUT and time.perf_counter() - start > timeout:
             print(f"  ⏱ Late-game sampling timed out after {timeout}s")
             break
         p = pool[:]
