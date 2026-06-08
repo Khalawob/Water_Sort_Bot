@@ -352,6 +352,11 @@
             5,
             1,
             1
+          ],
+          [
+            1,
+            5,
+            1
           ]
         ],
         "reveals_per_move": [
@@ -367,9 +372,10 @@
           0,
           0,
           0,
+          0,
           0
         ],
-        "outcome": "no_moves",
+        "outcome": "stuck",
         "board_hash": "32e577cf2eeb6f7b271a17d9d9fc391a1fa8b745",
         "total_reveals": 4
       },
@@ -468,8 +474,8 @@
           1,
           0
         ],
-        "outcome": "stuck",
-        "board_hash": "09163c073af3c954207653a6787e3b873fd9872c",
+        "outcome": "no_moves",
+        "board_hash": "54bad9b274b3215a6e133100adec5a9270735257",
         "total_reveals": 3
       },
       {
@@ -563,6 +569,16 @@
             4,
             0,
             1
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            0,
+            4,
+            1
           ]
         ],
         "reveals_per_move": [
@@ -583,9 +599,11 @@
           0,
           0,
           0,
+          0,
+          0,
           0
         ],
-        "outcome": "no_moves",
+        "outcome": "stuck",
         "board_hash": "75115c0192cbcc8e33a95a6c2a2706e106418579",
         "total_reveals": 1
       },
@@ -640,16 +658,6 @@
             1,
             5,
             1
-          ],
-          [
-            5,
-            1,
-            1
-          ],
-          [
-            1,
-            5,
-            1
           ]
         ],
         "reveals_per_move": [
@@ -662,12 +670,10 @@
           0,
           0,
           0,
-          0,
-          0,
           0
         ],
-        "outcome": "stuck",
-        "board_hash": "72cffc3df0d16247e811d14b5e8f86abcc56a350",
+        "outcome": "no_moves",
+        "board_hash": "2fe38782ad7095f136c2f82d587ce619e2edc1ba",
         "total_reveals": 0
       },
       {
@@ -774,6 +780,153 @@
         "outcome": "no_moves",
         "board_hash": "3095d6364ffa6db44ac4acc741d7b6cf8bccd5de",
         "total_reveals": 2
+      },
+      {
+        "moves": [
+          [
+            2,
+            10,
+            1
+          ],
+          [
+            6,
+            11,
+            1
+          ],
+          [
+            8,
+            11,
+            1
+          ]
+        ],
+        "reveals_per_move": [
+          0,
+          0,
+          0
+        ],
+        "outcome": "no_moves",
+        "board_hash": "fba62721feb54c826f717d230a9ef8e6b966746b",
+        "total_reveals": 0
+      },
+      {
+        "moves": [
+          [
+            3,
+            10,
+            2
+          ],
+          [
+            5,
+            11,
+            1
+          ],
+          [
+            7,
+            11,
+            1
+          ],
+          [
+            3,
+            10,
+            2
+          ],
+          [
+            5,
+            11,
+            1
+          ],
+          [
+            7,
+            11,
+            1
+          ],
+          [
+            5,
+            11,
+            1
+          ],
+          [
+            4,
+            3,
+            1
+          ],
+          [
+            2,
+            7,
+            1
+          ],
+          [
+            1,
+            4,
+            1
+          ],
+          [
+            5,
+            1,
+            1
+          ]
+        ],
+        "reveals_per_move": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "outcome": "stuck",
+        "board_hash": "581c147b415a00dd5183de46ef85ec6c01923e51",
+        "total_reveals": 0
+      },
+      {
+        "moves": [
+          [
+            3,
+            10,
+            2
+          ],
+          [
+            5,
+            11,
+            1
+          ],
+          [
+            7,
+            11,
+            1
+          ],
+          [
+            2,
+            10,
+            1
+          ],
+          [
+            6,
+            11,
+            1
+          ],
+          [
+            8,
+            11,
+            1
+          ]
+        ],
+        "reveals_per_move": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "outcome": "stuck",
+        "board_hash": "7a57ac2b7e7bfd5e65c6d0abe8d137f807c3fc8c",
+        "total_reveals": 0
       }
     ]
   }

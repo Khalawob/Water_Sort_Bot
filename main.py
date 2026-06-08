@@ -1222,6 +1222,7 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                     revealed = sim.reconcile(reconcile_tubes, reconcile_l2r)
                     for origin, rgb in revealed:
                         memory.record_slot(signature, origin[0], origin[1], rgb, capacity)
+                        print(f"  🆕 Recorded origin ({origin[0]},{origin[1]}) → RGB{rgb}")
                     revealed_count = len(revealed)
                     if not sim.valid:
                         print("  ⚠ Sim desynced from board — stopped attributing reveals.")
