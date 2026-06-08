@@ -528,7 +528,7 @@ Known colours: 7
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
-  ⏱ info_gain 0.01s
+  ⏱ info_gain 0.00s
   🧠 Info-gain selected 5 reveal move(s) (score: 4.00)
   ⏱ score_prefix 0.00s
   0 reclaim + 5 reveal moves
@@ -794,80 +794,14 @@ Known colours: 8
   Attempt 2/12 · Round 4
 ────────────────────────────────────────
 📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(176,  89, 192)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(104,  47, 142)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB(217, 130,  53)
-    colour_10        RGB(102, 170,  13)
-  Hidden slots: 25
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | colour_3 | colour_3 | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | colour_8]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_9]
-  Tube 12: [colour_10]
-
-Known colours: 10
-  colour_1: 2  (2)
-  colour_10: 1  (1)
-  colour_2: 1  (1)
-  colour_3: 3  (3)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 1  (1)
-  colour_8: 1  (1)
-  colour_9: 1  (1)
-  Hidden slots: 25
-  🧠 Recalled 8 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.00s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  ✗ Deadlocked: 0 empty tubes and all candidate moves would reverse the prior state.
+  🚫 'No more moves!' detected.
 
 ========================================
   ATTEMPT 2 · SUMMARY
 ========================================
+  🚫 Attempt ended on 'No more moves!'.
   📚 Learned 4 new hidden slot(s) this attempt (12 known total).
-  📝 Recorded attempt 2 (outcome: stuck, reveals: 4, total_known: 12/29)
+  📝 Recorded attempt 2 (outcome: no_moves, reveals: 4, total_known: 12/29)
   ↩ Restarting level to retry (learned 4 new slot(s)) (attempt 3/12)...
   🔄 Tapping restart at (265, 118)...
 
@@ -1032,7 +966,7 @@ Known colours: 7
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 8.73s
+  ⏱ determinization 7.90s
   ⏭ Skipping solvability scoring for determinization moves
   0 reclaim + 3 reveal moves
     Move 1/3: Tube 3 → Tube 8 (1 poured, wait 1.4s)
@@ -1238,7 +1172,7 @@ Known colours: 10
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.01s
+  ⏱ determinization 0.00s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -1301,7 +1235,7 @@ Known colours: 7
   ⏱ safe 0.00s
   ⏱ info_gain 0.00s
   ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.01s
+  ⏱ deep 0.00s
   ⛏ Deep-reveal: 2-move dig into tube 7 (score: 2.00)
   ⏱ score_prefix 0.00s
   0 reclaim + 2 reveal moves
@@ -1944,202 +1878,6 @@ Known colours: 10
   Attempt 4/12 · Round 8
 ────────────────────────────────────────
 📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(255, 230,  64)
-    colour_9         RGB(176,  89, 192)
-    colour_10        RGB(  0,  38, 203)
-  Hidden slots: 18
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_5 | colour_5]
-  Tube 6: [unknown | unknown | colour_2 | colour_2]
-  Tube 7: [colour_6 | colour_6 | colour_6]
-  Tube 8: [unknown | colour_7 | colour_7]
-  Tube 9: [unknown | colour_8 | colour_8]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 2  (2)
-  colour_10: 3  (3)
-  colour_2: 3  (3)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 2  (2)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 18
-  🧠 Recalled 8 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.01s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 6 → Tube 2 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 8 end screenshot → debug_screenshots/level_001/round_08_end.png
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(255, 230,  64)
-    colour_9         RGB(176,  89, 192)
-    colour_10        RGB(  0,  38, 203)
-  Hidden slots: 18
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 4 · ROUND 9
-========================================
-
-────────────────────────────────────────
-  Attempt 4/12 · Round 9
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(255, 230,  64)
-    colour_9         RGB(176,  89, 192)
-    colour_10        RGB(  0,  38, 203)
-  Hidden slots: 18
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | colour_2 | colour_2]
-  Tube 3: [unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_5 | colour_5]
-  Tube 6: [unknown | unknown | colour_2]
-  Tube 7: [colour_6 | colour_6 | colour_6]
-  Tube 8: [unknown | colour_7 | colour_7]
-  Tube 9: [unknown | colour_8 | colour_8]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 2  (2)
-  colour_10: 3  (3)
-  colour_2: 3  (3)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 2  (2)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 18
-  🧠 Recalled 8 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.00s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 2 → Tube 6 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 9 end screenshot → debug_screenshots/level_001/round_09_end.png
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(255, 230,  64)
-    colour_9         RGB(176,  89, 192)
-    colour_10        RGB(  0,  38, 203)
-  Hidden slots: 18
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 4 · ROUND 10
-========================================
-
-────────────────────────────────────────
-  Attempt 4/12 · Round 10
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
   🚫 'No more moves!' detected.
 
 ========================================
@@ -2300,7 +2038,7 @@ Known colours: 7
   ⏱ deep 0.00s
   ℹ Deep-reveal found no buried targets — falling through
   🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
+  ⏱ consolidate 0.01s
   🔧 Consolidate: 4 moves to free 1 tube(s) for deep dig
   ⏭ Skipping solvability scoring for consolidate moves
   0 reclaim + 4 reveal moves
@@ -2479,7 +2217,7 @@ Known colours: 8
   ⏱ deep 0.00s
   ℹ Deep-reveal found no buried targets — falling through
   🔧 Consolidation BFS: 11 usable tubes, 1 empties, target 2
-  ⏱ consolidate 0.12s
+  ⏱ consolidate 0.11s
   ℹ Consolidation found no path to free tubes — falling through
   ⏱ maximize 0.00s
     Determinization sample 1/10...
@@ -2492,7 +2230,7 @@ Known colours: 8
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 16.87s
+  ⏱ determinization 15.84s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⏭ Skipping solvability scoring for reveal_round moves
@@ -2585,7 +2323,7 @@ Known colours: 8
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 15.34s
+  ⏱ determinization 14.04s
   ⏭ Skipping solvability scoring for determinization moves
   0 reclaim + 3 reveal moves
     Move 1/3: Tube 1 → Tube 10 (1 poured, wait 1.4s)
@@ -2660,7 +2398,7 @@ Known colours: 8
   ⏱ safe 0.00s
   ⏱ info_gain 0.00s
   🧠 Info-gain selected 2 reveal move(s) (score: 2.50)
-  ⏱ score_prefix 8.81s
+  ⏱ score_prefix 8.71s
   0 reclaim + 2 reveal moves
   ✂ Truncated batch to 1/2 executable move(s) — later move would pour onto a hidden top.
     Move 1/1: Tube 4 → Tube 1 (2 poured, wait 1.9s)
@@ -2879,7 +2617,7 @@ Known colours: 10
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.01s
+  ⏱ determinization 0.00s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -2945,7 +2683,7 @@ Known colours: 7
   ⏱ deep 0.00s
   ℹ Deep-reveal found no buried targets — falling through
   🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.19s
+  ⏱ consolidate 0.20s
   ℹ Consolidation found no path to free tubes — falling through
   ⏱ maximize 0.00s
     Determinization sample 1/10...
@@ -2958,7 +2696,7 @@ Known colours: 7
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 18.28s
+  ⏱ determinization 17.15s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⏭ Skipping solvability scoring for reveal_round moves
@@ -3242,7 +2980,7 @@ Known colours: 9
   ⏱ deep 0.00s
   ℹ Deep-reveal found no buried targets — falling through
   🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
+  ⏱ consolidate 0.01s
   ℹ Consolidation found no path to free tubes — falling through
   ⏱ maximize 0.00s
     Determinization sample 1/10...
@@ -3351,7 +3089,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.03s
+  ⏱ determinization 0.02s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   1 reclaim + 0 reveal moves
@@ -3444,7 +3182,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.03s
+  ⏱ determinization 0.02s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -3881,7 +3619,7 @@ Known colours: 7
   ⏱ deep 0.00s
   ℹ Deep-reveal found no buried targets — falling through
   🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.19s
+  ⏱ consolidate 0.18s
   ℹ Consolidation found no path to free tubes — falling through
   ⏱ maximize 0.00s
     Determinization sample 1/10...
@@ -3894,7 +3632,7 @@ Known colours: 7
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 18.49s
+  ⏱ determinization 17.23s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⏭ Skipping solvability scoring for reveal_round moves
@@ -3990,7 +3728,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.03s
+  ⏱ determinization 0.02s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -4085,7 +3823,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.03s
+  ⏱ determinization 0.05s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -4180,7 +3918,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.01s
+  ⏱ determinization 0.02s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -4470,7 +4208,7 @@ Known colours: 10
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.01s
+  ⏱ determinization 0.00s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -4703,48 +4441,55 @@ Known colours: 7
   🧠 Recalled 23 hidden slot(s) from memory.
 
 🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.19s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 18.56s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⏭ Skipping solvability scoring for reveal_round moves
-  0 reclaim + 3 reveal moves
-    Move 1/3: Tube 4 → Tube 11 (2 poured, wait 1.9s)
-    Move 2/3: Tube 7 → Tube 12 (1 poured, wait 1.4s)
-    Move 3/3: Tube 9 → Tube 12 (1 poured, wait 1.4s)
+  ⏱ path_to_unknown 0.05s
+  🧭 Barren-retry path-to-unknown: 4 move(s) to expose a buried slot
+  ⏭ Skipping solvability scoring for path_to_unknown moves
+  0 reclaim + 4 reveal moves
+    Move 1/4: Tube 1 → Tube 11 (1 poured, wait 1.4s)
+    Move 2/4: Tube 5 → Tube 12 (1 poured, wait 1.4s)
+    Move 3/4: Tube 1 → Tube 5 (1 poured, wait 1.4s)
+    Move 4/4: Tube 1 → Tube 12 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
   📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
 
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
+  Colours detected (8):
+    colour_1         RGB(104,  47, 142)
     colour_2         RGB(180,  58,  58)
     colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
+    colour_4         RGB( 85, 163, 229)
     colour_5         RGB(  0,  38, 203)
-    colour_6         RGB(104,  47, 142)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 26
+    colour_6         RGB(176,  89, 192)
+    colour_7         RGB(  0, 230, 167)
+    colour_8         RGB(255, 230,  64)
+  Hidden slots: 25
+  🗳 Confirm read 1/3...
+  🗳 Confirm read 2/3...
+
+  Colours detected (8):
+    colour_1         RGB(104,  47, 142)
+    colour_2         RGB(180,  58,  58)
+    colour_3         RGB(217, 130,  53)
+    colour_4         RGB( 85, 163, 229)
+    colour_5         RGB(  0,  38, 203)
+    colour_6         RGB(176,  89, 192)
+    colour_7         RGB(  0, 230, 167)
+    colour_8         RGB(255, 230,  64)
+  Hidden slots: 25
+  🗳 Confirm read 3/3...
+
+  Colours detected (8):
+    colour_1         RGB(104,  47, 142)
+    colour_2         RGB(180,  58,  58)
+    colour_3         RGB(217, 130,  53)
+    colour_4         RGB( 85, 163, 229)
+    colour_5         RGB(  0,  38, 203)
+    colour_6         RGB(176,  89, 192)
+    colour_7         RGB(  0, 230, 167)
+    colour_8         RGB(255, 230,  64)
+  Hidden slots: 25
+  🗳 Majority vote: 15/15 slots confirmed, 0 skipped (no consensus)
+  🆕 Recorded origin (0,0) → RGB(104, 47, 142)
   🔄 Restarting scrcpy...
   scrcpy stopped.
   ✓ scrcpy launched (window: 'WaterSortBot')
@@ -4759,90 +4504,44 @@ Known colours: 7
 📸 Capturing screenshot (ADB)...
 🔍 Reading tubes...
 
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
+  Colours detected (8):
+    colour_1         RGB(104,  47, 142)
     colour_2         RGB(180,  58,  58)
     colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
+    colour_4         RGB( 85, 163, 229)
     colour_5         RGB(  0,  38, 203)
-    colour_6         RGB(104,  47, 142)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 26
+    colour_6         RGB(176,  89, 192)
+    colour_7         RGB(  0, 230, 167)
+    colour_8         RGB(255, 230,  64)
+  Hidden slots: 25
 
 Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
+  Tube 1: [colour_1]
   Tube 2: [unknown | unknown | unknown | colour_2]
   Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_4]
+  Tube 4: [unknown | unknown | colour_4 | colour_4]
+  Tube 5: [unknown | unknown | colour_2 | colour_2]
   Tube 6: [unknown | unknown | unknown | colour_5]
-  Tube 7: [unknown | unknown | colour_6]
+  Tube 7: [unknown | unknown | unknown | colour_6]
   Tube 8: [unknown | unknown | unknown | colour_5]
-  Tube 9: [unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_8 | colour_8]
-  Tube 12: [colour_9 | colour_9]
+  Tube 9: [unknown | unknown | unknown | colour_6]
+  Tube 10: [unknown | unknown | unknown | colour_7]
+  Tube 11: [colour_7]
+  Tube 12: [colour_8 | colour_8]
 
-Known colours: 9
-  colour_1: 2  (2)
-  colour_2: 1  (1)
+Known colours: 8
+  colour_1: 1  (1)
+  colour_2: 3  (3)
   colour_3: 1  (1)
   colour_4: 2  (2)
   colour_5: 2  (2)
-  colour_6: 1  (1)
-  colour_7: 1  (1)
+  colour_6: 2  (2)
+  colour_7: 2  (2)
   colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 26
-  🧠 Recalled 20 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.01s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.02s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 5 → Tube 4 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(  0,  38, 203)
-    colour_6         RGB(104,  47, 142)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
   Hidden slots: 25
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
+  🧠 Recalled 20 hidden slot(s) from memory.
+  🎯 Late-game detected on modified board — restarting for clean slate
+  🔄 Tapping restart at (265, 118)...
 
 ========================================
   ATTEMPT 8 · ROUND 3
@@ -4850,938 +4549,6 @@ Known colours: 9
 
 ────────────────────────────────────────
   Attempt 8/12 · Round 3
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(  0,  38, 203)
-    colour_6         RGB(104,  47, 142)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 25
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_2]
-  Tube 6: [unknown | unknown | unknown | colour_5]
-  Tube 7: [unknown | unknown | colour_6]
-  Tube 8: [unknown | unknown | unknown | colour_5]
-  Tube 9: [unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_8 | colour_8]
-  Tube 12: [colour_9 | colour_9]
-
-Known colours: 9
-  colour_1: 2  (2)
-  colour_2: 2  (2)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 1  (1)
-  colour_7: 1  (1)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 25
-  🧠 Recalled 19 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.02s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 2 → Tube 5 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 24
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 8 · ROUND 4
-========================================
-
-────────────────────────────────────────
-  Attempt 8/12 · Round 4
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 24
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_5 | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | colour_2]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_8 | colour_8]
-  Tube 12: [colour_9 | colour_9]
-
-Known colours: 9
-  colour_1: 2  (2)
-  colour_2: 2  (2)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 2  (2)
-  colour_7: 1  (1)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 24
-  🧠 Recalled 18 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.02s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 7 → Tube 2 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 4 end screenshot → debug_screenshots/level_001/round_04_end.png
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 23
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 8 · ROUND 5
-========================================
-
-────────────────────────────────────────
-  Attempt 8/12 · Round 5
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 23
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | colour_2 | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_5 | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | colour_6]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_8 | colour_8]
-  Tube 12: [colour_9 | colour_9]
-
-Known colours: 9
-  colour_1: 2  (2)
-  colour_2: 2  (2)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 1  (1)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 23
-  🧠 Recalled 17 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.01s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  2 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/2: Tube 8 → Tube 7 (1 poured, wait 1.4s)
-    Move 2/2: Tube 6 → Tube 7 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 5 end screenshot → debug_screenshots/level_001/round_05_end.png
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 21
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 8 · ROUND 6
-========================================
-
-────────────────────────────────────────
-  Attempt 8/12 · Round 6
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(176,  89, 192)
-  Hidden slots: 21
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | colour_2 | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_5 | colour_5]
-  Tube 6: [unknown | unknown | colour_2]
-  Tube 7: [unknown | colour_6 | colour_6 | colour_6]
-  Tube 8: [unknown | unknown | colour_3]
-  Tube 9: [unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_8 | colour_8]
-  Tube 12: [colour_9 | colour_9]
-
-Known colours: 9
-  colour_1: 2  (2)
-  colour_2: 3  (3)
-  colour_3: 2  (2)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 1  (1)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 21
-  🧠 Recalled 15 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.01s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  2 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/2: Tube 3 → Tube 8 (1 poured, wait 1.4s)
-    Move 2/2: Tube 2 → Tube 6 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 6 end screenshot → debug_screenshots/level_001/round_06_end.png
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(176,  89, 192)
-  Hidden slots: 20
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 8 · ROUND 7
-========================================
-
-────────────────────────────────────────
-  Attempt 8/12 · Round 7
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(176,  89, 192)
-  Hidden slots: 20
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | colour_3]
-  Tube 4: [unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_5 | colour_5]
-  Tube 6: [unknown | unknown | colour_2 | colour_2]
-  Tube 7: [unknown | colour_6 | colour_6 | colour_6]
-  Tube 8: [unknown | unknown | colour_7 | colour_7]
-  Tube 9: [unknown | unknown | colour_8]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 2  (2)
-  colour_10: 2  (2)
-  colour_2: 3  (3)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 2  (2)
-  colour_8: 1  (1)
-  colour_9: 2  (2)
-  Hidden slots: 20
-  🧠 Recalled 14 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.01s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 6 → Tube 2 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 7 end screenshot → debug_screenshots/level_001/round_07_end.png
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(176,  89, 192)
-  Hidden slots: 20
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 8 · ROUND 8
-========================================
-
-────────────────────────────────────────
-  Attempt 8/12 · Round 8
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(176,  89, 192)
-  Hidden slots: 20
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | colour_2 | colour_2]
-  Tube 3: [unknown | unknown | colour_3]
-  Tube 4: [unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_5 | colour_5]
-  Tube 6: [unknown | unknown | colour_2]
-  Tube 7: [unknown | colour_6 | colour_6 | colour_6]
-  Tube 8: [unknown | unknown | colour_7 | colour_7]
-  Tube 9: [unknown | unknown | colour_8]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 2  (2)
-  colour_10: 2  (2)
-  colour_2: 3  (3)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 2  (2)
-  colour_8: 1  (1)
-  colour_9: 2  (2)
-  Hidden slots: 20
-  🧠 Recalled 14 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.01s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 2 → Tube 6 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 8 end screenshot → debug_screenshots/level_001/round_08_end.png
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(176,  89, 192)
-  Hidden slots: 20
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 8 · ROUND 9
-========================================
-
-────────────────────────────────────────
-  Attempt 8/12 · Round 9
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(104,  47, 142)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(180,  58,  58)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(176,  89, 192)
-  Hidden slots: 20
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | colour_3]
-  Tube 4: [unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_5 | colour_5]
-  Tube 6: [unknown | unknown | colour_2 | colour_2]
-  Tube 7: [unknown | colour_6 | colour_6 | colour_6]
-  Tube 8: [unknown | unknown | colour_7 | colour_7]
-  Tube 9: [unknown | unknown | colour_8]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 2  (2)
-  colour_10: 2  (2)
-  colour_2: 3  (3)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 2  (2)
-  colour_8: 1  (1)
-  colour_9: 2  (2)
-  Hidden slots: 20
-  🧠 Recalled 14 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ♻ Reveal state already seen this attempt — cycle detected, ending attempt.
-
-========================================
-  ATTEMPT 8 · SUMMARY
-========================================
-  📚 Learned 0 new hidden slot(s) this attempt (23 known total).
-  📝 Recorded attempt 8 (outcome: stuck, reveals: 0, total_known: 23/29)
-  ↩ Restarting level to retry (patience 2/3) (attempt 9/12)...
-  🔄 Tapping restart at (265, 118)...
-
-========================================
-  ATTEMPT 9 · ROUND 1
-========================================
-
-────────────────────────────────────────
-  Attempt 9/12 · Round 1
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 23 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.18s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 18.58s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⏭ Skipping solvability scoring for reveal_round moves
-  0 reclaim + 3 reveal moves
-    Move 1/3: Tube 4 → Tube 11 (2 poured, wait 1.9s)
-    Move 2/3: Tube 1 → Tube 12 (1 poured, wait 1.4s)
-    Move 3/3: Tube 10 → Tube 12 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
-
-  Colours detected (7):
-    colour_1         RGB(180,  58,  58)
-    colour_2         RGB(217, 130,  53)
-    colour_3         RGB(255, 230,  64)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(176,  89, 192)
-    colour_6         RGB( 85, 163, 229)
-    colour_7         RGB(  0, 230, 167)
-  Hidden slots: 26
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 9 · ROUND 2
-========================================
-
-────────────────────────────────────────
-  Attempt 9/12 · Round 2
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(180,  58,  58)
-    colour_2         RGB(217, 130,  53)
-    colour_3         RGB(255, 230,  64)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(176,  89, 192)
-    colour_6         RGB( 85, 163, 229)
-    colour_7         RGB(  0, 230, 167)
-  Hidden slots: 26
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_1]
-  Tube 3: [unknown | unknown | unknown | colour_2]
-  Tube 4: [unknown | colour_3]
-  Tube 5: [unknown | unknown | unknown | colour_3]
-  Tube 6: [unknown | unknown | unknown | colour_4]
-  Tube 7: [unknown | unknown | unknown | colour_5]
-  Tube 8: [unknown | unknown | unknown | colour_4]
-  Tube 9: [unknown | unknown | unknown | colour_5]
-  Tube 10: [unknown | unknown | colour_4]
-  Tube 11: [colour_6 | colour_6]
-  Tube 12: [colour_7 | colour_7]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 2  (2)
-  colour_4: 3  (3)
-  colour_5: 2  (2)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 26
-  🧠 Recalled 20 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  🔧 Consolidate: 6 moves to free 1 tube(s) for deep dig
-  ⏭ Skipping solvability scoring for consolidate moves
-  0 reclaim + 6 reveal moves
-    Move 1/6: Tube 5 → Tube 4 (1 poured, wait 1.4s)
-    Move 2/6: Tube 1 → Tube 5 (1 poured, wait 1.4s)
-    Move 3/6: Tube 4 → Tube 1 (2 poured, wait 1.9s)
-    Move 4/6: Tube 8 → Tube 10 (1 poured, wait 1.4s)
-    Move 5/6: Tube 3 → Tube 8 (1 poured, wait 1.4s)
-    Move 6/6: Tube 4 → Tube 3 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
-
-  Colours detected (8):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(176,  89, 192)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB( 85, 163, 229)
-    colour_8         RGB(  0, 230, 167)
-  Hidden slots: 21
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 9 · ROUND 3
-========================================
-
-────────────────────────────────────────
-  Attempt 9/12 · Round 3
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (8):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(176,  89, 192)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB( 85, 163, 229)
-    colour_8         RGB(  0, 230, 167)
-  Hidden slots: 21
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | colour_1 | colour_1 | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | colour_3 | colour_3]
-  Tube 4: [(empty)]
-  Tube 5: [unknown | unknown | colour_2 | colour_2]
-  Tube 6: [unknown | unknown | unknown | colour_4]
-  Tube 7: [unknown | unknown | unknown | colour_5]
-  Tube 8: [unknown | unknown | colour_6 | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_5]
-  Tube 10: [unknown | unknown | colour_4 | colour_4]
-  Tube 11: [colour_7 | colour_7]
-  Tube 12: [colour_8 | colour_8]
-
-Known colours: 8
-  colour_1: 3  (3)
-  colour_2: 3  (3)
-  colour_3: 2  (2)
-  colour_4: 3  (3)
-  colour_5: 2  (2)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  colour_8: 2  (2)
-  Hidden slots: 21
-  🧠 Recalled 15 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
-  🧠 Info-gain selected 1 reveal move(s) (score: 2.33)
-  ⏱ score_prefix 5.59s
-  0 reclaim + 1 reveal moves
-    Move 1/1: Tube 1 → Tube 4 (3 poured, wait 2.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
-
-  Colours detected (9):
-    colour_1         RGB(104,  47, 142)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(  0,  38, 203)
-    colour_6         RGB(176,  89, 192)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(  0, 230, 167)
-  Hidden slots: 20
-  🗳 Confirm read 1/3...
-  🗳 Confirm read 2/3...
-
-  Colours detected (9):
-    colour_1         RGB(104,  47, 142)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(  0,  38, 203)
-    colour_6         RGB(176,  89, 192)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(  0, 230, 167)
-  Hidden slots: 20
-  🗳 Confirm read 3/3...
-
-  Colours detected (9):
-    colour_1         RGB(104,  47, 142)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(  0,  38, 203)
-    colour_6         RGB(176,  89, 192)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(  0, 230, 167)
-  Hidden slots: 20
-  🗳 Majority vote: 20/20 slots confirmed, 0 skipped (no consensus)
-  🆕 Recorded origin (0,0) → RGB(104, 47, 142)
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 9 · ROUND 4
-========================================
-
-────────────────────────────────────────
-  Attempt 9/12 · Round 4
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-  🚫 'No more moves!' detected.
-
-========================================
-  ATTEMPT 9 · SUMMARY
-========================================
-  🚫 Attempt ended on 'No more moves!'.
-  📚 Learned 1 new hidden slot(s) this attempt (24 known total).
-  📝 Recorded attempt 9 (outcome: no_moves, reveals: 1, total_known: 24/29)
-  ↩ Restarting level to retry (learned 1 new slot(s)) (attempt 10/12)...
-  🔄 Tapping restart at (265, 118)...
-
-========================================
-  ATTEMPT 10 · ROUND 1
-========================================
-
-────────────────────────────────────────
-  Attempt 10/12 · Round 1
 ────────────────────────────────────────
 📸 Capturing screenshot (ADB)...
 🔍 Reading tubes...
@@ -5976,838 +4743,55 @@ Known colours: 7
     Move 7/8: Tube 9 → Tube 12 (1 poured, wait 1.4s)
     Move 8/8: Tube 8 → Tube 9 (1 poured, wait 1.4s)
 
-  Colours detected (11):
+  Colours detected (10):
     colour_1         RGB(  0, 230, 167)
     colour_2         RGB(180,  58,  58)
     colour_3         RGB(217, 130,  53)
     colour_4         RGB( 85, 163, 229)
     colour_5         RGB(255, 230,  64)
     colour_6         RGB(104,  47, 142)
-    colour_7         RGB(  0,  38, 203)
-    colour_8         RGB(188, 188, 188)
-    colour_9         RGB( 45,  51,  60)
-    colour_10        RGB(112, 112, 112)
-    colour_11        RGB(176,  89, 192)
-  Hidden slots: 24
+    colour_7         RGB(102, 170,  13)
+    colour_8         RGB(112, 112, 112)
+    colour_9         RGB(  0,  38, 203)
+    colour_10        RGB(176,  89, 192)
+  Hidden slots: 21
 
-  Colours detected (11):
+  Colours detected (10):
     colour_1         RGB(  0, 230, 167)
     colour_2         RGB(180,  58,  58)
     colour_3         RGB(217, 130,  53)
     colour_4         RGB( 85, 163, 229)
     colour_5         RGB(255, 230,  64)
     colour_6         RGB(104,  47, 142)
-    colour_7         RGB(  0,  38, 203)
-    colour_8         RGB(188, 188, 188)
-    colour_9         RGB( 45,  51,  60)
-    colour_10        RGB(112, 112, 112)
-    colour_11        RGB(176,  89, 192)
-  Hidden slots: 24
+    colour_7         RGB(102, 170,  13)
+    colour_8         RGB(112, 112, 112)
+    colour_9         RGB(  0,  38, 203)
+    colour_10        RGB(176,  89, 192)
+  Hidden slots: 21
 
-  Colours detected (11):
+  Colours detected (10):
     colour_1         RGB(  0, 230, 167)
     colour_2         RGB(180,  58,  58)
     colour_3         RGB(217, 130,  53)
     colour_4         RGB( 85, 163, 229)
     colour_5         RGB(255, 230,  64)
     colour_6         RGB(104,  47, 142)
-    colour_7         RGB(  0,  38, 203)
-    colour_8         RGB(188, 188, 188)
-    colour_9         RGB( 45,  51,  60)
-    colour_10        RGB(112, 112, 112)
-    colour_11        RGB(176,  89, 192)
-  Hidden slots: 24
-  🗳 Majority vote: 17/17 slots confirmed, 0 skipped (no consensus)
-  ⚠ Couldn't read exposed slot — ending intervention
-  🔬 Intervention revealed 1 slot(s) — restarting for late-game retry
+    colour_7         RGB(102, 170,  13)
+    colour_8         RGB(112, 112, 112)
+    colour_9         RGB(  0,  38, 203)
+    colour_10        RGB(176,  89, 192)
+  Hidden slots: 21
+  🗳 Majority vote: 19/19 slots confirmed, 0 skipped (no consensus)
+  🧠 Revealed tube 8 depth 0 → colour_9
+  🔬 Intervention revealed 2 slot(s) — restarting for late-game retry
   🔄 Tapping restart at (265, 118)...
 
 ========================================
-  ATTEMPT 10 · ROUND 2
+  ATTEMPT 8 · ROUND 4
 ========================================
 
 ────────────────────────────────────────
-  Attempt 10/12 · Round 2
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 25 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.07s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 6.37s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⏭ Skipping solvability scoring for reveal_round moves
-  0 reclaim + 3 reveal moves
-    Move 1/3: Tube 4 → Tube 11 (2 poured, wait 1.9s)
-    Move 2/3: Tube 1 → Tube 12 (1 poured, wait 1.4s)
-    Move 3/3: Tube 10 → Tube 12 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
-
-  Colours detected (9):
-    colour_1         RGB(180,  58,  58)
-    colour_2         RGB(217, 130,  53)
-    colour_3         RGB(255, 230,  64)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(176,  89, 192)
-    colour_6         RGB(188, 188, 188)
-    colour_7         RGB( 45,  51,  60)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(  0, 230, 167)
-  Hidden slots: 25
-  ⚠ Sim desynced from board — stopped attributing reveals.
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 10 · ROUND 3
-========================================
-
-────────────────────────────────────────
-  Attempt 10/12 · Round 3
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (9):
-    colour_1         RGB(180,  58,  58)
-    colour_2         RGB(217, 130,  53)
-    colour_3         RGB(255, 230,  64)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(176,  89, 192)
-    colour_6         RGB(188, 188, 188)
-    colour_7         RGB( 45,  51,  60)
-    colour_8         RGB( 85, 163, 229)
-    colour_9         RGB(  0, 230, 167)
-  Hidden slots: 25
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_1]
-  Tube 3: [unknown | unknown | unknown | colour_2]
-  Tube 4: [unknown | colour_3]
-  Tube 5: [unknown | unknown | unknown | colour_3]
-  Tube 6: [unknown | unknown | unknown | colour_4]
-  Tube 7: [unknown | unknown | unknown | colour_5]
-  Tube 8: [unknown | unknown | unknown | colour_4]
-  Tube 9: [unknown | unknown | unknown | colour_5]
-  Tube 10: [colour_6 | colour_7 | colour_7 | unknown]
-  Tube 11: [colour_8 | colour_8]
-  Tube 12: [colour_9]
-
-Known colours: 9
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 2  (2)
-  colour_4: 2  (2)
-  colour_5: 2  (2)
-  colour_6: 1  (1)
-  colour_7: 2  (2)
-  colour_8: 2  (2)
-  colour_9: 1  (1)
-  Hidden slots: 25
-  🧠 Recalled 20 hidden slot(s) from memory.
-  🎯 Late-game detected on modified board — restarting for clean slate
-  🔄 Tapping restart at (265, 118)...
-
-========================================
-  ATTEMPT 10 · ROUND 4
-========================================
-
-────────────────────────────────────────
-  Attempt 10/12 · Round 4
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 25 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.07s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 6.32s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⏭ Skipping solvability scoring for reveal_round moves
-  0 reclaim + 3 reveal moves
-    Move 1/3: Tube 4 → Tube 11 (2 poured, wait 1.9s)
-    Move 2/3: Tube 1 → Tube 12 (1 poured, wait 1.4s)
-    Move 3/3: Tube 10 → Tube 12 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 4 end screenshot → debug_screenshots/level_001/round_04_end.png
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 10 · ROUND 5
-========================================
-
-────────────────────────────────────────
-  Attempt 10/12 · Round 5
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(180,  58,  58)
-    colour_2         RGB(217, 130,  53)
-    colour_3         RGB(255, 230,  64)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(176,  89, 192)
-    colour_6         RGB( 85, 163, 229)
-    colour_7         RGB(  0, 230, 167)
-  Hidden slots: 26
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_1]
-  Tube 3: [unknown | unknown | unknown | colour_2]
-  Tube 4: [unknown | colour_3]
-  Tube 5: [unknown | unknown | unknown | colour_3]
-  Tube 6: [unknown | unknown | unknown | colour_4]
-  Tube 7: [unknown | unknown | unknown | colour_5]
-  Tube 8: [unknown | unknown | unknown | colour_4]
-  Tube 9: [unknown | unknown | unknown | colour_5]
-  Tube 10: [unknown | unknown | colour_4]
-  Tube 11: [colour_6 | colour_6]
-  Tube 12: [colour_7 | colour_7]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 2  (2)
-  colour_4: 3  (3)
-  colour_5: 2  (2)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 26
-  🧠 Recalled 22 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-  🧩 Late-game plan: 32 move(s) on a sampled completion
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-    Move 1/32: Tube 5 → Tube 4 (1 poured, wait 1.4s)
-    Move 2/32: Tube 1 → Tube 5 (1 poured, wait 1.4s)
-    Move 3/32: Tube 4 → Tube 1 (2 poured, wait 1.9s)
-    Move 4/32: Tube 8 → Tube 10 (1 poured, wait 1.4s)
-    Move 5/32: Tube 3 → Tube 8 (1 poured, wait 1.4s)
-    Move 6/32: Tube 4 → Tube 3 (1 poured, wait 1.4s)
-    Move 7/32: Tube 6 → Tube 4 (1 poured, wait 1.4s)
-    Move 8/32: Tube 10 → Tube 4 (2 poured, wait 1.9s)
-    Move 9/32: Tube 7 → Tube 10 (1 poured, wait 1.4s)
-    Move 10/32: Tube 7 → Tube 6 (1 poured, wait 1.4s)
-    Move 11/32: Tube 7 → Tube 4 (1 poured, wait 1.4s)
-    Move 12/32: Tube 8 → Tube 7 (2 poured, wait 1.9s)
-    Move 13/32: Tube 9 → Tube 10 (1 poured, wait 1.4s)
-    Move 14/32: Tube 8 → Tube 9 (1 poured, wait 1.4s)
-
-  Colours detected (10):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(176,  89, 192)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(  0, 230, 167)
-  Hidden slots: 13
-
-  Colours detected (10):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(176,  89, 192)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(  0, 230, 167)
-  Hidden slots: 13
-
-  Colours detected (10):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(176,  89, 192)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(  0, 230, 167)
-  Hidden slots: 13
-  🗳 Majority vote: 27/27 slots confirmed, 0 skipped (no consensus)
-  🧠 Tube 8 depth 0 revealed → colour_9; recorded to memory.
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ↻ Late-game stopped early — re-reading board next round.
-
-========================================
-  ATTEMPT 10 · ROUND 6
-========================================
-
-────────────────────────────────────────
-  Attempt 10/12 · Round 6
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(176,  89, 192)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(  0, 230, 167)
-  Hidden slots: 13
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | colour_1 | colour_1 | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | colour_3 | colour_3]
-  Tube 4: [colour_4 | colour_4 | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_2 | colour_2]
-  Tube 6: [unknown | unknown | colour_5 | colour_5]
-  Tube 7: [colour_6 | colour_6 | colour_6]
-  Tube 8: [colour_3]
-  Tube 9: [unknown | unknown | colour_7 | colour_7]
-  Tube 10: [unknown | colour_8 | colour_8 | colour_8]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 3  (3)
-  colour_10: 2  (2)
-  colour_2: 3  (3)
-  colour_3: 3  (3)
-  colour_4: 4  ✓
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 2  (2)
-  colour_8: 3  (3)
-  colour_9: 2  (2)
-  Hidden slots: 13
-  🧠 Recalled 10 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.00s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 3 → Tube 8 (2 poured, wait 1.9s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 6 end screenshot → debug_screenshots/level_001/round_06_end.png
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 10 · ROUND 7
-========================================
-
-────────────────────────────────────────
-  Attempt 10/12 · Round 7
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(176,  89, 192)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(102, 170,  13)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(  0, 230, 167)
-  Hidden slots: 12
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | colour_1 | colour_1 | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | colour_3]
-  Tube 4: [colour_4 | colour_4 | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_2 | colour_2]
-  Tube 6: [unknown | unknown | colour_5 | colour_5]
-  Tube 7: [colour_6 | colour_6 | colour_6]
-  Tube 8: [colour_7 | colour_7 | colour_7]
-  Tube 9: [unknown | unknown | colour_8 | colour_8]
-  Tube 10: [unknown | colour_3 | colour_3 | colour_3]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 3  (3)
-  colour_10: 2  (2)
-  colour_2: 3  (3)
-  colour_3: 4  ✓
-  colour_4: 4  ✓
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 3  (3)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 12
-  🧠 Recalled 9 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.00s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  1 fallback moves
-  0 reclaim + 0 reveal moves
-    Move 1/1: Tube 10 → Tube 3 (2 poured, wait 1.9s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 7 end screenshot → debug_screenshots/level_001/round_07_end.png
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 10 · ROUND 8
-========================================
-
-────────────────────────────────────────
-  Attempt 10/12 · Round 8
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(176,  89, 192)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(102, 170,  13)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(  0, 230, 167)
-  Hidden slots: 12
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | colour_1 | colour_1 | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | colour_3 | colour_3 | colour_3]
-  Tube 4: [colour_4 | colour_4 | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_2 | colour_2]
-  Tube 6: [unknown | unknown | colour_5 | colour_5]
-  Tube 7: [colour_6 | colour_6 | colour_6]
-  Tube 8: [colour_7 | colour_7 | colour_7]
-  Tube 9: [unknown | unknown | colour_8 | colour_8]
-  Tube 10: [unknown | colour_3]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 3  (3)
-  colour_10: 2  (2)
-  colour_2: 3  (3)
-  colour_3: 4  ✓
-  colour_4: 4  ✓
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 3  (3)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 12
-  🧠 Recalled 9 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-  ⏭ Skipping solvability scoring for maximize moves
-  0 reclaim + 1 reveal moves
-    Move 1/1: Tube 3 → Tube 10 (2 poured, wait 1.9s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 8 end screenshot → debug_screenshots/level_001/round_08_end.png
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 10 · ROUND 9
-========================================
-
-────────────────────────────────────────
-  Attempt 10/12 · Round 9
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(255, 230,  64)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(176,  89, 192)
-    colour_4         RGB(  0,  38, 203)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(102, 170,  13)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(  0, 230, 167)
-  Hidden slots: 12
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | colour_1 | colour_1 | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | colour_3]
-  Tube 4: [colour_4 | colour_4 | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_2 | colour_2]
-  Tube 6: [unknown | unknown | colour_5 | colour_5]
-  Tube 7: [colour_6 | colour_6 | colour_6]
-  Tube 8: [colour_7 | colour_7 | colour_7]
-  Tube 9: [unknown | unknown | colour_8 | colour_8]
-  Tube 10: [unknown | colour_3 | colour_3 | colour_3]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 3  (3)
-  colour_10: 2  (2)
-  colour_2: 3  (3)
-  colour_3: 4  ✓
-  colour_4: 4  ✓
-  colour_5: 2  (2)
-  colour_6: 3  (3)
-  colour_7: 3  (3)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 12
-  🧠 Recalled 9 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ♻ Reveal state already seen this attempt — cycle detected, ending attempt.
-
-========================================
-  ATTEMPT 10 · SUMMARY
-========================================
-  📚 Learned 2 new hidden slot(s) this attempt (26 known total).
-  📝 Recorded attempt 10 (outcome: stuck, reveals: 1, total_known: 26/29)
-  ↩ Restarting level to retry (learned 2 new slot(s)) (attempt 11/12)...
-  🔄 Tapping restart at (265, 118)...
-
-========================================
-  ATTEMPT 11 · ROUND 1
-========================================
-
-────────────────────────────────────────
-  Attempt 11/12 · Round 1
+  Attempt 8/12 · Round 4
 ────────────────────────────────────────
 📸 Capturing screenshot (ADB)...
 🔍 Reading tubes...
@@ -6847,609 +4831,28 @@ Known colours: 7
   Hidden slots: 29
   🧠 Recalled 26 hidden slot(s) from memory.
   🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  🔬 Late-game failed — running reveal intervention to reduce unknowns
-
-  🔬 Intervention reveal 1/2...
-  🔄 Tapping restart at (265, 118)...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 26 hidden slot(s) from memory.
-  🧭 Found 8 move(s) to expose a buried slot
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-    Move 1/8: Tube 6 → Tube 11 (1 poured, wait 1.4s)
-    Move 2/8: Tube 7 → Tube 12 (1 poured, wait 1.4s)
-    Move 3/8: Tube 7 → Tube 6 (1 poured, wait 1.4s)
-    Move 4/8: Tube 8 → Tube 7 (1 poured, wait 1.4s)
-    Move 5/8: Tube 3 → Tube 8 (1 poured, wait 1.4s)
-    Move 6/8: Tube 11 → Tube 7 (1 poured, wait 1.4s)
-    Move 7/8: Tube 3 → Tube 11 (1 poured, wait 1.4s)
-    Move 8/8: Tube 3 → Tube 12 (1 poured, wait 1.4s)
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB( 85, 163, 229)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(176,  89, 192)
-    colour_9         RGB(102, 170,  13)
-  Hidden slots: 22
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB( 85, 163, 229)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(176,  89, 192)
-    colour_9         RGB(102, 170,  13)
-  Hidden slots: 22
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB( 85, 163, 229)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(217, 130,  53)
-    colour_8         RGB(176,  89, 192)
-    colour_9         RGB(102, 170,  13)
-  Hidden slots: 22
-  🗳 Majority vote: 18/18 slots confirmed, 0 skipped (no consensus)
-  🧠 Revealed tube 3 depth 0 → colour_4
-
-  🔬 Intervention reveal 2/2...
-  🔄 Tapping restart at (265, 118)...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 27 hidden slot(s) from memory.
-  ℹ No path to unknown found — ending intervention
-  🔬 Intervention revealed 1 slot(s) — restarting for late-game retry
-  🔄 Tapping restart at (265, 118)...
-
-========================================
-  ATTEMPT 11 · ROUND 2
-========================================
-
-────────────────────────────────────────
-  Attempt 11/12 · Round 2
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 27 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.07s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 6.52s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⏭ Skipping solvability scoring for reveal_round moves
-  0 reclaim + 3 reveal moves
-    Move 1/3: Tube 3 → Tube 11 (1 poured, wait 1.4s)
-    Move 2/3: Tube 6 → Tube 12 (1 poured, wait 1.4s)
-    Move 3/3: Tube 8 → Tube 12 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(104,  47, 142)
-    colour_7         RGB(176,  89, 192)
-    colour_8         RGB(217, 130,  53)
-    colour_9         RGB(  0,  38, 203)
-  Hidden slots: 26
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 11 · ROUND 3
-========================================
-
-────────────────────────────────────────
-  Attempt 11/12 · Round 3
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (9):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(104,  47, 142)
-    colour_7         RGB(176,  89, 192)
-    colour_8         RGB(217, 130,  53)
-    colour_9         RGB(  0,  38, 203)
-  Hidden slots: 26
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | colour_8]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_8]
-  Tube 12: [colour_9 | colour_9]
-
-Known colours: 9
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 1  (1)
-  colour_7: 2  (2)
-  colour_8: 2  (2)
-  colour_9: 2  (2)
-  Hidden slots: 26
-  🧠 Recalled 24 hidden slot(s) from memory.
-  🎯 Late-game detected on modified board — restarting for clean slate
-  🔄 Tapping restart at (265, 118)...
-
-========================================
-  ATTEMPT 11 · ROUND 4
-========================================
-
-────────────────────────────────────────
-  Attempt 11/12 · Round 4
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 27 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.07s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 6.28s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⏭ Skipping solvability scoring for reveal_round moves
-  0 reclaim + 3 reveal moves
-    Move 1/3: Tube 3 → Tube 11 (1 poured, wait 1.4s)
-    Move 2/3: Tube 7 → Tube 12 (1 poured, wait 1.4s)
-    Move 3/3: Tube 9 → Tube 12 (1 poured, wait 1.4s)
-
-  ⏳ Waiting for animations...
-  📷 Saved round 4 end screenshot → debug_screenshots/level_001/round_04_end.png
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(104,  47, 142)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB(217, 130,  53)
-    colour_10        RGB(176,  89, 192)
-  Hidden slots: 26
-  ⚠ Sim desynced from board — stopped attributing reveals.
-  🔄 Restarting scrcpy...
-  scrcpy stopped.
-  ✓ scrcpy launched (window: 'WaterSortBot')
-
-========================================
-  ATTEMPT 11 · ROUND 5
-========================================
-
-────────────────────────────────────────
-  Attempt 11/12 · Round 5
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(104,  47, 142)
-    colour_8         RGB(112, 112, 112)
-    colour_9         RGB(217, 130,  53)
-    colour_10        RGB(176,  89, 192)
-  Hidden slots: 26
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | colour_8]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [colour_9]
-  Tube 12: [colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 2  (2)
-  colour_10: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 1  (1)
-  colour_8: 1  (1)
-  colour_9: 1  (1)
-  Hidden slots: 26
-  🧠 Recalled 24 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-    Using A* solver (12 tubes)
-  ⚠ Late-game couldn't plan — path-to-unknown disabled, falling through
-
-🔄 Hidden slots remain — planning reveal round...
-  ⏱ info_gain 0.00s
-  ℹ Info-gain found no candidates — trying deep-reveal
-  ⏱ deep 0.00s
-  ℹ Deep-reveal found no buried targets — falling through
-  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.00s
-  ℹ Consolidation found no path to free tubes — falling through
-  ⏱ maximize 0.00s
-    Determinization sample 1/10...
-    Determinization sample 2/10...
-    Determinization sample 3/10...
-    Determinization sample 4/10...
-    Determinization sample 5/10...
-    Determinization sample 6/10...
-    Determinization sample 7/10...
-    Determinization sample 8/10...
-    Determinization sample 9/10...
-    Determinization sample 10/10...
-  ⏱ determinization 0.00s
-  ℹ Maximizer + determinization empty — heuristic park (last resort)...
-  ⏱ reveal_round 0.00s
-  ⚠ New strategy found no moves — trying legacy fallback...
-  ✗ Deadlocked: 0 empty tubes and all candidate moves would reverse the prior state.
-
-========================================
-  ATTEMPT 11 · SUMMARY
-========================================
-  📚 Learned 1 new hidden slot(s) this attempt (27 known total).
-  📝 Recorded attempt 11 (outcome: stuck, reveals: 0, total_known: 27/29)
-  ↩ Restarting level to retry (learned 1 new slot(s)) (attempt 12/12)...
-  🔄 Tapping restart at (265, 118)...
-
-========================================
-  ATTEMPT 12 · ROUND 1
-========================================
-
-────────────────────────────────────────
-  Attempt 12/12 · Round 1
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 27 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
     Using A* solver (12 tubes)
 
 === Reveal planner stats ===
-  safe             reached   58  used    0  (0% hit)
-  info_gain        reached   66  used   12  (18% hit)
-  deep             reached   54  used    6  (11% hit)
-  consolidate      reached   47  used    3  (6% hit)
-  maximize         reached   45  used    1  (2% hit)
-  reveal_round     reached   42  used    9  (21% hit)
-  determinization  reached   44  used    2  (5% hit)
-  path_to_unknown  reached    0  used    0  (0% hit)
-  heal                0   patience_retry      2
+  safe             reached   44  used    0  (0% hit)
+  info_gain        reached   44  used   11  (25% hit)
+  deep             reached   33  used    6  (18% hit)
+  consolidate      reached   26  used    2  (8% hit)
+  maximize         reached   25  used    0  (0% hit)
+  reveal_round     reached   23  used    3  (13% hit)
+  determinization  reached   25  used    2  (8% hit)
+  path_to_unknown  reached    1  used    1  (100% hit)
+  heal                0   patience_retry      1
 
 === Reveal planner timings ===
   stage                total  calls       mean
-  safe                 0.00s     58      0.0ms
-  info_gain            0.06s     66      0.9ms
-  deep                 0.04s     54      0.7ms
-  consolidate          1.22s     47     25.9ms
-  maximize             0.00s     45      0.1ms
-  determinization    140.81s     44   3200.2ms
-  reveal_round         0.01s     42      0.2ms
-  path_to_unknown      0.00s      0      0.0ms
-  score_prefix        14.45s     18    802.8ms
+  safe                 0.00s     44      0.0ms
+  info_gain            0.06s     44      1.4ms
+  deep                 0.03s     33      0.9ms
+  consolidate          0.53s     26     20.4ms
+  maximize             0.00s     25      0.1ms
+  determinization     72.52s     25   2901.0ms
+  reveal_round         0.01s     23      0.2ms
+  path_to_unknown      0.05s      1     46.1ms
+  score_prefix         8.76s     17    515.6ms
   full_solve           0.00s      0      0.0ms

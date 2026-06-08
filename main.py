@@ -58,8 +58,8 @@ REVEAL_SOLVABILITY_EMPTY_GATE = 1
 # meaningfully helps in the 6-8 range; above this the cost is wasted.
 SCORE_PREFIX_MAX_UNKNOWNS = 8
 
-ENABLE_BARREN_PATH = False   # Gate: barren-retry find_path_to_unknown
-ENABLE_LATE_GAME_PATH = False  # Gate: find_path_to_unknown after late-game clean_fail
+ENABLE_BARREN_PATH = True   # Gate: barren-retry find_path_to_unknown
+ENABLE_LATE_GAME_PATH = True  # Gate: find_path_to_unknown after late-game clean_fail
 
 # Instrumentation: how often each reveal planner is reached vs. actually used.
 REVEAL_STATS = {
@@ -822,6 +822,16 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                     total_hidden_slots = sum(t.count(UNKNOWN) for t in tubes)
                     print(f"  🔑 Level signature {signature[:12]}… "
                           f"({slots_before}/{total_hidden_slots} hidden slot(s) known)")
+
+                    # Store the initial board's visible-colour counts so
+                    # record_slot can enforce the capacity invariant.
+                    visible_rgb_counts = {}
+                    for _tube in tubes:
+                        for _slot in _tube:
+                            if _slot != UNKNOWN:
+                                _rgb = tuple(label_to_rgb[_slot])
+                                visible_rgb_counts[_rgb] = visible_rgb_counts.get(_rgb, 0) + 1
+                    memory.set_visible_counts(signature, visible_rgb_counts)
 
                 # Seed the sim on the first round of the attempt. Reveals are
                 # reconciled at the END of each round (against end_image) so the

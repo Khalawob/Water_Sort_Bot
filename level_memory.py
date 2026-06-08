@@ -89,12 +89,62 @@ class LevelMemory:
         return result
 
     def record_slot(self, signature, tube, depth, rgb, capacity):
-        """Record a revealed originally-hidden slot's RGB and persist."""
+        """Record a revealed originally-hidden slot's RGB and persist.
+
+        Returns True if the entry was accepted, False if rejected by the
+        capacity guard (the colour would exceed ``capacity`` total instances
+        across memory + visible slots on the initial board).
+        """
         entry = self.data.setdefault(
             signature, {"initial_slots": {}, "capacity": capacity}
         )
         entry["capacity"] = capacity
+
+        rgb_tuple = tuple(int(c) for c in rgb)
+        tol = 5  # same matching tolerance as read_tubes / _overlay_learned_colours
+
+        # Count how many memory entries already record this colour
+        memory_count = sum(
+            1 for stored_rgb in entry.get("initial_slots", {}).values()
+            if colour_distance(tuple(stored_rgb), rgb_tuple) < tol
+        )
+
+        # Count how many times this colour is visible on the initial board
+        visible = 0
+        for key, count in entry.get("visible_counts", {}).items():
+            parts = key.split(",")
+            v_rgb = (int(parts[0]), int(parts[1]), int(parts[2]))
+            if colour_distance(v_rgb, rgb_tuple) < tol:
+                visible += count
+
+        total = memory_count + visible + 1
+        if total > capacity:
+            print(f"  ⛔ Capacity guard: REJECTED slot ({tube},{depth}) → "
+                  f"RGB{rgb_tuple} — would give {total} total "
+                  f"({memory_count} memory + {visible} visible + 1 new, "
+                  f"capacity {capacity})")
+            return False
+
         entry["initial_slots"][f"{tube},{depth}"] = [int(c) for c in rgb]
+        self._save()
+        return True
+
+    def set_visible_counts(self, signature, visible_rgb_counts):
+        """Store the initial board's visible-colour counts for capacity validation.
+
+        ``visible_rgb_counts`` is a dict mapping ``(r, g, b)`` tuples to the
+        number of times that colour appears as a visible (non-UNKNOWN) slot on
+        the initial board read.  Stored once per signature; ``record_slot``
+        uses them so it can reject an entry that would push a colour past
+        capacity.
+        """
+        entry = self.data.setdefault(
+            signature, {"initial_slots": {}, "capacity": None}
+        )
+        entry["visible_counts"] = {
+            f"{r},{g},{b}": count
+            for (r, g, b), count in visible_rgb_counts.items()
+        }
         self._save()
 
     def record_attempt(self, signature, moves, reveals_per_move, outcome,
