@@ -436,8 +436,6 @@ def run_late_game(state, capacity, memory, signature, attempt_moves,
     """
     sim_state = tuple(tuple(t) for t in state)
     executed_any = False
-    refresh_mapping()
-    zones = get_tube_tap_zones(config)
 
     # Label minting for a re-seen / brand-new colour, mirroring _overlay_learned_colours.
     existing_nums = [
@@ -453,6 +451,12 @@ def run_late_game(state, capacity, memory, signature, attempt_moves,
             return "dirty" if executed_any else "clean_fail"
         solution, _filled = planned
         print(f"  🧩 Late-game plan: {len(solution)} move(s) on a sampled completion")
+
+        # Fresh scrcpy window before each execution batch
+        stop_scrcpy()
+        launch_scrcpy()
+        refresh_mapping()
+        zones = get_tube_tap_zones(config)  # re-fetch zones with fresh mapping
 
         replanned = False
         for i, (src, dst, n) in enumerate(solution, 1):
@@ -562,6 +566,11 @@ def run_reveal_intervention(config, capacity, memory, signature, n_reveals=2):
             break
 
         print(f"  🧭 Found {len(path)} move(s) to expose a buried slot")
+
+        # Fresh scrcpy window before executing taps
+        stop_scrcpy()
+        launch_scrcpy()
+        refresh_mapping()
 
         # Execute the path
         execute_move_list(path, config, capacity)
@@ -911,6 +920,11 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                             print(f"  {i}. Tube {s+1} → Tube {d+1} ({n} poured)")
                         print("\n(Dry run — no taps sent)")
                         return True
+
+                    # Fresh scrcpy window before long solution execution
+                    stop_scrcpy()
+                    launch_scrcpy()
+                    refresh_mapping()
 
                     execute_move_list(moves, config, capacity)
                     print("\n🎉 Level complete!")
