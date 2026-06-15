@@ -842,9 +842,14 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                                      memory.get_initial_slots(signature))
 
                 # Fill UNKNOWN slots from memory before deducing/solving.
+                learned_slots = memory.get_initial_slots(signature)
                 _overlay_learned_colours(
-                    tubes, memory.get_initial_slots(signature),
+                    tubes, learned_slots,
                     seen_colours, label_to_rgb)
+                if learned_slots:
+                    print("  Memory overlay:")
+                    for (ti, depth), rgb in sorted(learned_slots.items()):
+                        print(f"    Tube {ti + 1} depth {depth} → RGB{rgb}")
 
                 # Corruption guard: a colour can occupy at most `capacity` slots.
                 # If the overlay pushes one past that, recorded memory is provably
@@ -1202,8 +1207,8 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                 end_image = screenshot()
                 if end_image is not None:
                     screenshots_dir.mkdir(parents=True, exist_ok=True)
-                    cv2.imwrite(str(screenshots_dir / f"round_{round_num:02d}_end.png"), end_image)
-                    print(f"  📷 Saved round {round_num} end screenshot → debug_screenshots/level_{level_num:03d}/round_{round_num:02d}_end.png")
+                    cv2.imwrite(str(screenshots_dir / f"attempt_{attempt:02d}_round_{round_num:02d}_end.png"), end_image)
+                    print(f"  📷 Saved round {round_num} end screenshot → debug_screenshots/level_{level_num:03d}/attempt_{attempt:02d}_round_{round_num:02d}_end.png")
 
                 # Reconcile against the post-move board now, so reveals are
                 # recorded the same round they happen — even if the attempt ends

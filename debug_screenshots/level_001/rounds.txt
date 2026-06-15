@@ -52,7 +52,7 @@ Known colours: 7
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
-  ⏱ info_gain 0.01s
+  ⏱ info_gain 0.00s
   🧠 Info-gain selected 10 reveal move(s) (score: 2.50)
   ⏱ score_prefix 0.00s
   0 reclaim + 10 reveal moves
@@ -60,7 +60,7 @@ Known colours: 7
     Move 1/1: Tube 1 → Tube 12 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
+  📷 Saved round 1 end screenshot → debug_screenshots/level_001/attempt_01_round_01_end.png
 
   Colours detected (7):
     colour_1         RGB(180,  58,  58)
@@ -143,6 +143,8 @@ Known colours: 7
   colour_6: 2  (2)
   colour_7: 2  (2)
   Hidden slots: 28
+  Memory overlay:
+    Tube 1 depth 2 → RGB(180, 58, 58)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -156,7 +158,7 @@ Known colours: 7
     Move 3/3: Tube 1 → Tube 11 (2 poured, wait 1.9s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
+  📷 Saved round 2 end screenshot → debug_screenshots/level_001/attempt_01_round_02_end.png
 
   Colours detected (8):
     colour_1         RGB(255, 230,  64)
@@ -246,6 +248,11 @@ Known colours: 8
   colour_7: 2  (2)
   colour_8: 2  (2)
   Hidden slots: 25
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -258,7 +265,7 @@ Known colours: 8
     Move 2/2: Tube 6 → Tube 10 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
+  📷 Saved round 3 end screenshot → debug_screenshots/level_001/attempt_01_round_03_end.png
 
   Colours detected (8):
     colour_1         RGB(255, 230,  64)
@@ -347,6 +354,13 @@ Known colours: 8
   colour_7: 3  (3)
   colour_8: 2  (2)
   Hidden slots: 23
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -360,7 +374,7 @@ Known colours: 8
     Move 3/3: Tube 5 → Tube 11 (2 poured, wait 1.9s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 4 end screenshot → debug_screenshots/level_001/round_04_end.png
+  📷 Saved round 4 end screenshot → debug_screenshots/level_001/attempt_01_round_04_end.png
 
   Colours detected (10):
     colour_1         RGB(255, 230,  64)
@@ -459,6 +473,15 @@ Known colours: 10
   colour_8: 3  (3)
   colour_9: 3  (3)
   Hidden slots: 21
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -525,10 +548,19 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 29
   🧠 Recalled 8 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
+  ⏱ info_gain 0.01s
   🧠 Info-gain selected 5 reveal move(s) (score: 4.00)
   ⏱ score_prefix 0.00s
   0 reclaim + 5 reveal moves
@@ -536,7 +568,7 @@ Known colours: 7
     Move 1/1: Tube 3 → Tube 11 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
+  📷 Saved round 1 end screenshot → debug_screenshots/level_001/attempt_02_round_01_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -625,10 +657,20 @@ Known colours: 8
   colour_8: 1  (1)
   Hidden slots: 28
   🧠 Recalled 8 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
-  ⏱ info_gain 0.00s
+  ⏱ info_gain 0.01s
   🧠 Info-gain selected 5 reveal move(s) (score: 2.00)
   ⏱ score_prefix 0.00s
   0 reclaim + 5 reveal moves
@@ -636,7 +678,7 @@ Known colours: 8
     Move 1/1: Tube 3 → Tube 12 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
+  📷 Saved round 2 end screenshot → debug_screenshots/level_001/attempt_02_round_02_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -725,6 +767,17 @@ Known colours: 8
   colour_8: 1  (1)
   Hidden slots: 27
   🧠 Recalled 8 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -736,7 +789,7 @@ Known colours: 8
     Move 2/2: Tube 9 → Tube 3 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
+  📷 Saved round 3 end screenshot → debug_screenshots/level_001/attempt_02_round_03_end.png
 
   Colours detected (10):
     colour_1         RGB(  0, 230, 167)
@@ -794,14 +847,93 @@ Known colours: 8
   Attempt 2/12 · Round 4
 ────────────────────────────────────────
 📸 Capturing screenshot (ADB)...
-  🚫 'No more moves!' detected.
+🔍 Reading tubes...
+
+  Colours detected (10):
+    colour_1         RGB(  0, 230, 167)
+    colour_2         RGB(180,  58,  58)
+    colour_3         RGB(176,  89, 192)
+    colour_4         RGB( 85, 163, 229)
+    colour_5         RGB(255, 230,  64)
+    colour_6         RGB(  0,  38, 203)
+    colour_7         RGB(104,  47, 142)
+    colour_8         RGB(112, 112, 112)
+    colour_9         RGB(217, 130,  53)
+    colour_10        RGB(102, 170,  13)
+  Hidden slots: 25
+
+Detected 12 tubes (capacity 4):
+  Tube 1: [unknown | unknown | unknown | colour_1]
+  Tube 2: [unknown | unknown | unknown | colour_2]
+  Tube 3: [unknown | colour_3 | colour_3 | colour_3]
+  Tube 4: [unknown | unknown | colour_4 | colour_4]
+  Tube 5: [unknown | unknown | unknown | colour_5]
+  Tube 6: [unknown | unknown | unknown | colour_6]
+  Tube 7: [unknown | unknown | colour_7]
+  Tube 8: [unknown | unknown | unknown | colour_6]
+  Tube 9: [unknown | unknown | colour_8]
+  Tube 10: [unknown | unknown | unknown | colour_1]
+  Tube 11: [colour_9]
+  Tube 12: [colour_10]
+
+Known colours: 10
+  colour_1: 2  (2)
+  colour_10: 1  (1)
+  colour_2: 1  (1)
+  colour_3: 3  (3)
+  colour_4: 2  (2)
+  colour_5: 1  (1)
+  colour_6: 2  (2)
+  colour_7: 1  (1)
+  colour_8: 1  (1)
+  colour_9: 1  (1)
+  Hidden slots: 25
+  🧠 Recalled 8 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
+
+🔄 Hidden slots remain — planning reveal round...
+  ⏱ safe 0.00s
+  ⏱ info_gain 0.00s
+  ℹ Info-gain found no candidates — trying deep-reveal
+  ⏱ deep 0.00s
+  ℹ Deep-reveal found no buried targets — falling through
+  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
+  ⏱ consolidate 0.00s
+  ℹ Consolidation found no path to free tubes — falling through
+  ⏱ maximize 0.00s
+    Determinization sample 1/10...
+    Determinization sample 2/10...
+    Determinization sample 3/10...
+    Determinization sample 4/10...
+    Determinization sample 5/10...
+    Determinization sample 6/10...
+    Determinization sample 7/10...
+    Determinization sample 8/10...
+    Determinization sample 9/10...
+    Determinization sample 10/10...
+  ⏱ determinization 0.01s
+  ℹ Maximizer + determinization empty — heuristic park (last resort)...
+  ⏱ reveal_round 0.00s
+  ⚠ New strategy found no moves — trying legacy fallback...
+  ✗ Deadlocked: 0 empty tubes and all candidate moves would reverse the prior state.
 
 ========================================
   ATTEMPT 2 · SUMMARY
 ========================================
-  🚫 Attempt ended on 'No more moves!'.
   📚 Learned 4 new hidden slot(s) this attempt (12 known total).
-  📝 Recorded attempt 2 (outcome: no_moves, reveals: 4, total_known: 12/29)
+  📝 Recorded attempt 2 (outcome: stuck, reveals: 4, total_known: 12/29)
   ↩ Restarting level to retry (learned 4 new slot(s)) (attempt 3/12)...
   🔄 Tapping restart at (265, 118)...
 
@@ -849,6 +981,19 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 29
   🧠 Recalled 12 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -860,7 +1005,7 @@ Known colours: 7
     Move 2/2: Tube 8 → Tube 11 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
+  📷 Saved round 1 end screenshot → debug_screenshots/level_001/attempt_03_round_01_end.png
 
   Colours detected (7):
     colour_1         RGB(  0, 230, 167)
@@ -945,6 +1090,21 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 27
   🧠 Recalled 12 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -966,7 +1126,7 @@ Known colours: 7
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 7.90s
+  ⏱ determinization 8.60s
   ⏭ Skipping solvability scoring for determinization moves
   0 reclaim + 3 reveal moves
     Move 1/3: Tube 3 → Tube 8 (1 poured, wait 1.4s)
@@ -974,7 +1134,7 @@ Known colours: 7
     Move 3/3: Tube 2 → Tube 5 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
+  📷 Saved round 2 end screenshot → debug_screenshots/level_001/attempt_03_round_02_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -1039,6 +1199,21 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 24
   🧠 Recalled 9 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1052,7 +1227,7 @@ Known colours: 9
     Move 2/2: Tube 6 → Tube 2 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
+  📷 Saved round 3 end screenshot → debug_screenshots/level_001/attempt_03_round_03_end.png
 
   Colours detected (10):
     colour_1         RGB(  0, 230, 167)
@@ -1151,6 +1326,22 @@ Known colours: 10
   colour_9: 2  (2)
   Hidden slots: 22
   🧠 Recalled 8 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1230,6 +1421,22 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 29
   🧠 Recalled 15 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1243,7 +1450,7 @@ Known colours: 7
     Move 2/2: Tube 7 → Tube 12 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
+  📷 Saved round 1 end screenshot → debug_screenshots/level_001/attempt_04_round_01_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -1332,6 +1539,23 @@ Known colours: 8
   colour_8: 1  (1)
   Hidden slots: 27
   🧠 Recalled 14 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1348,7 +1572,7 @@ Known colours: 8
     Move 2/2: Tube 12 → Tube 6 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
+  📷 Saved round 2 end screenshot → debug_screenshots/level_001/attempt_04_round_02_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -1410,6 +1634,23 @@ Known colours: 8
   colour_8: 2  (2)
   Hidden slots: 26
   🧠 Recalled 13 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1420,7 +1661,7 @@ Known colours: 8
     Move 1/1: Tube 7 → Tube 12 (2 poured, wait 1.9s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
+  📷 Saved round 3 end screenshot → debug_screenshots/level_001/attempt_04_round_03_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -1509,6 +1750,24 @@ Known colours: 8
   colour_8: 2  (2)
   Hidden slots: 25
   🧠 Recalled 13 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1522,7 +1781,7 @@ Known colours: 8
     Move 2/2: Tube 8 → Tube 7 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 4 end screenshot → debug_screenshots/level_001/round_04_end.png
+  📷 Saved round 4 end screenshot → debug_screenshots/level_001/attempt_04_round_04_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -1616,6 +1875,25 @@ Known colours: 9
   colour_9: 3  (3)
   Hidden slots: 23
   🧠 Recalled 12 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1629,7 +1907,7 @@ Known colours: 9
     Move 2/2: Tube 9 → Tube 8 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 5 end screenshot → debug_screenshots/level_001/round_05_end.png
+  📷 Saved round 5 end screenshot → debug_screenshots/level_001/attempt_04_round_05_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -1723,6 +2001,26 @@ Known colours: 9
   colour_9: 3  (3)
   Hidden slots: 21
   🧠 Recalled 11 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1744,7 +2042,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.01s
+  ⏱ determinization 0.02s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -1754,7 +2052,7 @@ Known colours: 9
     Move 2/2: Tube 3 → Tube 7 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 6 end screenshot → debug_screenshots/level_001/round_06_end.png
+  📷 Saved round 6 end screenshot → debug_screenshots/level_001/attempt_04_round_06_end.png
 
   Colours detected (10):
     colour_1         RGB(  0, 230, 167)
@@ -1822,6 +2120,26 @@ Known colours: 10
   colour_9: 2  (2)
   Hidden slots: 19
   🧠 Recalled 9 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1852,7 +2170,7 @@ Known colours: 10
     Move 1/1: Tube 2 → Tube 5 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 7 end screenshot → debug_screenshots/level_001/round_07_end.png
+  📷 Saved round 7 end screenshot → debug_screenshots/level_001/attempt_04_round_07_end.png
 
   Colours detected (10):
     colour_1         RGB(  0, 230, 167)
@@ -1876,6 +2194,124 @@ Known colours: 10
 
 ────────────────────────────────────────
   Attempt 4/12 · Round 8
+────────────────────────────────────────
+📸 Capturing screenshot (ADB)...
+🔍 Reading tubes...
+
+  Colours detected (10):
+    colour_1         RGB(  0, 230, 167)
+    colour_2         RGB(104,  47, 142)
+    colour_3         RGB(102, 170,  13)
+    colour_4         RGB( 85, 163, 229)
+    colour_5         RGB(180,  58,  58)
+    colour_6         RGB(217, 130,  53)
+    colour_7         RGB(112, 112, 112)
+    colour_8         RGB(255, 230,  64)
+    colour_9         RGB(176,  89, 192)
+    colour_10        RGB(  0,  38, 203)
+  Hidden slots: 18
+
+Detected 12 tubes (capacity 4):
+  Tube 1: [unknown | unknown | unknown | colour_1]
+  Tube 2: [unknown | unknown | colour_2]
+  Tube 3: [unknown | unknown | colour_3]
+  Tube 4: [unknown | unknown | colour_4 | colour_4]
+  Tube 5: [unknown | unknown | colour_5 | colour_5]
+  Tube 6: [unknown | unknown | colour_2 | colour_2]
+  Tube 7: [colour_6 | colour_6 | colour_6]
+  Tube 8: [unknown | colour_7 | colour_7]
+  Tube 9: [unknown | colour_8 | colour_8]
+  Tube 10: [unknown | unknown | unknown | colour_1]
+  Tube 11: [colour_9 | colour_9]
+  Tube 12: [colour_10 | colour_10 | colour_10]
+
+Known colours: 10
+  colour_1: 2  (2)
+  colour_10: 3  (3)
+  colour_2: 3  (3)
+  colour_3: 1  (1)
+  colour_4: 2  (2)
+  colour_5: 2  (2)
+  colour_6: 3  (3)
+  colour_7: 2  (2)
+  colour_8: 2  (2)
+  colour_9: 2  (2)
+  Hidden slots: 18
+  🧠 Recalled 8 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
+
+🔄 Hidden slots remain — planning reveal round...
+  ⏱ safe 0.00s
+  ⏱ info_gain 0.00s
+  ℹ Info-gain found no candidates — trying deep-reveal
+  ⏱ deep 0.00s
+  ℹ Deep-reveal found no buried targets — falling through
+  🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
+  ⏱ consolidate 0.00s
+  ℹ Consolidation found no path to free tubes — falling through
+  ⏱ maximize 0.00s
+    Determinization sample 1/10...
+    Determinization sample 2/10...
+    Determinization sample 3/10...
+    Determinization sample 4/10...
+    Determinization sample 5/10...
+    Determinization sample 6/10...
+    Determinization sample 7/10...
+    Determinization sample 8/10...
+    Determinization sample 9/10...
+    Determinization sample 10/10...
+  ⏱ determinization 0.00s
+  ℹ Maximizer + determinization empty — heuristic park (last resort)...
+  ⏱ reveal_round 0.00s
+  ⚠ New strategy found no moves — trying legacy fallback...
+  1 fallback moves
+  0 reclaim + 0 reveal moves
+    Move 1/1: Tube 6 → Tube 2 (1 poured, wait 1.4s)
+
+  ⏳ Waiting for animations...
+  📷 Saved round 8 end screenshot → debug_screenshots/level_001/attempt_04_round_08_end.png
+
+  Colours detected (10):
+    colour_1         RGB(  0, 230, 167)
+    colour_2         RGB(104,  47, 142)
+    colour_3         RGB(102, 170,  13)
+    colour_4         RGB( 85, 163, 229)
+    colour_5         RGB(180,  58,  58)
+    colour_6         RGB(217, 130,  53)
+    colour_7         RGB(112, 112, 112)
+    colour_8         RGB(255, 230,  64)
+    colour_9         RGB(176,  89, 192)
+    colour_10        RGB(  0,  38, 203)
+  Hidden slots: 18
+  🔄 Restarting scrcpy...
+  scrcpy stopped.
+  ✓ scrcpy launched (window: 'WaterSortBot')
+
+========================================
+  ATTEMPT 4 · ROUND 9
+========================================
+
+────────────────────────────────────────
+  Attempt 4/12 · Round 9
 ────────────────────────────────────────
 📸 Capturing screenshot (ADB)...
   🚫 'No more moves!' detected.
@@ -1933,6 +2369,26 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 29
   🧠 Recalled 19 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -1946,7 +2402,7 @@ Known colours: 7
     Move 2/2: Tube 10 → Tube 11 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
+  📷 Saved round 1 end screenshot → debug_screenshots/level_001/attempt_05_round_01_end.png
 
   Colours detected (7):
     colour_1         RGB(  0, 230, 167)
@@ -2030,6 +2486,27 @@ Known colours: 7
   colour_7: 3  (3)
   Hidden slots: 27
   🧠 Recalled 18 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2048,7 +2525,7 @@ Known colours: 7
     Move 4/4: Tube 11 → Tube 7 (2 poured, wait 1.9s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
+  📷 Saved round 2 end screenshot → debug_screenshots/level_001/attempt_05_round_02_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -2110,6 +2587,27 @@ Known colours: 8
   colour_8: 3  (3)
   Hidden slots: 24
   🧠 Recalled 15 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2120,7 +2618,7 @@ Known colours: 8
     Move 1/1: Tube 10 → Tube 11 (2 poured, wait 1.9s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
+  📷 Saved round 3 end screenshot → debug_screenshots/level_001/attempt_05_round_03_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -2209,6 +2707,28 @@ Known colours: 8
   colour_8: 3  (3)
   Hidden slots: 23
   🧠 Recalled 15 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2217,7 +2737,7 @@ Known colours: 8
   ⏱ deep 0.00s
   ℹ Deep-reveal found no buried targets — falling through
   🔧 Consolidation BFS: 11 usable tubes, 1 empties, target 2
-  ⏱ consolidate 0.11s
+  ⏱ consolidate 0.12s
   ℹ Consolidation found no path to free tubes — falling through
   ⏱ maximize 0.00s
     Determinization sample 1/10...
@@ -2230,7 +2750,7 @@ Known colours: 8
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 15.84s
+  ⏱ determinization 17.09s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⏭ Skipping solvability scoring for reveal_round moves
@@ -2240,7 +2760,7 @@ Known colours: 8
     Move 3/3: Tube 4 → Tube 12 (2 poured, wait 1.9s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 4 end screenshot → debug_screenshots/level_001/round_04_end.png
+  📷 Saved round 4 end screenshot → debug_screenshots/level_001/attempt_05_round_04_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -2302,6 +2822,28 @@ Known colours: 8
   colour_8: 2  (2)
   Hidden slots: 22
   🧠 Recalled 14 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2323,7 +2865,7 @@ Known colours: 8
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 14.04s
+  ⏱ determinization 15.26s
   ⏭ Skipping solvability scoring for determinization moves
   0 reclaim + 3 reveal moves
     Move 1/3: Tube 1 → Tube 10 (1 poured, wait 1.4s)
@@ -2331,7 +2873,7 @@ Known colours: 8
     Move 3/3: Tube 1 → Tube 5 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 5 end screenshot → debug_screenshots/level_001/round_05_end.png
+  📷 Saved round 5 end screenshot → debug_screenshots/level_001/attempt_05_round_05_end.png
 
   Colours detected (8):
     colour_1         RGB(255, 230,  64)
@@ -2393,18 +2935,40 @@ Known colours: 8
   colour_8: 2  (2)
   Hidden slots: 19
   🧠 Recalled 11 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
   ⏱ info_gain 0.00s
   🧠 Info-gain selected 2 reveal move(s) (score: 2.50)
-  ⏱ score_prefix 8.71s
+  ⏱ score_prefix 9.59s
   0 reclaim + 2 reveal moves
   ✂ Truncated batch to 1/2 executable move(s) — later move would pour onto a hidden top.
     Move 1/1: Tube 4 → Tube 1 (2 poured, wait 1.9s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 6 end screenshot → debug_screenshots/level_001/round_06_end.png
+  📷 Saved round 6 end screenshot → debug_screenshots/level_001/attempt_05_round_06_end.png
 
   Colours detected (9):
     colour_1         RGB(255, 230,  64)
@@ -2498,6 +3062,29 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 18
   🧠 Recalled 11 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2528,7 +3115,7 @@ Known colours: 9
     Move 1/1: Tube 9 → Tube 11 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 7 end screenshot → debug_screenshots/level_001/round_07_end.png
+  📷 Saved round 7 end screenshot → debug_screenshots/level_001/attempt_05_round_07_end.png
 
   Colours detected (10):
     colour_1         RGB(255, 230,  64)
@@ -2596,6 +3183,29 @@ Known colours: 10
   colour_9: 3  (3)
   Hidden slots: 17
   🧠 Recalled 10 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2617,7 +3227,7 @@ Known colours: 10
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.00s
+  ⏱ determinization 0.01s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -2675,6 +3285,29 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 29
   🧠 Recalled 22 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2696,7 +3329,7 @@ Known colours: 7
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 17.15s
+  ⏱ determinization 18.80s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⏭ Skipping solvability scoring for reveal_round moves
@@ -2706,7 +3339,7 @@ Known colours: 7
     Move 3/3: Tube 8 → Tube 12 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
+  📷 Saved round 1 end screenshot → debug_screenshots/level_001/attempt_06_round_01_end.png
 
   Colours detected (8):
     colour_1         RGB(  0, 230, 167)
@@ -2768,6 +3401,29 @@ Known colours: 8
   colour_8: 2  (2)
   Hidden slots: 26
   🧠 Recalled 19 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2799,7 +3455,7 @@ Known colours: 8
     Move 2/2: Tube 3 → Tube 8 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
+  📷 Saved round 2 end screenshot → debug_screenshots/level_001/attempt_06_round_02_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -2864,6 +3520,29 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 24
   🧠 Recalled 17 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2871,14 +3550,14 @@ Known colours: 9
   ℹ Info-gain found no candidates — trying deep-reveal
   ⏱ deep 0.00s
   ⛏ Deep-reveal: 3-move dig into tube 2 (score: 2.33)
-  ⏱ score_prefix 0.05s
+  ⏱ score_prefix 0.04s
   0 reclaim + 3 reveal moves
     Move 1/3: Tube 2 → Tube 5 (1 poured, wait 1.4s)
     Move 2/3: Tube 2 → Tube 6 (1 poured, wait 1.4s)
     Move 3/3: Tube 2 → Tube 3 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
+  📷 Saved round 3 end screenshot → debug_screenshots/level_001/attempt_06_round_03_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -2972,6 +3651,30 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 21
   🧠 Recalled 15 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -2980,7 +3683,7 @@ Known colours: 9
   ⏱ deep 0.00s
   ℹ Deep-reveal found no buried targets — falling through
   🔧 Consolidation BFS: 12 usable tubes, 0 empties, target 1
-  ⏱ consolidate 0.01s
+  ⏱ consolidate 0.00s
   ℹ Consolidation found no path to free tubes — falling through
   ⏱ maximize 0.00s
     Determinization sample 1/10...
@@ -3003,7 +3706,7 @@ Known colours: 9
     Move 2/2: Tube 1 → Tube 2 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 4 end screenshot → debug_screenshots/level_001/round_04_end.png
+  📷 Saved round 4 end screenshot → debug_screenshots/level_001/attempt_06_round_04_end.png
 
   Colours detected (9):
     colour_1         RGB(180,  58,  58)
@@ -3068,6 +3771,30 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 19
   🧠 Recalled 13 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3089,14 +3816,14 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.02s
+  ⏱ determinization 0.03s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   1 reclaim + 0 reveal moves
     Move 1/1: Tube 12 → Tube 10 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 5 end screenshot → debug_screenshots/level_001/round_05_end.png
+  📷 Saved round 5 end screenshot → debug_screenshots/level_001/attempt_06_round_05_end.png
 
   Colours detected (9):
     colour_1         RGB(180,  58,  58)
@@ -3161,6 +3888,30 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 19
   🧠 Recalled 13 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3192,7 +3943,7 @@ Known colours: 9
     Move 2/2: Tube 5 → Tube 1 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 6 end screenshot → debug_screenshots/level_001/round_06_end.png
+  📷 Saved round 6 end screenshot → debug_screenshots/level_001/attempt_06_round_06_end.png
 
   Colours detected (9):
     colour_1         RGB(180,  58,  58)
@@ -3257,6 +4008,30 @@ Known colours: 9
   colour_9: 3  (3)
   Hidden slots: 18
   🧠 Recalled 12 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3289,7 +4064,7 @@ Known colours: 9
     Move 3/3: Tube 1 → Tube 5 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 7 end screenshot → debug_screenshots/level_001/round_07_end.png
+  📷 Saved round 7 end screenshot → debug_screenshots/level_001/attempt_06_round_07_end.png
 
   Colours detected (10):
     colour_1         RGB(180,  58,  58)
@@ -3357,6 +4132,30 @@ Known colours: 10
   colour_9: 2  (2)
   Hidden slots: 16
   🧠 Recalled 10 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3388,7 +4187,7 @@ Known colours: 10
     Move 2/2: Tube 5 → Tube 1 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 8 end screenshot → debug_screenshots/level_001/round_08_end.png
+  📷 Saved round 8 end screenshot → debug_screenshots/level_001/attempt_06_round_08_end.png
 
   Colours detected (10):
     colour_1         RGB(180,  58,  58)
@@ -3456,6 +4255,30 @@ Known colours: 10
   colour_9: 2  (2)
   Hidden slots: 16
   🧠 Recalled 10 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3487,7 +4310,7 @@ Known colours: 10
     Move 2/2: Tube 1 → Tube 5 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 9 end screenshot → debug_screenshots/level_001/round_09_end.png
+  📷 Saved round 9 end screenshot → debug_screenshots/level_001/attempt_06_round_09_end.png
 
   Colours detected (10):
     colour_1         RGB(180,  58,  58)
@@ -3513,57 +4336,14 @@ Known colours: 10
   Attempt 6/12 · Round 10
 ────────────────────────────────────────
 📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (10):
-    colour_1         RGB(180,  58,  58)
-    colour_2         RGB(  0, 230, 167)
-    colour_3         RGB(102, 170,  13)
-    colour_4         RGB(255, 230,  64)
-    colour_5         RGB(104,  47, 142)
-    colour_6         RGB(217, 130,  53)
-    colour_7         RGB(112, 112, 112)
-    colour_8         RGB(176,  89, 192)
-    colour_9         RGB( 85, 163, 229)
-    colour_10        RGB(  0,  38, 203)
-  Hidden slots: 16
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | colour_1]
-  Tube 2: [colour_2 | colour_2 | colour_2]
-  Tube 3: [unknown | unknown | colour_3 | colour_3]
-  Tube 4: [unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | colour_1 | colour_1]
-  Tube 6: [unknown | unknown | colour_5 | colour_5]
-  Tube 7: [unknown | unknown | colour_5]
-  Tube 8: [unknown | unknown | colour_6 | colour_6]
-  Tube 9: [unknown | unknown | colour_7]
-  Tube 10: [unknown | colour_8 | colour_8 | colour_8]
-  Tube 11: [colour_9 | colour_9]
-  Tube 12: [colour_10 | colour_10 | colour_10]
-
-Known colours: 10
-  colour_1: 3  (3)
-  colour_10: 3  (3)
-  colour_2: 3  (3)
-  colour_3: 2  (2)
-  colour_4: 2  (2)
-  colour_5: 3  (3)
-  colour_6: 2  (2)
-  colour_7: 1  (1)
-  colour_8: 3  (3)
-  colour_9: 2  (2)
-  Hidden slots: 16
-  🧠 Recalled 10 hidden slot(s) from memory.
-
-🔄 Hidden slots remain — planning reveal round...
-  ♻ Reveal state already seen this attempt — cycle detected, ending attempt.
+  🚫 'No more moves!' detected.
 
 ========================================
   ATTEMPT 6 · SUMMARY
 ========================================
+  🚫 Attempt ended on 'No more moves!'.
   📚 Learned 1 new hidden slot(s) this attempt (23 known total).
-  📝 Recorded attempt 6 (outcome: stuck, reveals: 1, total_known: 23/29)
+  📝 Recorded attempt 6 (outcome: no_moves, reveals: 1, total_known: 23/29)
   ↩ Restarting level to retry (learned 1 new slot(s)) (attempt 7/12)...
   🔄 Tapping restart at (265, 118)...
 
@@ -3611,6 +4391,30 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 29
   🧠 Recalled 23 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3619,7 +4423,7 @@ Known colours: 7
   ⏱ deep 0.00s
   ℹ Deep-reveal found no buried targets — falling through
   🔧 Consolidation BFS: 10 usable tubes, 2 empties, target 3
-  ⏱ consolidate 0.18s
+  ⏱ consolidate 0.19s
   ℹ Consolidation found no path to free tubes — falling through
   ⏱ maximize 0.00s
     Determinization sample 1/10...
@@ -3632,7 +4436,7 @@ Known colours: 7
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 17.23s
+  ⏱ determinization 18.80s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⏭ Skipping solvability scoring for reveal_round moves
@@ -3642,7 +4446,7 @@ Known colours: 7
     Move 3/3: Tube 9 → Tube 12 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
+  📷 Saved round 1 end screenshot → debug_screenshots/level_001/attempt_07_round_01_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -3707,6 +4511,30 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 26
   🧠 Recalled 20 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3728,7 +4556,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.02s
+  ⏱ determinization 0.01s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -3737,7 +4565,7 @@ Known colours: 9
     Move 1/1: Tube 5 → Tube 4 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 2 end screenshot → debug_screenshots/level_001/round_02_end.png
+  📷 Saved round 2 end screenshot → debug_screenshots/level_001/attempt_07_round_02_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -3802,6 +4630,30 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 25
   🧠 Recalled 19 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3823,7 +4675,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.05s
+  ⏱ determinization 0.02s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -3832,7 +4684,7 @@ Known colours: 9
     Move 1/1: Tube 2 → Tube 5 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 3 end screenshot → debug_screenshots/level_001/round_03_end.png
+  📷 Saved round 3 end screenshot → debug_screenshots/level_001/attempt_07_round_03_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -3897,6 +4749,30 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 24
   🧠 Recalled 18 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -3918,7 +4794,7 @@ Known colours: 9
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.02s
+  ⏱ determinization 0.01s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -3927,7 +4803,7 @@ Known colours: 9
     Move 1/1: Tube 7 → Tube 2 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 4 end screenshot → debug_screenshots/level_001/round_04_end.png
+  📷 Saved round 4 end screenshot → debug_screenshots/level_001/attempt_07_round_04_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -3992,6 +4868,30 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 23
   🧠 Recalled 17 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -4023,7 +4923,7 @@ Known colours: 9
     Move 2/2: Tube 6 → Tube 7 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 5 end screenshot → debug_screenshots/level_001/round_05_end.png
+  📷 Saved round 5 end screenshot → debug_screenshots/level_001/attempt_07_round_05_end.png
 
   Colours detected (9):
     colour_1         RGB(  0, 230, 167)
@@ -4088,6 +4988,30 @@ Known colours: 9
   colour_9: 2  (2)
   Hidden slots: 21
   🧠 Recalled 15 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -4119,7 +5043,7 @@ Known colours: 9
     Move 2/2: Tube 2 → Tube 6 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 6 end screenshot → debug_screenshots/level_001/round_06_end.png
+  📷 Saved round 6 end screenshot → debug_screenshots/level_001/attempt_07_round_06_end.png
 
   Colours detected (10):
     colour_1         RGB(  0, 230, 167)
@@ -4187,6 +5111,30 @@ Known colours: 10
   colour_9: 2  (2)
   Hidden slots: 20
   🧠 Recalled 14 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -4208,7 +5156,7 @@ Known colours: 10
     Determinization sample 8/10...
     Determinization sample 9/10...
     Determinization sample 10/10...
-  ⏱ determinization 0.00s
+  ⏱ determinization 0.01s
   ℹ Maximizer + determinization empty — heuristic park (last resort)...
   ⏱ reveal_round 0.00s
   ⚠ New strategy found no moves — trying legacy fallback...
@@ -4217,7 +5165,7 @@ Known colours: 10
     Move 1/1: Tube 6 → Tube 2 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 7 end screenshot → debug_screenshots/level_001/round_07_end.png
+  📷 Saved round 7 end screenshot → debug_screenshots/level_001/attempt_07_round_07_end.png
 
   Colours detected (10):
     colour_1         RGB(  0, 230, 167)
@@ -4285,6 +5233,30 @@ Known colours: 10
   colour_9: 2  (2)
   Hidden slots: 20
   🧠 Recalled 14 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ safe 0.00s
@@ -4315,7 +5287,7 @@ Known colours: 10
     Move 1/1: Tube 2 → Tube 6 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 8 end screenshot → debug_screenshots/level_001/round_08_end.png
+  📷 Saved round 8 end screenshot → debug_screenshots/level_001/attempt_07_round_08_end.png
 
   Colours detected (10):
     colour_1         RGB(  0, 230, 167)
@@ -4383,6 +5355,30 @@ Known colours: 10
   colour_9: 2  (2)
   Hidden slots: 20
   🧠 Recalled 14 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ♻ Reveal state already seen this attempt — cycle detected, ending attempt.
@@ -4439,6 +5435,30 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 29
   🧠 Recalled 23 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
 
 🔄 Hidden slots remain — planning reveal round...
   ⏱ path_to_unknown 0.05s
@@ -4451,7 +5471,7 @@ Known colours: 7
     Move 4/4: Tube 1 → Tube 12 (1 poured, wait 1.4s)
 
   ⏳ Waiting for animations...
-  📷 Saved round 1 end screenshot → debug_screenshots/level_001/round_01_end.png
+  📷 Saved round 1 end screenshot → debug_screenshots/level_001/attempt_08_round_01_end.png
 
   Colours detected (8):
     colour_1         RGB(104,  47, 142)
@@ -4540,6 +5560,31 @@ Known colours: 8
   colour_8: 2  (2)
   Hidden slots: 25
   🧠 Recalled 20 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 0 → RGB(104, 47, 142)
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
   🎯 Late-game detected on modified board — restarting for clean slate
   🔄 Tapping restart at (265, 118)...
 
@@ -4587,6 +5632,31 @@ Known colours: 7
   colour_7: 2  (2)
   Hidden slots: 29
   🧠 Recalled 24 hidden slot(s) from memory.
+  Memory overlay:
+    Tube 1 depth 0 → RGB(104, 47, 142)
+    Tube 1 depth 1 → RGB(255, 230, 64)
+    Tube 1 depth 2 → RGB(180, 58, 58)
+    Tube 2 depth 0 → RGB(0, 230, 167)
+    Tube 2 depth 1 → RGB(102, 170, 13)
+    Tube 2 depth 2 → RGB(104, 47, 142)
+    Tube 3 depth 1 → RGB(176, 89, 192)
+    Tube 3 depth 2 → RGB(102, 170, 13)
+    Tube 4 depth 0 → RGB(102, 170, 13)
+    Tube 4 depth 1 → RGB(255, 230, 64)
+    Tube 5 depth 1 → RGB(112, 112, 112)
+    Tube 5 depth 2 → RGB(180, 58, 58)
+    Tube 6 depth 1 → RGB(112, 112, 112)
+    Tube 6 depth 2 → RGB(104, 47, 142)
+    Tube 7 depth 0 → RGB(217, 130, 53)
+    Tube 7 depth 1 → RGB(0, 38, 203)
+    Tube 7 depth 2 → RGB(104, 47, 142)
+    Tube 8 depth 1 → RGB(112, 112, 112)
+    Tube 8 depth 2 → RGB(217, 130, 53)
+    Tube 9 depth 1 → RGB(255, 230, 64)
+    Tube 9 depth 2 → RGB(112, 112, 112)
+    Tube 10 depth 0 → RGB(0, 230, 167)
+    Tube 10 depth 1 → RGB(176, 89, 192)
+    Tube 10 depth 2 → RGB(0, 38, 203)
   🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
     Using A* solver (12 tubes)
     Using A* solver (12 tubes)
@@ -4785,74 +5855,3 @@ Known colours: 7
   🧠 Revealed tube 8 depth 0 → colour_9
   🔬 Intervention revealed 2 slot(s) — restarting for late-game retry
   🔄 Tapping restart at (265, 118)...
-
-========================================
-  ATTEMPT 8 · ROUND 4
-========================================
-
-────────────────────────────────────────
-  Attempt 8/12 · Round 4
-────────────────────────────────────────
-📸 Capturing screenshot (ADB)...
-🔍 Reading tubes...
-
-  Colours detected (7):
-    colour_1         RGB(  0, 230, 167)
-    colour_2         RGB(180,  58,  58)
-    colour_3         RGB(217, 130,  53)
-    colour_4         RGB( 85, 163, 229)
-    colour_5         RGB(255, 230,  64)
-    colour_6         RGB(  0,  38, 203)
-    colour_7         RGB(176,  89, 192)
-  Hidden slots: 29
-
-Detected 12 tubes (capacity 4):
-  Tube 1: [unknown | unknown | unknown | colour_1]
-  Tube 2: [unknown | unknown | unknown | colour_2]
-  Tube 3: [unknown | unknown | unknown | colour_3]
-  Tube 4: [unknown | unknown | colour_4 | colour_4]
-  Tube 5: [unknown | unknown | unknown | colour_5]
-  Tube 6: [unknown | unknown | unknown | colour_6]
-  Tube 7: [unknown | unknown | unknown | colour_7]
-  Tube 8: [unknown | unknown | unknown | colour_6]
-  Tube 9: [unknown | unknown | unknown | colour_7]
-  Tube 10: [unknown | unknown | unknown | colour_1]
-  Tube 11: [(empty)]
-  Tube 12: [(empty)]
-
-Known colours: 7
-  colour_1: 2  (2)
-  colour_2: 1  (1)
-  colour_3: 1  (1)
-  colour_4: 2  (2)
-  colour_5: 1  (1)
-  colour_6: 2  (2)
-  colour_7: 2  (2)
-  Hidden slots: 29
-  🧠 Recalled 26 hidden slot(s) from memory.
-  🎯 Late-game detected — ≤5 unknowns remain, running full-solve strategy
-    Using A* solver (12 tubes)
-
-=== Reveal planner stats ===
-  safe             reached   44  used    0  (0% hit)
-  info_gain        reached   44  used   11  (25% hit)
-  deep             reached   33  used    6  (18% hit)
-  consolidate      reached   26  used    2  (8% hit)
-  maximize         reached   25  used    0  (0% hit)
-  reveal_round     reached   23  used    3  (13% hit)
-  determinization  reached   25  used    2  (8% hit)
-  path_to_unknown  reached    1  used    1  (100% hit)
-  heal                0   patience_retry      1
-
-=== Reveal planner timings ===
-  stage                total  calls       mean
-  safe                 0.00s     44      0.0ms
-  info_gain            0.06s     44      1.4ms
-  deep                 0.03s     33      0.9ms
-  consolidate          0.53s     26     20.4ms
-  maximize             0.00s     25      0.1ms
-  determinization     72.52s     25   2901.0ms
-  reveal_round         0.01s     23      0.2ms
-  path_to_unknown      0.05s      1     46.1ms
-  score_prefix         8.76s     17    515.6ms
-  full_solve           0.00s      0      0.0ms

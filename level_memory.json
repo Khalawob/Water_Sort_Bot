@@ -235,8 +235,8 @@
           1,
           1
         ],
-        "outcome": "no_moves",
-        "board_hash": "da8370115c56ca82db1373966bb9db79d5b3d061",
+        "outcome": "stuck",
+        "board_hash": "7d72820b861a59a15d97f281aa09cc62499a35ab",
         "total_reveals": 4
       },
       {
@@ -351,6 +351,11 @@
             1,
             4,
             1
+          ],
+          [
+            5,
+            1,
+            1
           ]
         ],
         "reveals_per_move": [
@@ -365,10 +370,11 @@
           1,
           0,
           0,
+          0,
           0
         ],
         "outcome": "no_moves",
-        "board_hash": "38effa53fa886fe262c4a7506c18cbba1f364628",
+        "board_hash": "32e577cf2eeb6f7b271a17d9d9fc391a1fa8b745",
         "total_reveals": 4
       },
       {
@@ -595,8 +601,8 @@
           0,
           0
         ],
-        "outcome": "stuck",
-        "board_hash": "75115c0192cbcc8e33a95a6c2a2706e106418579",
+        "outcome": "no_moves",
+        "board_hash": "57c1c69626f685b1ec9bdaee1b8055dda4a07cdf",
         "total_reveals": 1
       },
       {
