@@ -914,7 +914,9 @@ def plan_late_game_solve(state, capacity, max_samples=20, timeout=90):
         p = pool[:]
         random.shuffle(p)
         filled = _fill_unknowns(state, p)
-        solution = solve(filled, capacity)
+        solution = solve_astar(filled, capacity, max_states=150_000)
+        if not solution:
+            solution = solve_dfs(filled, capacity, max_states=2_000_000, restrict_empties=False)
         if solution:
             return solution, filled
     return None
