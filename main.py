@@ -1394,10 +1394,6 @@ def tap_next_level(config, wait_time=3.0):
         if image is None:
             continue
 
-        if is_game_screen(image, config):
-            print("  ✓ Game screen detected!")
-            return True
-
         win_info = detect_win_screen(image)
         if win_info["detected"]:
             if win_info["next_button_position"]:
@@ -1417,6 +1413,10 @@ def tap_next_level(config, wait_time=3.0):
             time.sleep(2.0)
             elapsed += 2.0
             continue
+
+        if is_game_screen(image, config):
+            print("  ✓ Game screen detected!")
+            return True
 
         print(f"  Not visible ({elapsed:.0f}s/{timeout:.0f}s) — retrying...")
 

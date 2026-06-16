@@ -21,4 +21,4 @@
   reveal_round         0.00s      8      0.2ms
   path_to_unknown      0.00s      0      0.0ms
   score_prefix        17.88s     21    851.4ms
-  full_solve         110.35s      1 110352.0ms
+  full_solve         707.62s      9  78624.1ms

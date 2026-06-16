@@ -1,1 +1,69 @@
-{}
+{
+  "9a78ff09d7174143560627984b10b01603b487c0": {
+    "initial_slots": {},
+    "capacity": null,
+    "visible_counts": {
+      "112,112,112": 4,
+      "255,230,64": 4,
+      "85,163,229": 4,
+      "0,230,167": 4,
+      "176,89,192": 4,
+      "104,47,142": 4,
+      "0,38,203": 4,
+      "217,130,53": 4,
+      "180,58,58": 4,
+      "102,170,13": 4
+    },
+    "attempt_log": [
+      {
+        "moves": [],
+        "reveals_per_move": [],
+        "outcome": "stuck",
+        "board_hash": "e6d80315a5ab75475289dbc18a92a66896ac8c39",
+        "total_reveals": 0
+      },
+      {
+        "moves": [],
+        "reveals_per_move": [],
+        "outcome": "stuck",
+        "board_hash": "e6d80315a5ab75475289dbc18a92a66896ac8c39",
+        "total_reveals": 0
+      },
+      {
+        "moves": [],
+        "reveals_per_move": [],
+        "outcome": "stuck",
+        "board_hash": "e6d80315a5ab75475289dbc18a92a66896ac8c39",
+        "total_reveals": 0
+      },
+      {
+        "moves": [],
+        "reveals_per_move": [],
+        "outcome": "stuck",
+        "board_hash": "e6d80315a5ab75475289dbc18a92a66896ac8c39",
+        "total_reveals": 0
+      },
+      {
+        "moves": [],
+        "reveals_per_move": [],
+        "outcome": "stuck",
+        "board_hash": "e6d80315a5ab75475289dbc18a92a66896ac8c39",
+        "total_reveals": 0
+      },
+      {
+        "moves": [],
+        "reveals_per_move": [],
+        "outcome": "stuck",
+        "board_hash": "e6d80315a5ab75475289dbc18a92a66896ac8c39",
+        "total_reveals": 0
+      },
+      {
+        "moves": [],
+        "reveals_per_move": [],
+        "outcome": "stuck",
+        "board_hash": "e6d80315a5ab75475289dbc18a92a66896ac8c39",
+        "total_reveals": 0
+      }
+    ]
+  }
+}
