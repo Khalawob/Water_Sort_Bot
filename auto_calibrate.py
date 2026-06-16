@@ -376,6 +376,153 @@ def detect_buttons(image):
     return {name: coord for name, coord in zip(names, candidates[:4])}
 
 
+def detect_win_screen(image):
+    """Detect the win screen by its red banner and optionally locate a yellow NEXT button.
+
+    Returns {"detected": bool, "next_button_position": (x, y) | None}.
+    """
+    h, w = image.shape[:2]
+    roi = image[int(h * 0.15):int(h * 0.32), :]
+
+    b = roi[:, :, 0].astype(np.int16)
+    g = roi[:, :, 1].astype(np.int16)
+    r = roi[:, :, 2].astype(np.int16)
+
+    mask = (
+        (r >= 170) & (r <= 255) &
+        (g >= 10) & (g <= 130) &
+        (b >= 30) & (b <= 130) &
+        (r > g + 60) &
+        (r > b + 60)
+    ).astype(np.uint8) * 255
+
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,
+                                   cv2.CHAIN_APPROX_SIMPLE)
+    banner_found = False
+    for cnt in contours:
+        x, y, bw, bh = cv2.boundingRect(cnt)
+        if bw >= w * 0.4 and bh >= 30:
+            banner_found = True
+            break
+
+    if not banner_found:
+        return {"detected": False, "next_button_position": None}
+
+    y_top = int(h * 0.70)
+    y_bot = int(h * 0.90)
+    btn_roi = image[y_top:y_bot, :]
+
+    bb = btn_roi[:, :, 0].astype(np.int16)
+    bg = btn_roi[:, :, 1].astype(np.int16)
+    br = btn_roi[:, :, 2].astype(np.int16)
+
+    yellow_mask = (
+        (bb >= 0) & (bb <= 50) &
+        (bg >= 150) & (bg <= 240) &
+        (br >= 200) & (br <= 255) &
+        (br > bg)
+    ).astype(np.uint8) * 255
+
+    btn_contours, _ = cv2.findContours(yellow_mask, cv2.RETR_EXTERNAL,
+                                       cv2.CHAIN_APPROX_SIMPLE)
+    best = None
+    best_area = 0
+    for cnt in btn_contours:
+        bx, by, bbw, bbh = cv2.boundingRect(cnt)
+        if bbw >= 200 and bbh >= 60:
+            area = bbw * bbh
+            if area > best_area:
+                best = (bx, by, bbw, bbh)
+                best_area = area
+
+    if best is not None:
+        bx, by, bbw, bbh = best
+        cx = bx + bbw // 2
+        cy = y_top + by + bbh // 2
+        return {"detected": True, "next_button_position": (cx, cy)}
+
+    return {"detected": True, "next_button_position": None}
+
+
+def detect_popup(image):
+    """
+    Detect theme-unlock or special-level popups by their coloured buttons.
+
+    Returns {"popup": "theme"|"special"|None, "skip_position": (x,y)|None}.
+    Coordinates are absolute device pixels (ADB screenshot space).
+    """
+    win_info = detect_win_screen(image)
+    if win_info["detected"]:
+        return {"popup": None, "skip_position": None}
+
+    h, w = image.shape[:2]
+    roi_top = int(h * 0.50)
+    roi_bottom = int(h * 0.90)
+    roi = image[roi_top:roi_bottom, :]
+
+    b = roi[:, :, 0].astype(np.int16)
+    g = roi[:, :, 1].astype(np.int16)
+    r = roi[:, :, 2].astype(np.int16)
+
+    green_mask = (
+        (b >= 40) & (b <= 120) &
+        (g >= 100) & (g <= 230) &
+        (r >= 0) & (r <= 40) &
+        (g > r + 60) &
+        (g > b + 20)
+    ).astype(np.uint8) * 255
+
+    yellow_mask = (
+        (b >= 0) & (b <= 50) &
+        (g >= 150) & (g <= 240) &
+        (r >= 200) & (r <= 255) &
+        (r > g)
+    ).astype(np.uint8) * 255
+
+    blue_mask = (
+        (b >= 170) & (b <= 250) &
+        (g >= 130) & (g <= 220) &
+        (r >= 60) & (r <= 150) &
+        (b > r + 50)
+    ).astype(np.uint8) * 255
+
+    def _find_button(mask, min_w=200, min_h=60):
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL,
+                                       cv2.CHAIN_APPROX_SIMPLE)
+        best = None
+        best_area = 0
+        for cnt in contours:
+            x, y, bw, bh = cv2.boundingRect(cnt)
+            if bw >= min_w and bh >= min_h:
+                area = bw * bh
+                if area > best_area:
+                    best = (x, y, bw, bh)
+                    best_area = area
+        return best
+
+    green = _find_button(green_mask)
+    if green is not None:
+        gx, gy, gw, gh = green
+        skip_x = gx + gw // 2
+        skip_y = roi_top + gy + gh + 60
+        return {"popup": "theme", "skip_position": (skip_x, skip_y)}
+
+    yellow = _find_button(yellow_mask)
+    if yellow is not None:
+        yx, yy, yw, yh = yellow
+        blue = _find_button(blue_mask)
+        if blue is not None:
+            bx, by, bbw, bbh = blue
+            skip_x = bx + bbw // 2
+            skip_y = roi_top + by + bbh // 2
+            return {"popup": "special", "skip_position": (skip_x, skip_y)}
+        skip_x = yx + yw // 2
+        skip_y = roi_top + yy + yh + 150
+        return {"popup": "special", "skip_position": (skip_x, skip_y)}
+
+    return {"popup": None, "skip_position": None}
+
+
 if __name__ == "__main__":
     from capture import screenshot, SCREENSHOT_PATH
 

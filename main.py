@@ -40,7 +40,7 @@ from automator import (
     adb_tap, human_delay, jittered_tap,
     get_tube_tap_zones, refresh_mapping,
 )
-from auto_calibrate import auto_calibrate, visualise_detection, detect_buttons
+from auto_calibrate import auto_calibrate, visualise_detection, detect_buttons, detect_popup, detect_win_screen
 
 
 # Consecutive barren (learned-nothing) attempts tolerated before giving up on a
@@ -1359,7 +1359,7 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
 
 
 def tap_next_level(config, wait_time=3.0):
-    """Tap Next Level button."""
+    """Tap Next Level button, detecting and dismissing any popups."""
     btn = config.get("next_button")
     if not btn:
         print("\n⚠ No 'next level' button configured — trying auto-detection...")
@@ -1379,22 +1379,46 @@ def tap_next_level(config, wait_time=3.0):
     print(f"\n⏳ Waiting {wait_time}s for win animation...")
     time.sleep(wait_time)
 
-    for attempt in range(3):
-        print(f"👆 Tapping 'Next Level' at ({x}, {y})...")
-        adb_tap(x, y)
-        time.sleep(wait_time)
+    print(f"👆 Tapping 'Next Level' at ({x}, {y})...")
+    adb_tap(x, y)
+
+    timeout = 20.0
+    poll_interval = 1.5
+    elapsed = 0.0
+
+    while elapsed < timeout:
+        time.sleep(poll_interval)
+        elapsed += poll_interval
 
         image = screenshot()
-        if image is not None and is_game_screen(image, config):
+        if image is None:
+            continue
+
+        if is_game_screen(image, config):
             print("  ✓ Game screen detected!")
             return True
 
-        print(f"  Not visible (attempt {attempt+1}/3) — retrying...")
-        time.sleep(1.5)
+        win_info = detect_win_screen(image)
+        if win_info["detected"]:
+            if win_info["next_button_position"]:
+                nx, ny = win_info["next_button_position"]
+                print(f"  Win screen with yellow NEXT — tapping at ({nx}, {ny})...")
+                adb_tap(nx, ny)
+            else:
+                print(f"  Win screen still visible — re-tapping NEXT at ({x}, {y})...")
+                adb_tap(x, y)
+            continue
 
-    image = wait_for_game_screen(config, timeout=20)
-    if image is not None:
-        return True
+        popup = detect_popup(image)
+        if popup["popup"] is not None:
+            skip_x, skip_y = popup["skip_position"]
+            print(f"  🪟 {popup['popup']} popup detected — tapping SKIP at ({skip_x}, {skip_y})...")
+            adb_tap(skip_x, skip_y)
+            time.sleep(2.0)
+            elapsed += 2.0
+            continue
+
+        print(f"  Not visible ({elapsed:.0f}s/{timeout:.0f}s) — retrying...")
 
     print("  ⚠ Could not confirm next level loaded.")
     return False
@@ -1492,6 +1516,8 @@ def main():
                         help="Set the Restart button position (shown on 'No more moves' screen)")
     parser.add_argument("--test-detect", action="store_true",
                         help="Test auto-detection and save visualisation")
+    parser.add_argument("--test-popup", action="store_true",
+                        help="Test popup/win-screen detection on a live ADB screenshot")
     parser.add_argument("--dry-run", action="store_true",
                         help="Solve without tapping")
     parser.add_argument("--loop", action="store_true",
@@ -1539,6 +1565,25 @@ def main():
             for i, tube in enumerate(tubes):
                 label = " | ".join(tube) if tube else "(empty)"
                 print(f"  Tube {i+1}: [{label}]")
+        return
+
+    # ── Test popup detection ──────────────────────────────────────────
+    if args.test_popup:
+        print("📸 Taking ADB screenshot...")
+        img = screenshot()
+        if img is None:
+            print("  ✗ Failed.")
+            return
+        h, w = img.shape[:2]
+        print(f"  Image: {w}x{h}")
+        win_info = detect_win_screen(img)
+        print(f"  Win screen: {win_info['detected']}")
+        if win_info["next_button_position"]:
+            print(f"  Yellow NEXT button: {win_info['next_button_position']}")
+        popup = detect_popup(img)
+        print(f"  Popup: {popup['popup']}")
+        if popup["skip_position"]:
+            print(f"  Skip position: {popup['skip_position']}")
         return
 
     # ── Load existing config (for next_button) ──────────────────────
