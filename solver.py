@@ -1461,14 +1461,11 @@ def solve(initial_state, tube_capacity=4, max_states=500_000):
     if result is not None:
         return result
 
-    if num_tubes > 12:
-        print("    A* hit limit, trying DFS...")
-        result = solve_dfs(initial_state, tube_capacity,
-                           max_states=max_states * 4, restrict_empties=True)
-        if result:
-            return result
-        print("    Retrying DFS relaxed...")
-        return solve_dfs(initial_state, tube_capacity,
-                         max_states=max_states * 4, restrict_empties=False)
-
-    return None
+    print("    A* hit limit, trying DFS...")
+    result = solve_dfs(initial_state, tube_capacity,
+                       max_states=max_states * 4, restrict_empties=True)
+    if result:
+        return result
+    print("    Retrying DFS relaxed...")
+    return solve_dfs(initial_state, tube_capacity,
+                     max_states=max_states * 4, restrict_empties=False)

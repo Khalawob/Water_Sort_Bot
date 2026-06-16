@@ -1,24 +1,24 @@
 
 === Reveal planner stats ===
-  safe             reached   30  used    0  (0% hit)
-  info_gain        reached   30  used   16  (53% hit)
-  deep             reached   14  used    5  (36% hit)
-  consolidate      reached    9  used    1  (11% hit)
-  maximize         reached    8  used    0  (0% hit)
-  reveal_round     reached    8  used    0  (0% hit)
-  determinization  reached    8  used    0  (0% hit)
+  safe             reached   31  used    0  (0% hit)
+  info_gain        reached   31  used   17  (55% hit)
+  deep             reached   14  used    4  (29% hit)
+  consolidate      reached    8  used    3  (38% hit)
+  maximize         reached    7  used    2  (29% hit)
+  reveal_round     reached    4  used    0  (0% hit)
+  determinization  reached    5  used    1  (20% hit)
   path_to_unknown  reached    0  used    0  (0% hit)
-  heal                0   patience_retry      0
+  heal                2   patience_retry      0
 
 === Reveal planner timings ===
   stage                total  calls       mean
-  safe                 0.00s     30      0.0ms
-  info_gain            0.05s     30      1.8ms
-  deep                 0.02s     14      1.3ms
-  consolidate          0.02s      9      1.7ms
-  maximize             0.00s      8      0.1ms
-  determinization      0.08s      8      9.4ms
-  reveal_round         0.00s      8      0.2ms
+  safe                 0.00s     31      0.1ms
+  info_gain            0.08s     31      2.7ms
+  deep                 0.03s     14      2.1ms
+  consolidate          0.01s      8      1.5ms
+  maximize             0.00s      7      0.2ms
+  determinization     25.55s      5   5109.6ms
+  reveal_round         0.00s      4      0.2ms
   path_to_unknown      0.00s      0      0.0ms
-  score_prefix        17.88s     21    851.4ms
-  full_solve         707.62s      9  78624.1ms
+  score_prefix        37.84s     21   1801.9ms
+  full_solve          60.43s      1  60433.9ms
