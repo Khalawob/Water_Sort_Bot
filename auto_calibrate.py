@@ -377,7 +377,10 @@ def detect_buttons(image):
 
 
 def detect_win_screen(image):
-    """Detect the win screen by its red banner and optionally locate a yellow NEXT button.
+    """Detect the win screen by its red banner and locate the NEXT tap position.
+
+    Checks for a yellow NEXT button first; falls back to using a green CLAIM
+    button as a landmark (grey NEXT text sits 80px below the green button).
 
     Returns {"detected": bool, "next_button_position": (x, y) | None}.
     """
@@ -408,7 +411,7 @@ def detect_win_screen(image):
     if not banner_found:
         return {"detected": False, "next_button_position": None}
 
-    y_top = int(h * 0.70)
+    y_top = int(h * 0.55)
     y_bot = int(h * 0.90)
     btn_roi = image[y_top:y_bot, :]
 
@@ -439,6 +442,32 @@ def detect_win_screen(image):
         bx, by, bbw, bbh = best
         cx = bx + bbw // 2
         cy = y_top + by + bbh // 2
+        return {"detected": True, "next_button_position": (cx, cy)}
+
+    green_mask = (
+        (bb >= 40) & (bb <= 120) &
+        (bg >= 100) & (bg <= 230) &
+        (br >= 0) & (br <= 40) &
+        (bg > br + 60) &
+        (bg > bb + 20)
+    ).astype(np.uint8) * 255
+
+    green_contours, _ = cv2.findContours(green_mask, cv2.RETR_EXTERNAL,
+                                         cv2.CHAIN_APPROX_SIMPLE)
+    best_green = None
+    best_green_area = 0
+    for cnt in green_contours:
+        gx, gy, gw, gh = cv2.boundingRect(cnt)
+        if gw >= 200 and gh >= 60:
+            area = gw * gh
+            if area > best_green_area:
+                best_green = (gx, gy, gw, gh)
+                best_green_area = area
+
+    if best_green is not None:
+        gx, gy, gw, gh = best_green
+        cx = gx + gw // 2
+        cy = y_top + gy + gh + 80
         return {"detected": True, "next_button_position": (cx, cy)}
 
     return {"detected": True, "next_button_position": None}

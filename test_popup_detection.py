@@ -11,7 +11,7 @@ TESTS = [
         "label": "Win screen (CLAIM x2)",
         "expect_win": True,
         "expect_popup": None,
-        "expect_next_button": False,
+        "expect_next_button": True,
     },
     {
         "file": "Screenshot_20260616-103439_Water Sort Puzzle.jpg",
