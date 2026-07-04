@@ -1,77 +1,125 @@
 # Architectural Patterns
 
+Cross-cutting patterns that appear across multiple modules.
+
 ## Pipeline Architecture
 
-The bot follows a strict linear pipeline per level:
+The bot follows a per-round pipeline, re-run from scratch each iteration:
 
 ```
-screenshot() → auto_calibrate() → read_tubes() → solve() → execute_move_list()
+screenshot() -> auto_calibrate() -> read_tubes() -> [overlay learned] -> solve/reveal -> execute_move_list()
 ```
 
-Each stage is a pure function consuming the previous stage's output. `main.py:109` (`solve_one_level`) orchestrates this pipeline per round; it re-runs all stages from the screenshot step on each iteration (to handle hidden-slot reveals).
+`_solve_one_level_impl` (`main.py:726`) orchestrates this with up to `max_rounds=40` iterations per attempt and up to 12 restarts per level (`main.py:743`). Each round re-screenshots and re-calibrates to reflect the board state after the previous round's pours. The overlay step merges `LevelMemory`'s cross-restart knowledge onto the freshly-read board before solving.
 
 ## Separation of Concerns
 
-Each module owns exactly one stage with no cross-stage dependencies (all imports are one-directional down the pipeline):
+Each module owns one pipeline stage. Imports are one-directional -- only `main.py` imports from the others:
 
-| Module | Responsibility |
-|---|---|
-| `capture.py` | ADB I/O, scrcpy process management, window detection |
-| `auto_calibrate.py` | Vision-based tube geometry detection from a screenshot |
-| `screen_reader.py` | Pixel colour reading and hidden-slot detection |
-| `solver.py` | Pure search algorithms — no I/O, no imports from other project modules |
-| `automator.py` | Device coordinate → screen coordinate mapping and tap execution |
-| `main.py` | CLI entry point and pipeline orchestration |
+| Module | Responsibility | Project imports |
+|---|---|---|
+| `capture.py` | ADB I/O, scrcpy process management, window detection | none |
+| `auto_calibrate.py` | Tube geometry detection, button/win/popup detection | none |
+| `screen_reader.py` | Pixel colour reading, hidden-slot detection | `capture` |
+| `solver.py` | Pure search algorithms (A*, DFS, 10 reveal planners) | none |
+| `level_memory.py` | Cross-restart learning, attempt tracking, disk persistence | none |
+| `automator.py` | Device-to-screen coordinate mapping, tap execution | `capture` |
+| `main.py` | CLI entry point, pipeline orchestration, multi-attempt retry | all above |
 
-`solver.py` has zero project imports, making it independently testable.
+`solver.py` and `level_memory.py` have zero project imports, making them independently testable.
 
-## Config as Shared State
+## Config as Shared State Contract
 
-`config.json` is the single source of truth for all calibration data. Its `tubes[].sample_points` list — pixel coordinates on the device — is the contract between pipeline stages:
+`config.json` is the single source of truth for calibration data. Key consumers of `tubes[].sample_points`:
 
-- `auto_calibrate.py:255` produces it per-frame
-- `screen_reader.py:92` reads colours from those points
-- `automator.py:103` derives tap zones from those same points
+- `auto_calibrate.py:276` (`auto_calibrate`) produces it per-frame
+- `screen_reader.py:113` (`read_tubes`) reads colours from those pixel coordinates
+- `automator.py:103` (`get_tube_tap_zones`) derives tap targets from them
 
-Config is regenerated from the screenshot each round (`main.py:132`) but preserves `next_button` across rounds (`main.py:100`).
+Additional keys: `tube_capacity`, `empty_colour`, `next_button`, `restart_button`. Config is regenerated from the screenshot each round but preserves button locations across rounds (`main.py:215`, `get_config_for_level`).
+
+## UNKNOWN Sentinel (Mirrored, Not Imported)
+
+`UNKNOWN = "unknown"` is defined independently in three files:
+- `solver.py:20`
+- `screen_reader.py:32`
+- `level_memory.py:23`
+
+This is deliberate: it keeps the dependency graph one-directional (no cross-imports between library modules). Any change to the sentinel value must be mirrored in all three locations.
+
+The sentinel threads through the entire pipeline: `screen_reader` marks hidden slots as UNKNOWN, `solver` never pours them and penalises them in heuristics, `level_memory` records revealed colours keyed by (tube, depth), and `main.py`'s overlay replaces UNKNOWN with learned colours before solving.
 
 ## Fallback Chains
 
 Three independent fallback chains handle failure gracefully:
 
-**Screenshot capture** (`capture.py:148` → `capture.py:178`):  
-ADB fast pipe (`exec-out screencap -p`) → two-step legacy pull (`screencap` + `adb pull`)
+**Screenshot capture** (`capture.py`):
+`screenshot()` at line 148 (ADB fast pipe `exec-out screencap -p`) falls back to `_screenshot_legacy()` at line 178 (two-step `screencap` + `adb pull`).
 
-**Solver** (`solver.py:290`):  
-A* with `max_states=1_000_000` → DFS with depth limits [50, 100, 150, 200] (for >12 tubes only)
+**Solver** (`solver.py:1452`):
+`solve()` tries A* with `max_states=1_000_000`, then DFS with restricted empties (`max_states=2_000_000`), then DFS with relaxed empties (`max_states=2_000_000`).
 
-**Auto-calibration** (`main.py:93`):  
-Fresh per-frame detection → saved config from previous level
-
-## UNKNOWN Sentinel
-
-`UNKNOWN = "unknown"` (defined at `solver.py:16`, mirrored at `screen_reader.py:32`) is a string sentinel threaded through the entire pipeline to represent hidden/unrevealed ball slots. The solver never pours unknowns (`solver.py:57`), the heuristic penalises them (`solver.py:112`), and when a full solve is impossible, `find_safe_moves()` (`solver.py:223`) scores moves by how many unknowns they reveal.
+**Auto-calibration** (`main.py:215`, `get_config_for_level`):
+Fresh per-frame detection, falling back to saved config from the previous level.
 
 ## Module-Level Lazy Caches
 
-Two module-level singletons cache expensive lookups across calls within the same process run:
+| Cache | Location | Purpose |
+|---|---|---|
+| `_cached_mapping` | `automator.py:25` | scrcpy window bounds + scale factors |
+| `_device_resolution` | `capture.py:196` | device screen dimensions from `adb shell wm size` |
+| `REVEAL_STATS` | `main.py:65` | per-planner reached/used counts (dict) |
+| `REVEAL_TIMES` | `main.py:80` | per-planner cumulative wall-clock timing (dict) |
 
-- `automator.py:26`: `_cached_mapping` — scrcpy window bounds + scale factors; refreshed before each move batch via `refresh_mapping()`
-- `capture.py:196`: `_device_resolution` — device screen dimensions from `adb shell wm size`
-
-Both use `None` as the uninitialized sentinel and recompute on first use.
+The first two use `None` as the uninitialized sentinel. The latter two are zero-initialised dicts reset between levels.
 
 ## Device Coordinate Abstraction
 
-All game coordinates (tube positions, next-button location) are stored in **device space** (native Android pixels). Conversion to screen coordinates happens only at tap time in `automator.py:62` (`_device_to_screen`), using the cached scale factors. This means `config.json` is independent of the scrcpy window size or position.
+All game coordinates (tube positions, button locations) are stored in **device space** (native Android pixels). Conversion to screen coordinates happens only at tap time via `_device_to_screen()` (`automator.py:62`), using cached scale factors. This makes `config.json` independent of scrcpy window size or position.
 
 ## Human-Like Input Randomisation
 
-Tap positions and timing are randomised at two levels, both in `automator.py`:
+Tap positions and timing are randomised to avoid detection:
 
-- **Position jitter** (`automator.py:129`): ±8–12px around the tube center, scaled to tube spread
-- **Timing jitter** (`automator.py:136`): `base ± 0.15s` via `human_delay()`; pour wait scales linearly with `num_poured` (`0.83 + 0.52 * n`)
+- **Position jitter** (`automator.py:129`, `jittered_tap`): random offset around tube center, scaled to tube spread
+- **Timing jitter** (`automator.py:136`, `human_delay`): `base +/- 0.15s`
+- **Pour wait scaling** (`main.py:202`): `0.83 + 0.52 * num_poured` -- linear with balls poured
 
 ## Immutable State in Solver
 
-The solver represents puzzle state as `tuple(tuple(t) for t in state)` — a tuple of tuples. This makes states hashable for the `seen` set in A* and the `visited` set in DFS, preventing revisits without needing equality checks.
+Puzzle state is `tuple(tuple(t) for t in state)` -- a tuple of tuples. This makes states hashable for the `seen` set in A* and `visited` in DFS, enabling O(1) revisit detection. All state transitions create new tuples via `apply_move()` (`solver.py:690`).
+
+## Cross-Restart Learning (LevelMemory)
+
+The game is deterministic on restart: the same level always has the same hidden-slot layout. `LevelMemory` (`level_memory.py:35`) exploits this:
+
+- **Persistence**: JSON file keyed by sha1 signature of (tube labels, RGB values, capacity)
+- **Records**: maps `(tube, depth)` to the RGB colour of originally-hidden slots
+- **Overlay**: `main.py` merges learned slots onto freshly-read boards before solving
+- **AttemptSim** (`level_memory.py:196`): tracks ball origins during an attempt so newly-read colours can be attributed back to their original (tube, depth) positions
+- **Corruption guard**: capacity violations trigger `memory.delete()` + retry (once per level)
+
+## UI Element Detection (auto_calibrate.py)
+
+Beyond tube geometry, `auto_calibrate.py` detects UI overlays:
+
+- `detect_buttons()` (`auto_calibrate.py:338`): finds purple/lilac UI buttons (menu, restart, undo, add_tube)
+- `detect_win_screen()` (`auto_calibrate.py:379`): red banner + yellow NEXT / green CLAIM button
+- `detect_popup()` (`auto_calibrate.py:476`): theme-unlock or special-level popup overlays
+
+These are used by `main.py` in `tap_next_level` (`main.py:1361`) to navigate between levels in loop mode.
+
+## Debug Instrumentation
+
+- `debug_screenshots/level_NNN/` -- per-level directories with round-end screenshots
+- `rounds.txt` per level -- stdout captured via `_Tee` class, includes planner decisions and board state
+- `REVEAL_STATS` / `REVEAL_TIMES` dicts (`main.py:65,80`) track planner hit rates and latencies
+- `format_reveal_stats()` / `print_reveal_stats()` produce human-readable summaries
+
+## Reveal Chain Architecture
+
+The reveal chain (`main.py:1034-1168`) is a prioritised cascade of 10 planners. Each is tried only if all higher-priority planners produced no moves. The chain balances information-theoretic optimality (info_gain, deep) against exhaustive safety (guaranteed_safe) and heuristic fallbacks (maximize, determinization, reveal_round).
+
+Solvability scoring (`select_reveal_prefix`, `main.py:618`) trims info_gain and deep-reveal batches when empties are scarce (at or below `REVEAL_SOLVABILITY_EMPTY_GATE=1`), preventing reveal moves from stranding the board. Only `info_gain` and `deep` sources are scored -- other sources are either already safe or too cheap to justify the scoring cost.
+
+Feature gates controlling the chain: `ENABLE_BARREN_PATH` (`main.py:61`), `ENABLE_LATE_GAME_PATH` (`main.py:62`).
