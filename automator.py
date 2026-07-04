@@ -98,6 +98,12 @@ def adb_tap(dev_x, dev_y):
     pyautogui.click(screen_x, screen_y)
 
 
+def send_back_button():
+    """Send Android Back button via scrcpy's Alt+B shortcut."""
+    _focus_scrcpy()
+    pyautogui.hotkey('alt', 'b')
+
+
 # ── Tube zones and jitter ────────────────────────────────────────────
 
 def get_tube_tap_zones(config):
