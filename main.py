@@ -39,6 +39,7 @@ from capture import screenshot, launch_scrcpy, stop_scrcpy
 from automator import (
     adb_tap, human_delay, jittered_tap,
     get_tube_tap_zones, refresh_mapping,
+    send_back_button,
 )
 from auto_calibrate import auto_calibrate, visualise_detection, detect_buttons, detect_popup, detect_win_screen
 
@@ -781,7 +782,7 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
                     print("  ✗ Screenshot failed.")
                     return False
 
-                if detect_no_more_moves(image):
+                if (round_num > 1 or attempt > 1) and detect_no_more_moves(image):
                     print("  🚫 'No more moves!' detected.")
                     status = "no_moves"
                     break
@@ -1358,6 +1359,46 @@ def _solve_one_level_impl(config, tube_capacity, dry_run=False, max_rounds=40, l
     return False
 
 
+def wait_for_ad(config):
+    """Wait for an ad to finish, then dismiss it with Back button.
+
+    Returns True if the game screen reappeared, False if still stuck.
+    """
+    image = screenshot()
+    if image is not None:
+        if detect_win_screen(image)["detected"]:
+            return False
+        if detect_popup(image)["popup"] is not None:
+            return False
+        if is_game_screen(image, config):
+            return True
+
+    print("  📺 Possible ad detected — waiting 15s for it to finish...")
+    time.sleep(15)
+
+    max_attempts = 3
+    for attempt in range(1, max_attempts + 1):
+        print(f"  📺 Sending Back button (attempt {attempt}/{max_attempts})...")
+        send_back_button()
+        time.sleep(5)
+
+        image = screenshot()
+        if image is None:
+            continue
+        if is_game_screen(image, config):
+            print("  ✓ Game screen returned after ad dismissal!")
+            return True
+        if detect_win_screen(image)["detected"]:
+            print("  ✓ Win screen detected after ad dismissal.")
+            return True
+        if detect_popup(image)["popup"] is not None:
+            print("  ✓ Popup detected after ad dismissal.")
+            return True
+
+    print("  ⚠ Game screen did not return after ad dismissal attempts.")
+    return False
+
+
 def tap_next_level(config, wait_time=3.0):
     """Tap Next Level button, detecting and dismissing any popups."""
     btn = config.get("next_button")
@@ -1382,9 +1423,10 @@ def tap_next_level(config, wait_time=3.0):
     print(f"👆 Tapping 'Next Level' at ({x}, {y})...")
     adb_tap(x, y)
 
-    timeout = 20.0
+    timeout = 45.0
     poll_interval = 1.5
     elapsed = 0.0
+    ad_handled = False
 
     while elapsed < timeout:
         time.sleep(poll_interval)
@@ -1417,6 +1459,13 @@ def tap_next_level(config, wait_time=3.0):
         if is_game_screen(image, config):
             print("  ✓ Game screen detected!")
             return True
+
+        if not ad_handled:
+            ad_handled = True
+            if wait_for_ad(config):
+                return True
+            elapsed += 30.0
+            continue
 
         print(f"  Not visible ({elapsed:.0f}s/{timeout:.0f}s) — retrying...")
 
@@ -1469,7 +1518,32 @@ def tap_restart_level(config):
     x, y = btn["x"], btn["y"]
     print(f"  🔄 Tapping restart at ({x}, {y})...")
     adb_tap(x, y)
-    time.sleep(2.0)
+
+    timeout = 10.0
+    poll_interval = 1.5
+    elapsed = 0.0
+
+    while elapsed < timeout:
+        time.sleep(poll_interval)
+        elapsed += poll_interval
+
+        image = screenshot()
+        if image is None:
+            continue
+
+        if is_game_screen(image, config):
+            return True
+
+        if detect_win_screen(image)["detected"]:
+            continue
+
+        if detect_popup(image)["popup"] is not None:
+            continue
+
+        if wait_for_ad(config):
+            return True
+        elapsed += 30.0
+
     return True
 
 

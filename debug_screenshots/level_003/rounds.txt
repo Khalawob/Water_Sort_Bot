@@ -1,24 +1,24 @@
 
 === Reveal planner stats ===
-  safe             reached   30  used    0  (0% hit)
-  info_gain        reached   30  used   16  (53% hit)
-  deep             reached   14  used    5  (36% hit)
-  consolidate      reached    9  used    1  (11% hit)
-  maximize         reached    8  used    0  (0% hit)
-  reveal_round     reached    8  used    0  (0% hit)
-  determinization  reached    8  used    0  (0% hit)
-  path_to_unknown  reached    0  used    0  (0% hit)
-  heal                0   patience_retry      0
+  safe             reached   23  used    0  (0% hit)
+  info_gain        reached   23  used   15  (65% hit)
+  deep             reached    8  used    3  (38% hit)
+  consolidate      reached    4  used    0  (0% hit)
+  maximize         reached    5  used    1  (20% hit)
+  reveal_round     reached    2  used    0  (0% hit)
+  determinization  reached    4  used    2  (50% hit)
+  path_to_unknown  reached    1  used    1  (100% hit)
+  heal                1   patience_retry      1
 
 === Reveal planner timings ===
   stage                total  calls       mean
-  safe                 0.00s     30      0.0ms
-  info_gain            0.05s     30      1.8ms
-  deep                 0.02s     14      1.3ms
-  consolidate          0.02s      9      1.7ms
-  maximize             0.00s      8      0.1ms
-  determinization      0.08s      8      9.4ms
-  reveal_round         0.00s      8      0.2ms
-  path_to_unknown      0.00s      0      0.0ms
-  score_prefix        17.88s     21    851.4ms
-  full_solve         707.62s      9  78624.1ms
+  safe                 0.00s     23      0.0ms
+  info_gain            0.10s     23      4.2ms
+  deep                 0.01s      8      0.6ms
+  consolidate          0.01s      4      2.6ms
+  maximize             0.00s      5      0.3ms
+  determinization     20.37s      4   5093.1ms
+  reveal_round         0.00s      2      0.1ms
+  path_to_unknown      0.00s      1      0.1ms
+  score_prefix        16.51s     18    917.4ms
+  full_solve         122.87s      2  61432.8ms
