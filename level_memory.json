@@ -1,56 +1,12 @@
 {
-  "09f08a21b62292a3d6b73e9f74a65a57ffea5dd1": {
-    "initial_slots": {
-      "0,2": [
-        57,
-        82,
-        16
-      ]
-    },
-    "capacity": 4,
-    "visible_counts": {
-      "217,130,53": 4,
-      "219,104,125": 2,
-      "0,38,203": 1,
-      "85,163,229": 1,
-      "176,89,192": 1,
-      "180,58,58": 3,
-      "104,47,142": 2
-    },
+  "6827ea961b8827edc877464640d354844c707b9c": {
+    "initial_slots": {},
+    "capacity": null,
     "attempt_log": [
       {
-        "moves": [
-          [
-            0,
-            13,
-            1
-          ]
-        ],
-        "reveals_per_move": [
-          1
-        ],
-        "outcome": "no_moves",
-        "board_hash": "e14bc56fc171e57d496d6eee87ea6df92285ff81",
-        "total_reveals": 1
-      },
-      {
         "moves": [],
         "reveals_per_move": [],
-        "outcome": "no_moves",
-        "board_hash": null,
-        "total_reveals": 0
-      },
-      {
-        "moves": [],
-        "reveals_per_move": [],
-        "outcome": "no_moves",
-        "board_hash": null,
-        "total_reveals": 0
-      },
-      {
-        "moves": [],
-        "reveals_per_move": [],
-        "outcome": "no_moves",
+        "outcome": "stuck",
         "board_hash": null,
         "total_reveals": 0
       }

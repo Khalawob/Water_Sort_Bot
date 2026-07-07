@@ -265,7 +265,7 @@ def detect_no_more_moves(image):
     """
     h = image.shape[0]
 
-    bottom = image[int(h * 0.93):, :]
+    bottom = image[int(h * 0.90):, :]
     if np.all(bottom > _NMM_BRIGHT, axis=2).mean() > _NMM_BOTTOM_DENSITY:
         return True
 
