@@ -118,4 +118,12 @@ These are used by `main.py` in `tap_next_level` (`main.py:1361`) to navigate bet
 
 ## Reveal Chain Architecture
 
+<<<<<<< HEAD
 The reveal chain (`main.py:1034-1168`) is a prioritised cascade of 10 planners. Each is tried only if all higher-priority planners produced no moves. The chain balances information-theoretic optimality (info_gain, deep) against exhaustive safety (guaranteed_safe) and heuristic fallbacks (maximize, determinization, reveal_round).
+=======
+The reveal chain (`main.py:1034-1168`) is a prioritised cascade of 10 planners. Each is tried only if all higher-priority planners produced no moves. The chain balances information-theoretic optimality (info_gain, deep) against exhaustive safety (guaranteed_safe) and heuristic fallbacks (maximize, determinization, reveal_round).
+
+Solvability scoring (`select_reveal_prefix`, `main.py:618`) trims info_gain and deep-reveal batches when empties are scarce (at or below `REVEAL_SOLVABILITY_EMPTY_GATE=1`), preventing reveal moves from stranding the board. Only `info_gain` and `deep` sources are scored -- other sources are either already safe or too cheap to justify the scoring cost.
+
+Feature gates controlling the chain: `ENABLE_BARREN_PATH` (`main.py:61`), `ENABLE_LATE_GAME_PATH` (`main.py:62`).
+>>>>>>> 139dae753640394d0bf52c5a7d8b9bb4314f4ec5
